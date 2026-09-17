@@ -47,7 +47,6 @@ const BORDER = '#E3E7EE';
 const APPROACH_PHOTO = ['#060B13', '#101B28'];
 const TELLUS_PHOTO = ['#0A121C', '#182634'];
 const CTA_PHOTO = ['#111D30', '#0A1424', '#060B13'];
-const CARD_PHOTO = ['#0B7DFC', '#0A1B33'];
 
 const navItems = ['Solutions', 'Industries', 'How We Work', 'Insights', 'About', 'Contact'];
 const heroLinks = ['AI & Automation', 'Data & Analytics', 'Intelligent Systems', 'Business Transformation'];
@@ -87,11 +86,31 @@ const approachSteps = [
 ];
 
 const solutions = [
-  { title: 'AI & Intelligent Systems', desc: 'AI agents, copilots, document intelligence, voice AI, knowledge systems' },
-  { title: 'Intelligent Automation', desc: 'Workflows, CRM, sales, finance, operations, communications' },
-  { title: 'Data & Analytics', desc: 'Dashboards, reporting, predictive analytics, AI insights' },
-  { title: 'Software & Integration', desc: 'Custom applications, APIs, CRM/ERP, cloud solutions, system integration' },
-  { title: 'Business Transformation', desc: 'Process redesign, AI readiness, technology strategy, implementation' },
+  {
+    title: 'AI & Intelligent Systems',
+    desc: 'AI agents, copilots, document intelligence, voice AI, knowledge systems',
+    bg: require('./assets/01-ai-intelligence.png'),
+  },
+  {
+    title: 'Intelligent Automation',
+    desc: 'Workflows, CRM, sales, finance, operations, communications',
+    bg: require('./assets/02-engineering-gears.png'),
+  },
+  {
+    title: 'Data & Analytics',
+    desc: 'Dashboards, reporting, predictive analytics, AI insights',
+    bg: require('./assets/03-data-analytics.png'),
+  },
+  {
+    title: 'Software & Integration',
+    desc: 'Custom applications, APIs, CRM/ERP, cloud solutions, system integration',
+    bg: require('./assets/04-cloud-transformation.png'),
+  },
+  {
+    title: 'Business Transformation',
+    desc: 'Process redesign, AI readiness, technology strategy, implementation',
+    bg: require('./assets/05-business-advisory.png'),
+  },
 ];
 
 const trustPoints = [
@@ -354,7 +373,7 @@ export default function App() {
           <View style={[styles.solutionsGrid, isMobile && styles.solutionsGridMobile]}>
             {solutions.map((item) => (
               <View key={item.title} style={styles.solutionCard}>
-                <LinearGradient colors={CARD_PHOTO} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.solutionImage} />
+                <Image source={item.bg} style={styles.solutionImage} resizeMode="cover" />
                 <Text style={styles.solutionTitle}>{item.title}</Text>
                 <Text style={styles.solutionDesc}>{item.desc}</Text>
                 <Text style={styles.linkText}>LEARN MORE →</Text>
