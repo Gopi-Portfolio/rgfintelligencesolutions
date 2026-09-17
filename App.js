@@ -788,7 +788,7 @@ const styles = StyleSheet.create({
   },
   approachTile: {
     width: '100%',
-    aspectRatio: 0.85,
+    aspectRatio: 1.18,
     borderRadius: 14,
     marginBottom: 16,
     overflow: 'hidden',
