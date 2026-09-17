@@ -40,6 +40,7 @@ import {
 const NAVY = '#04101F';
 const BLUE = '#0B7DFC';
 const BLUE_LIGHT = '#4FA6FF';
+const RGF_ACCENT = '#0B4F98';
 const TEXT_DARK = '#0B1424';
 const TEXT_GREY = '#5B6472';
 const BORDER = '#E3E7EE';
@@ -272,9 +273,18 @@ export default function App() {
             <View style={styles.heroTextWrap}>
               <Text style={styles.heroKicker}>INTELLIGENCE. EXECUTION. REAL RESULTS.</Text>
               <Text style={styles.heroTitle}>
-                <Text style={{ color: BLUE_LIGHT }}>Reimagine</Text> with AI.{'\n'}
-                <Text style={{ color: BLUE_LIGHT }}>Generate</Text> Value.{'\n'}
-                <Text style={{ color: BLUE_LIGHT }}>Shape</Text> the Future.
+                <Text style={{ color: BLUE_LIGHT }}>
+                  <Text style={styles.heroInitial}>R</Text>eimagine
+                </Text>{' '}
+                with AI.{'\n'}
+                <Text style={{ color: BLUE_LIGHT }}>
+                  <Text style={styles.heroInitial}>G</Text>enerate
+                </Text>{' '}
+                Value.{'\n'}
+                <Text style={{ color: BLUE_LIGHT }}>Shape</Text> the{' '}
+                <Text style={{ color: BLUE_LIGHT }}>
+                  <Text style={styles.heroInitial}>F</Text>uture
+                </Text>.
               </Text>
               <Text style={styles.heroText}>
                 We help forward-thinking businesses solve complex problems using AI, automation,
@@ -632,6 +642,12 @@ const styles = StyleSheet.create({
     fontFamily: 'Inter_800ExtraBold',
     letterSpacing: -1,
     marginBottom: 16,
+  },
+  heroInitial: {
+    color: RGF_ACCENT,
+    fontSize: 54,
+    lineHeight: 56,
+    fontFamily: 'Inter_800ExtraBold',
   },
   heroText: {
     color: '#B7C0CE',
