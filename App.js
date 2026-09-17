@@ -281,10 +281,10 @@ export default function App() {
                   <Text style={styles.heroInitial}>G</Text>enerate
                 </Text>{' '}
                 Value.{'\n'}
-                <Text style={{ color: '#FFFFFF' }}>Shape</Text> the{' '}
                 <Text style={{ color: BLUE_LIGHT }}>
-                  <Text style={styles.heroInitial}>F</Text>uture
-                </Text>.
+                  <Text style={styles.heroInitial}>F</Text>orge
+                </Text>{' '}
+                <Text style={{ color: BLUE_LIGHT }}>the Future.</Text>
               </Text>
               <Text style={styles.heroText}>
                 We help forward-thinking businesses solve complex problems using AI, automation,
