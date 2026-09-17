@@ -209,7 +209,7 @@ function Eyebrow({ children, onDark = false }) {
 function ApproachTile({ bg }) {
   return (
     <View style={styles.approachTile}>
-      <Image source={bg} style={StyleSheet.absoluteFill} resizeMode="cover" />
+      <Image source={bg} style={styles.approachTileImage} resizeMode="contain" />
     </View>
   );
 }
@@ -793,6 +793,10 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     overflow: 'hidden',
     backgroundColor: '#0B1E3D',
+  },
+  approachTileImage: {
+    width: '100%',
+    height: '100%',
   },
   tileEdgeTop: {
     position: 'absolute',
