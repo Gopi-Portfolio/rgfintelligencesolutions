@@ -68,21 +68,21 @@ const approachSteps = [
     eyebrow: 'REIMAGINE',
     title: 'WITH AI',
     desc: 'See what’s possible. We identify opportunities and rethink how work gets done.',
-    bg: require('./assets/rgf-tile-r.png'),
+    bg: require('./assets/1.admin.png'),
   },
   {
     letter: 'G',
     eyebrow: 'GENERATE',
     title: 'VALUE',
     desc: 'Turn possibility into results. We design and implement solutions that deliver measurable outcomes.',
-    bg: require('./assets/rgf-tile-g.png'),
+    bg: require('./assets/2.arch.png'),
   },
   {
     letter: 'F',
     eyebrow: 'FORGE',
     title: 'THE FUTURE',
     desc: 'We create scalable systems designed for how your organization needs to operate tomorrow.',
-    bg: require('./assets/rgf-tile-f.png'),
+    bg: require('./assets/3.sales.png'),
   },
 ];
 
