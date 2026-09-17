@@ -79,7 +79,7 @@ const approachSteps = [
   },
   {
     letter: 'F',
-    eyebrow: 'SHAPE',
+    eyebrow: 'FORGE',
     title: 'THE FUTURE',
     desc: 'We create scalable systems designed for how your organization needs to operate tomorrow.',
     bg: require('./assets/rgf-tile-f.png'),
@@ -174,7 +174,7 @@ function Logo({ markStyle, nameStyle, taglineStyle, showTagline = true }) {
         <Text style={taglineStyle}>
           <Text style={{ color: BLUE_LIGHT }}>Reimagine</Text> with AI.{' '}
           <Text style={{ color: BLUE_LIGHT }}>Generate</Text> Value.{' '}
-          <Text style={{ color: BLUE_LIGHT }}>Shape</Text> the Future.
+          <Text style={{ color: BLUE_LIGHT }}>Forge</Text> the Future.
         </Text>
       )}
     </View>
