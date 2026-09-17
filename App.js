@@ -40,7 +40,7 @@ import {
 const NAVY = '#04101F';
 const BLUE = '#0B7DFC';
 const BLUE_LIGHT = '#4FA6FF';
-const RGF_ACCENT = '#0B4F98';
+const RGF_ACCENT = '#A6D5FF';
 const TEXT_DARK = '#0B1424';
 const TEXT_GREY = '#5B6472';
 const BORDER = '#E3E7EE';
