@@ -210,20 +210,6 @@ function ApproachTile({ bg }) {
   return (
     <View style={styles.approachTile}>
       <Image source={bg} style={StyleSheet.absoluteFill} resizeMode="cover" />
-      <LinearGradient colors={[NAVY, 'rgba(4,16,31,0)']} style={styles.tileEdgeTop} />
-      <LinearGradient colors={['rgba(4,16,31,0)', NAVY]} style={styles.tileEdgeBottom} />
-      <LinearGradient
-        colors={[NAVY, 'rgba(4,16,31,0)']}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 0 }}
-        style={styles.tileEdgeLeft}
-      />
-      <LinearGradient
-        colors={['rgba(4,16,31,0)', NAVY]}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 0 }}
-        style={styles.tileEdgeRight}
-      />
     </View>
   );
 }
