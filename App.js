@@ -278,13 +278,13 @@ export default function App() {
                 </Text>{' '}
                 with AI.{'\n'}
                 <Text style={{ color: BLUE_LIGHT }}>
-                  <Text style={styles.heroInitial}>G</Text>enerate
+                  <Text style={[styles.heroInitial, styles.heroInitialG]}>G</Text>enerate
                 </Text>{' '}
                 Value.{'\n'}
                 <Text style={{ color: BLUE_LIGHT }}>
                   <Text style={styles.heroInitial}>F</Text>orge
                 </Text>{' '}
-                <Text style={{ color: BLUE_LIGHT }}>the Future.</Text>
+                <Text style={{ color: '#FFFFFF' }}>the Future.</Text>
               </Text>
               <Text style={styles.heroText}>
                 We help forward-thinking businesses solve complex problems using AI, automation,
@@ -648,6 +648,9 @@ const styles = StyleSheet.create({
     fontSize: 54,
     lineHeight: 56,
     fontFamily: 'Inter_800ExtraBold',
+  },
+  heroInitialG: {
+    transform: [{ translateX: -2 }],
   },
   heroText: {
     color: '#B7C0CE',
