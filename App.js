@@ -281,7 +281,7 @@ export default function App() {
                   <Text style={styles.heroInitial}>G</Text>enerate
                 </Text>{' '}
                 Value.{'\n'}
-                <Text style={{ color: BLUE_LIGHT }}>Shape</Text> the{' '}
+                <Text style={{ color: '#FFFFFF' }}>Shape</Text> the{' '}
                 <Text style={{ color: BLUE_LIGHT }}>
                   <Text style={styles.heroInitial}>F</Text>uture
                 </Text>.
