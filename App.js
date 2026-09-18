@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   StatusBar,
   SafeAreaView,
@@ -49,7 +49,7 @@ const APPROACH_PHOTO = ['#060B13', '#101B28'];
 const TELLUS_PHOTO = ['#0A121C', '#182634'];
 const CTA_PHOTO = ['#111D30', '#0A1424', '#060B13'];
 
-const navItems = ['Solutions', 'Industries', 'How We Work', 'Insights', 'About', 'Contact'];
+const navItems = ['Solutions', 'Industries', 'How We Work', 'Insights', 'Who We Are', 'Contact'];
 const heroLinks = ['AI & Automation', 'Data & Analytics', 'Intelligent Systems', 'Business Transformation'];
 const heroWords = ['IDEAS', 'SOLUTIONS', 'PEOPLE', 'A BRIGHTER', 'TOMORROW'];
 
@@ -142,10 +142,10 @@ const footerColumns = [
   ['Solutions', 'Industries'],
   ['How We Work', 'Insights'],
   ['Insights'],
-  ['About', 'Contact'],
+  ['Who We Are', 'Contact'],
 ];
 
-function Btn({ label, variant = 'solid', onDark = false, style }) {
+function Btn({ label, variant = 'solid', onDark = false, style, onPress }) {
   const outline = variant === 'outline';
   return (
     <Pressable
@@ -157,6 +157,7 @@ function Btn({ label, variant = 'solid', onDark = false, style }) {
         pressed && styles.pressed,
         style,
       ]}
+      onPress={onPress}
     >
       <Text style={[styles.btnText, outline && { color: onDark ? '#FFFFFF' : BLUE }]}>{label}</Text>
     </Pressable>
@@ -214,9 +215,224 @@ function ApproachTile({ bg }) {
   );
 }
 
+function SiteHeader({ isMobile, onNavigate, activePage = 'home' }) {
+  return (
+    <View style={styles.topbar}>
+      <Pressable onPress={() => onNavigate('home')}>
+        <Logo markStyle={styles.headerMark} nameStyle={styles.headerLogoName} taglineStyle={styles.hidden} showTagline={false} />
+      </Pressable>
+
+      {!isMobile && (
+        <View style={styles.navWrap}>
+          {navItems.map((item) => {
+            const page = item === 'Who We Are' ? 'who' : 'home';
+            return (
+              <Pressable key={item} onPress={() => item === 'Who We Are' && onNavigate('who')}>
+                <Text style={[styles.navItem, activePage === page && item === 'Who We Are' && styles.navItemActive]}>
+                  {item}
+                </Text>
+              </Pressable>
+            );
+          })}
+        </View>
+      )}
+
+      <Btn label="TELL US YOUR BUSINESS PROBLEM →" onDark style={styles.headerBtn} />
+    </View>
+  );
+}
+
+function SiteFooter({ isMobile, onNavigate }) {
+  return (
+    <Section bg="#050B14">
+      <View style={[styles.footerTop, isMobile && styles.footerTopMobile]}>
+        <Pressable onPress={() => onNavigate('home')}>
+          <Logo markStyle={styles.footerMark} nameStyle={styles.footerLogoName} taglineStyle={styles.footerLogoTagline} />
+        </Pressable>
+
+        {!isMobile && (
+          <View style={styles.footerColumns}>
+            {footerColumns.map((col, i) => (
+              <View key={i} style={styles.footerColumn}>
+                {col.map((item) => (
+                  <Pressable key={item} onPress={() => item === 'Who We Are' && onNavigate('who')}>
+                    <Text style={styles.footerLink}>{item}</Text>
+                  </Pressable>
+                ))}
+              </View>
+            ))}
+          </View>
+        )}
+
+        <View style={styles.connectWrap}>
+          <Text style={styles.connectLabel}>Let’s Stay Connected</Text>
+          <View style={styles.linkedinBadge}>
+            <Text style={styles.linkedinBadgeText}>in</Text>
+          </View>
+        </View>
+      </View>
+      <View style={styles.footerRule} />
+      <View style={[styles.footerBottom, isMobile && styles.footerBottomMobile]}>
+        <Text style={styles.footerText}>© 2024 RGF Intelligence Solutions. All rights reserved.</Text>
+        <Text style={styles.footerText}>Privacy  |  Terms  |  Sitemap</Text>
+      </View>
+    </Section>
+  );
+}
+
+function WhoWeArePage({ isMobile, onNavigate }) {
+  return (
+    <SafeAreaView style={styles.safeArea}>
+      <StatusBar style="light" />
+      <ScrollView contentContainerStyle={styles.page}>
+        <Section
+          bg={NAVY}
+          image={require('./assets/who-we-are-hero.png')}
+          scrim={['rgba(4,16,31,0.8)', 'rgba(4,16,31,0.38)', 'rgba(4,16,31,0.65)']}
+          style={styles.whoHero}
+        >
+          <SiteHeader isMobile={isMobile} onNavigate={onNavigate} activePage="who" />
+          <View style={[styles.whoHeroRow, isMobile && styles.whoHeroRowMobile]}>
+            <View style={styles.whoHeroCopy}>
+              <Eyebrow onDark>ABOUT RGF</Eyebrow>
+              <Text style={styles.whoHeroTitle}>Who We Are</Text>
+              <Text style={styles.whoHeroTitleAccent}>And Why We Exist.</Text>
+              <Text style={styles.whoHeroText}>
+                RGF Intelligence Solutions is a technology and AI consulting partner committed to helping
+                businesses solve real problems, improve efficiency, and unlock new opportunities through
+                intelligent solutions.
+              </Text>
+            </View>
+            {!isMobile && (
+              <View style={styles.whoHeroQuote}>
+                <Text style={styles.whoHeroQuoteText}>Better Systems.{"\n"}Smarter Decisions.{"\n"}Greater Impact.</Text>
+                <View style={styles.heroWordsRule} />
+              </View>
+            )}
+          </View>
+        </Section>
+
+        <Section bg="#FFFFFF">
+          <View style={[styles.whoStoryRow, isMobile && styles.whoStoryRowMobile]}>
+            <View style={styles.whoStoryCopy}>
+              <Eyebrow>OUR STORY</Eyebrow>
+              <Text style={styles.sectionTitleDark}>Built on Experience.{"\n"}Driven by Innovation.</Text>
+              <Text style={styles.whoBodyText}>
+                RGF was founded with a simple belief: technology should make business easier, not harder.
+                With years of experience in business operations, data, and technology, we saw an opportunity
+                to help organizations cut through the complexity and get real results.
+              </Text>
+              <Text style={styles.whoBodyText}>
+                Today, we bring together industry knowledge, AI, automation, and a people-first approach to
+                deliver practical solutions that create lasting value.
+              </Text>
+            </View>
+            <Image source={require('./assets/who-we-are-story.png')} style={styles.whoStoryImage} resizeMode="cover" />
+            <View style={styles.whoPrinciples}>
+              <View style={styles.whoPrincipleRow}>
+                <TrendIcon size={30} color={BLUE} />
+                <View style={styles.whoPrincipleCopy}>
+                  <Text style={styles.whoPrincipleTitle}>Our Mission</Text>
+                  <Text style={styles.whoPrincipleText}>To help businesses work smarter, move faster, and achieve more with intelligent technology.</Text>
+                </View>
+              </View>
+              <View style={styles.whoPrincipleRule} />
+              <View style={styles.whoPrincipleRow}>
+                <BulbIcon size={30} color={BLUE} />
+                <View style={styles.whoPrincipleCopy}>
+                  <Text style={styles.whoPrincipleTitle}>Our Vision</Text>
+                  <Text style={styles.whoPrincipleText}>To be the most trusted partner for AI-driven business transformation across every industry.</Text>
+                </View>
+              </View>
+              <View style={styles.whoPrincipleRule} />
+              <View style={styles.whoPrincipleRow}>
+                <UsersIcon size={30} color={BLUE} />
+                <View style={styles.whoPrincipleCopy}>
+                  <Text style={styles.whoPrincipleTitle}>Our Values</Text>
+                  <Text style={styles.whoPrincipleText}>Integrity  |  Innovation  |  Partnership  |  Excellence  |  Results</Text>
+                </View>
+              </View>
+            </View>
+          </View>
+        </Section>
+
+        <Section bg={NAVY} image={require('./assets/rgf-texture.png')}>
+          <View style={[styles.whoWhyRow, isMobile && styles.whoWhyRowMobile]}>
+            <View style={styles.whoWhyCopy}>
+              <Eyebrow onDark>WHY CHOOSE RGF</Eyebrow>
+              <Text style={styles.sectionTitleLight}>More Than Technology.{"\n"}A True Partner.</Text>
+              <Text style={styles.sectionSubtitleLight}>
+                We don’t just provide solutions. We work alongside your team to understand your goals,
+                challenges, and unique needs. Our approach combines strategy, technology, and hands-on support
+                to ensure you get measurable results.
+              </Text>
+            </View>
+            <View style={[styles.whoFeatureGrid, isMobile && styles.whoFeatureGridMobile]}>
+              {[
+                [BuildingIcon, 'Industry & Business Expertise', 'Real-world experience across multiple industries and business sizes.'],
+                [GearIcon, 'Advanced Technology', 'AI, automation, data, and modern software solutions.'],
+                [UsersIcon, 'Collaborative Approach', 'Your goals. Our team. One path forward.'],
+                [TrendIcon, 'Measurable Results', 'Greater efficiency, lower costs, and long-term growth.'],
+              ].map(([Icon, title, text]) => (
+                <View key={title} style={styles.whoFeature}>
+                  <Icon size={32} color={BLUE_LIGHT} />
+                  <Text style={styles.whoFeatureTitle}>{title}</Text>
+                  <Text style={styles.whoFeatureText}>{text}</Text>
+                </View>
+              ))}
+            </View>
+          </View>
+        </Section>
+
+        <Section bg="#FFFFFF">
+          <View style={[styles.whoTeamRow, isMobile && styles.whoTeamRowMobile]}>
+            <View style={styles.whoTeamCopy}>
+              <Eyebrow>OUR TEAM</Eyebrow>
+              <Text style={styles.sectionTitleDark}>Experienced People.{"\n"}Real-World Solutions.</Text>
+              <Text style={styles.whoBodyText}>
+                Our team brings together experts in business strategy, AI, data, and technology with deep
+                industry experience and a passion for solving problems.
+              </Text>
+              <Btn label="MEET OUR TEAM →" />
+            </View>
+            <Image source={require('./assets/who-we-are-team.png')} style={styles.whoTeamImage} resizeMode="cover" />
+          </View>
+          <View style={[styles.whoStatsRow, isMobile && styles.whoStatsRowMobile]}>
+            {[
+              ['100%', 'Client-Focused'],
+              ['50+', 'Technologies & Tools'],
+              ['Multiple', 'Industries'],
+              ['Scalable', 'for Any Business Size'],
+            ].map(([value, label]) => (
+              <View key={label} style={styles.whoStat}>
+                <Text style={styles.whoStatValue}>{value}</Text>
+                <Text style={styles.whoStatLabel}>{label}</Text>
+              </View>
+            ))}
+          </View>
+        </Section>
+
+        <Section bg={NAVY} image={require('./assets/bgimg.png')} scrim={['rgba(4,16,31,0.7)', 'rgba(4,16,31,0.35)', 'rgba(4,16,31,0.72)']}>
+          <View style={[styles.whoCtaRow, isMobile && styles.whoCtaRowMobile]}>
+            <View style={styles.whoCtaCopy}>
+              <Eyebrow onDark>LET’S BUILD WHAT’S NEXT</Eyebrow>
+              <Text style={styles.sectionTitleLight}>Ready to Turn Your Business{"\n"}Challenges Into Real Solutions?</Text>
+              <Text style={styles.sectionSubtitleLight}>Partner with RGF Intelligence Solutions and discover how intelligent technology can help you work smarter, grow faster, and achieve more.</Text>
+              <Btn label="TELL US YOUR BUSINESS PROBLEM →" />
+            </View>
+          </View>
+        </Section>
+
+        <SiteFooter isMobile={isMobile} onNavigate={onNavigate} />
+      </ScrollView>
+    </SafeAreaView>
+  );
+}
+
 export default function App() {
   const { width } = useWindowDimensions();
   const isMobile = width < 860;
+  const [page, setPage] = useState('home');
 
   const [fontsLoaded] = useFonts({
     Inter_400Regular,
@@ -229,6 +445,10 @@ export default function App() {
     return <View style={{ flex: 1, backgroundColor: NAVY }} />;
   }
 
+  if (page === 'who') {
+    return <WhoWeArePage isMobile={isMobile} onNavigate={setPage} />;
+  }
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <StatusBar style="light" />
@@ -239,21 +459,7 @@ export default function App() {
           scrim={['rgba(4,16,31,0.5)', 'rgba(4,16,31,0.25)', 'rgba(4,16,31,0.5)']}
           style={styles.heroSection}
         >
-          <View style={styles.topbar}>
-            <Logo markStyle={styles.headerMark} nameStyle={styles.headerLogoName} taglineStyle={styles.hidden} showTagline={false} />
-
-            {!isMobile && (
-              <View style={styles.navWrap}>
-                {navItems.map((item) => (
-                  <Text key={item} style={styles.navItem}>
-                    {item}
-                  </Text>
-                ))}
-              </View>
-            )}
-
-            <Btn label="TELL US YOUR BUSINESS PROBLEM →" onDark style={styles.headerBtn} />
-          </View>
+          <SiteHeader isMobile={isMobile} onNavigate={setPage} />
 
           <View style={[styles.heroRow, isMobile && styles.heroRowMobile]}>
             <View style={styles.heroTextWrap}>
@@ -488,43 +694,7 @@ export default function App() {
           </View>
         </Section>
 
-        <Section bg="#050B14">
-          <View style={[styles.footerTop, isMobile && styles.footerTopMobile]}>
-            <Logo
-              markStyle={styles.footerMark}
-              nameStyle={styles.footerLogoName}
-              taglineStyle={styles.footerLogoTagline}
-            />
-
-            {!isMobile && (
-              <View style={styles.footerColumns}>
-                {footerColumns.map((col, i) => (
-                  <View key={i} style={styles.footerColumn}>
-                    {col.map((item) => (
-                      <Text key={item} style={styles.footerLink}>
-                        {item}
-                      </Text>
-                    ))}
-                  </View>
-                ))}
-              </View>
-            )}
-
-            <View style={styles.connectWrap}>
-              <Text style={styles.connectLabel}>Let’s Stay Connected</Text>
-              <View style={styles.linkedinBadge}>
-                <Text style={styles.linkedinBadgeText}>in</Text>
-              </View>
-            </View>
-          </View>
-
-          <View style={styles.footerRule} />
-
-          <View style={[styles.footerBottom, isMobile && styles.footerBottomMobile]}>
-            <Text style={styles.footerText}>© 2024 RGF Intelligence Solutions. All rights reserved.</Text>
-            <Text style={styles.footerText}>Privacy  |  Terms  |  Sitemap</Text>
-          </View>
-        </Section>
+        <SiteFooter isMobile={isMobile} onNavigate={setPage} />
       </ScrollView>
     </SafeAreaView>
   );
@@ -1178,5 +1348,213 @@ const styles = StyleSheet.create({
     color: '#7C8798',
     fontSize: 12,
     fontFamily: 'Inter_400Regular',
+  },
+  navItemActive: {
+    color: BLUE_LIGHT,
+  },
+  whoHero: {
+    minHeight: 430,
+    overflow: 'hidden',
+  },
+  whoHeroRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    minHeight: 300,
+    gap: 24,
+  },
+  whoHeroRowMobile: {
+    flexDirection: 'column',
+    alignItems: 'flex-start',
+    justifyContent: 'center',
+    paddingVertical: 32,
+  },
+  whoHeroCopy: {
+    maxWidth: 620,
+  },
+  whoHeroTitle: {
+    color: '#FFFFFF',
+    fontSize: 44,
+    lineHeight: 50,
+    fontFamily: 'Inter_800ExtraBold',
+  },
+  whoHeroTitleAccent: {
+    color: BLUE,
+    fontSize: 44,
+    lineHeight: 50,
+    fontFamily: 'Inter_800ExtraBold',
+    marginBottom: 18,
+  },
+  whoHeroText: {
+    color: '#D6DEE8',
+    fontSize: 16,
+    lineHeight: 25,
+    fontFamily: 'Inter_400Regular',
+    maxWidth: 560,
+  },
+  whoHeroQuote: {
+    width: 180,
+    alignItems: 'flex-start',
+  },
+  whoHeroQuoteText: {
+    color: '#FFFFFF',
+    fontSize: 18,
+    lineHeight: 27,
+    fontFamily: 'Inter_600SemiBold',
+    fontStyle: 'italic',
+  },
+  whoStoryRow: {
+    flexDirection: 'row',
+    alignItems: 'stretch',
+    gap: 18,
+  },
+  whoStoryRowMobile: {
+    flexDirection: 'column',
+  },
+  whoStoryCopy: {
+    flex: 1.1,
+    justifyContent: 'center',
+  },
+  whoBodyText: {
+    color: TEXT_GREY,
+    fontSize: 14,
+    lineHeight: 21,
+    fontFamily: 'Inter_400Regular',
+    marginBottom: 14,
+  },
+  whoStoryImage: {
+    flex: 0.9,
+    minHeight: 280,
+    borderRadius: 8,
+  },
+  whoPrinciples: {
+    flex: 1,
+    backgroundColor: '#F0F8FF',
+    borderRadius: 8,
+    padding: 18,
+    justifyContent: 'center',
+  },
+  whoPrincipleRow: {
+    flexDirection: 'row',
+    gap: 14,
+    alignItems: 'flex-start',
+  },
+  whoPrincipleCopy: {
+    flex: 1,
+  },
+  whoPrincipleTitle: {
+    color: TEXT_DARK,
+    fontSize: 16,
+    fontFamily: 'Inter_700Bold',
+    marginBottom: 4,
+  },
+  whoPrincipleText: {
+    color: TEXT_GREY,
+    fontSize: 12,
+    lineHeight: 18,
+    fontFamily: 'Inter_400Regular',
+  },
+  whoPrincipleRule: {
+    height: 1,
+    backgroundColor: '#C9E4FA',
+    marginVertical: 14,
+  },
+  whoWhyRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 30,
+  },
+  whoWhyRowMobile: {
+    flexDirection: 'column',
+    alignItems: 'flex-start',
+  },
+  whoWhyCopy: {
+    flex: 0.9,
+  },
+  whoFeatureGrid: {
+    flex: 1.5,
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 18,
+  },
+  whoFeatureGridMobile: {
+    flexDirection: 'column',
+    width: '100%',
+  },
+  whoFeature: {
+    flex: 1,
+    minWidth: 130,
+    borderLeftWidth: 1,
+    borderLeftColor: 'rgba(255,255,255,0.16)',
+    paddingLeft: 16,
+  },
+  whoFeatureTitle: {
+    color: '#FFFFFF',
+    fontSize: 14,
+    lineHeight: 19,
+    fontFamily: 'Inter_700Bold',
+    marginTop: 12,
+    marginBottom: 6,
+  },
+  whoFeatureText: {
+    color: '#AAB8C8',
+    fontSize: 12,
+    lineHeight: 18,
+    fontFamily: 'Inter_400Regular',
+  },
+  whoTeamRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 34,
+  },
+  whoTeamRowMobile: {
+    flexDirection: 'column',
+    alignItems: 'flex-start',
+  },
+  whoTeamCopy: {
+    flex: 0.8,
+  },
+  whoTeamImage: {
+    flex: 1.4,
+    height: 210,
+    borderRadius: 8,
+  },
+  whoStatsRow: {
+    flexDirection: 'row',
+    borderTopWidth: 1,
+    borderTopColor: BORDER,
+    marginTop: 34,
+    paddingTop: 24,
+    gap: 20,
+  },
+  whoStatsRowMobile: {
+    flexDirection: 'column',
+  },
+  whoStat: {
+    flex: 1,
+    borderRightWidth: 1,
+    borderRightColor: BORDER,
+    paddingRight: 18,
+  },
+  whoStatValue: {
+    color: BLUE,
+    fontSize: 24,
+    fontFamily: 'Inter_800ExtraBold',
+  },
+  whoStatLabel: {
+    color: TEXT_GREY,
+    fontSize: 12,
+    fontFamily: 'Inter_400Regular',
+    marginTop: 4,
+  },
+  whoCtaRow: {
+    minHeight: 260,
+    justifyContent: 'center',
+  },
+  whoCtaRowMobile: {
+    minHeight: 320,
+  },
+  whoCtaCopy: {
+    maxWidth: 650,
   },
 });
