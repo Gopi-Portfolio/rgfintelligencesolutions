@@ -147,21 +147,49 @@ const footerColumns = [
   'Contact',
 ];
 
+function LinkText({ children, style, hoverStyle, activeStyle, onPress }) {
+  return (
+    <Pressable onPress={onPress} style={({ pressed }) => [pressed && activeStyle]}>
+      {({ hovered, pressed }) => (
+        <Text style={[style, hovered && hoverStyle, pressed && activeStyle]}>{children}</Text>
+      )}
+    </Pressable>
+  );
+}
+
 function Btn({ label, variant = 'solid', onDark = false, style, onPress }) {
   const outline = variant === 'outline';
   return (
     <Pressable
-      style={({ pressed }) => [
+      style={({ hovered, pressed }) => [
         styles.btn,
         outline
-          ? { borderWidth: 1.5, borderColor: onDark ? '#FFFFFF' : BLUE, backgroundColor: 'transparent' }
+          ? {
+              borderWidth: 1.5,
+              borderColor: onDark ? '#FFFFFF' : BLUE,
+              backgroundColor: 'transparent',
+            }
           : { backgroundColor: BLUE },
+        hovered && !outline && styles.btnHoverSolid,
+        hovered && outline && styles.btnHoverOutline,
         pressed && styles.pressed,
         style,
       ]}
       onPress={onPress}
     >
-      <Text style={[styles.btnText, outline && { color: onDark ? '#FFFFFF' : BLUE }]}>{label}</Text>
+      {({ hovered, pressed }) => (
+        <Text
+          style={[
+            styles.btnText,
+            outline && { color: onDark ? '#FFFFFF' : BLUE },
+            hovered && !outline && styles.btnTextHoverSolid,
+            hovered && outline && styles.btnTextHoverOutline,
+            pressed && styles.btnTextPressed,
+          ]}
+        >
+          {label}
+        </Text>
+      )}
     </Pressable>
   );
 }
@@ -187,7 +215,7 @@ function Logo({ markStyle, nameStyle, taglineStyle, showTagline = true }) {
 function Section({ bg, children, style, shellStyle, photo, image, scrim }) {
   return (
     <View style={[styles.section, { backgroundColor: bg }, style]}>
-      {image && <Image source={image} style={StyleSheet.absoluteFill} resizeMode="cover" />}
+      {image && <Image source={image} style={[StyleSheet.absoluteFillObject, styles.sectionBackgroundImage]} resizeMode="stretch" />}
       {photo && (
         <LinearGradient colors={photo} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={StyleSheet.absoluteFill} />
       )}
@@ -235,13 +263,26 @@ function SiteHeader({ isMobile, onNavigate, activePage = 'home' }) {
       {!isMobile && (
         <View style={[styles.navWrap, compact && styles.navWrapCompact]}>
           {navItems.map((item) => {
-            const page = item === 'Who We Are' ? 'who' : 'home';
+            const page = item === 'Who We Are' ? 'who' : item === 'Solutions' ? 'solution' : 'home';
+            const isWhoLink = item === 'Who We Are';
+            const isSolutionLink = item === 'Solutions';
             return (
-              <Pressable key={item} onPress={() => item === 'Who We Are' && onNavigate('who')}>
-                <Text style={[styles.navItem, compact && styles.navItemCompact, activePage === page && item === 'Who We Are' && styles.navItemActive]}>
-                  {item}
-                </Text>
-              </Pressable>
+              <LinkText
+                key={item}
+                onPress={() => {
+                  if (isWhoLink || isSolutionLink) onNavigate(page);
+                  else onNavigate('home');
+                }}
+                style={[
+                  styles.navItem,
+                  compact && styles.navItemCompact,
+                  activePage === page && (isWhoLink || isSolutionLink) && styles.navItemActive,
+                ]}
+                hoverStyle={styles.navItemHover}
+                activeStyle={styles.navItemPressed}
+              >
+                {item}
+              </LinkText>
             );
           })}
         </View>
@@ -262,11 +303,24 @@ function SiteFooter({ isMobile, onNavigate }) {
 
         {!isMobile && (
           <View style={styles.footerColumns}>
-            {footerColumns.map((item) => (
-              <Pressable key={item} onPress={() => item === 'About' && onNavigate('who')}>
-                <Text style={styles.footerLink}>{item}</Text>
-              </Pressable>
-            ))}
+            {footerColumns.map((item) => {
+              const isWhoLink = item === 'About';
+              const isSolutionLink = item === 'Solutions';
+              const targetPage = isWhoLink ? 'who' : isSolutionLink ? 'solution' : 'home';
+              return (
+                <LinkText
+                  key={item}
+                  onPress={() => {
+                    onNavigate(targetPage);
+                  }}
+                  style={styles.footerLink}
+                  hoverStyle={styles.footerLinkHover}
+                  activeStyle={styles.footerLinkPressed}
+                >
+                  {item}
+                </LinkText>
+              );
+            })}
           </View>
         )}
 
@@ -290,6 +344,167 @@ function SiteFooter({ isMobile, onNavigate }) {
   );
 }
 
+function SolutionPage({ isMobile, onNavigate }) {
+  const solutionCards = [
+    {
+      title: 'AI & Intelligent Systems',
+      subtitle: 'Put intelligence to work across your organization.',
+      bullets: ['AI agents, copilots & assistants', 'Generative AI solutions', 'Document intelligence', 'Voice & conversational AI', 'Enterprise knowledge systems', 'Custom AI applications'],
+      bg: require('./assets/01-ai-intelligence.png'),
+    },
+    {
+      title: 'Intelligent Automation',
+      subtitle: 'Turn repetitive work into intelligent workflows.',
+      bullets: ['Workflow automation', 'Sales & CRM automation', 'Customer service automation', 'Finance & billing automation', 'Operations automation', 'Approvals & notifications'],
+      bg: require('./assets/02-engineering-gears.png'),
+    },
+    {
+      title: 'Data & Analytics',
+      subtitle: 'Turn information into decisions.',
+      bullets: ['Executive dashboards', 'Business intelligence', 'Power BI & reporting', 'Predictive analytics', 'Data integration & modernization', 'AI-powered insights'],
+      bg: require('./assets/03-data-analytics.png'),
+    },
+    {
+      title: 'Software & Integration',
+      subtitle: 'Make your technology work together.',
+      bullets: ['Custom software development', 'System & API integration', 'CRM & ERP integration', 'Cloud solutions', 'Customer & employee portals', 'Legacy system modernization'],
+      bg: require('./assets/04-cloud-transformation.png'),
+    },
+    {
+      title: 'Business Transformation',
+      subtitle: 'Redesign how your organization works.',
+      bullets: ['Business process optimization', 'AI readiness & strategy', 'Digital transformation', 'Technology assessments & roadmaps', 'Workflow redesign', 'Implementation & change management'],
+      bg: require('./assets/05-business-advisory.png'),
+    },
+  ];
+
+  const approachSteps = [
+    { number: '01', title: 'Understand', text: 'Your business, goals, challenges and opportunities.' },
+    { number: '02', title: 'Design', text: 'The right combination of technology and strategy.' },
+    { number: '03', title: 'Implement', text: 'A solution tailored to your environment.' },
+    { number: '04', title: 'Deliver Value', text: 'Measure results and continuously improve.' },
+  ];
+
+  return (
+    <SafeAreaView style={styles.safeArea}>
+      <StatusBar style="light" />
+      <ScrollView contentContainerStyle={styles.page}>
+        <Section
+          bg={NAVY}
+          image={require('./assets/our solution.png')}
+          scrim={['rgba(4,16,31,0.94)', 'rgba(4,16,31,0.72)', 'rgba(4,16,31,0.94)']}
+          style={styles.solutionHero}
+          shellStyle={styles.headerShell}
+        >
+          <SiteHeader isMobile={isMobile} onNavigate={onNavigate} activePage="solution" />
+          <View style={[styles.solutionHeroRow, isMobile && styles.solutionHeroRowMobile]}>
+            <View style={styles.solutionHeroCopy}>
+              <Eyebrow onDark>OUR SOLUTIONS</Eyebrow>
+              <Text style={styles.solutionHeroTitle}>Intelligence That{isMobile ? '\n' : ' '}<Text style={styles.solutionHeroTitleAccent}>Solves Real Business Problems.</Text></Text>
+              <Text style={styles.solutionHeroText}>
+                The right solution can do more than improve efficiency. It can transform how you operate, compete, and grow. We combine human expertise with AI, automation, data, software, and strategy to deliver practical solutions that create measurable value.
+              </Text>
+              <View style={[styles.solutionHeroButtons, isMobile && styles.solutionHeroButtonsMobile]}>
+                <Btn label="TELL US YOUR BUSINESS PROBLEM →" onPress={() => onNavigate('home')} />
+                <Btn label="SCHEDULE A CONSULTATION" variant="outline" onDark onPress={() => onNavigate('home')} />
+              </View>
+            </View>
+            {!isMobile && (
+              <View style={styles.solutionHeroQuote}>
+                <Text style={styles.solutionHeroQuoteText}>IDEAS{ '\n' }SOLUTIONS{ '\n' }PEOPLE{ '\n'}A BRIGHTER{ '\n'}TOMORROW</Text>
+                <View style={styles.heroWordsRule} />
+                <Text style={styles.solutionHeroQuoteAccent}>“Real solutions{ '\n'}start with real{ '\n'}business problems.”</Text>
+              </View>
+            )}
+          </View>
+        </Section>
+
+        <Section bg="#F0F7FE" shellStyle={styles.solutionTrustShell}>
+          <View style={[styles.solutionTrustRow, isMobile && styles.solutionTrustRowMobile]}>
+            {[
+              { Icon: UsersIcon, title: 'Business-First', text: 'Approach' },
+              { Icon: GearIcon, title: 'Technology', text: 'Agnostic' },
+              { Icon: BarChartIcon, title: 'Measurable', text: 'Outcomes' },
+              { Icon: ShieldIcon, title: 'Trusted', text: 'Partner' },
+            ].map((item, index) => (
+              <View key={item.title} style={[styles.solutionTrustItem, index > 0 && !isMobile && styles.solutionTrustDivider]}>
+                <item.Icon size={30} color={BLUE} />
+                <View><Text style={styles.solutionTrustTitle}>{item.title}</Text><Text style={styles.solutionTrustText}>{item.text}</Text></View>
+              </View>
+            ))}
+          </View>
+        </Section>
+
+        <Section bg="#FFFFFF" shellStyle={styles.solutionShell}>
+          <View style={styles.solutionSectionHeading}>
+            <View style={styles.solutionIntroCopy}>
+              <Eyebrow>OUR SOLUTIONS</Eyebrow>
+              <Text style={styles.sectionTitleDark}>Smarter Solutions for a Stronger Tomorrow.</Text>
+              <Text style={styles.solutionIntroText}>From AI and automation to data, software, and business transformation, our solutions are designed to help you solve today’s challenges and unlock new opportunities for growth.</Text>
+            </View>
+            {!isMobile && <LinkText style={styles.linkText} hoverStyle={styles.linkTextHover} activeStyle={styles.linkTextPressed} onPress={() => onNavigate('home')}>DISCUSS YOUR NEEDS →</LinkText>}
+          </View>
+          <View style={[styles.solutionGrid, isMobile && styles.solutionGridMobile]}>
+            {solutionCards.map((item) => (
+              <View key={item.title} style={styles.solutionVisualCard}>
+                <Image source={item.bg} style={styles.solutionVisualImage} resizeMode="cover" />
+                <View style={styles.solutionVisualBody}>
+                  <Text style={styles.solutionBoxTitle}>{item.title}</Text>
+                  <Text style={styles.solutionVisualSubtitle}>{item.subtitle}</Text>
+                  {item.bullets.map((bullet) => <Text key={bullet} style={styles.solutionBullet}>•  {bullet}</Text>)}
+                  <LinkText style={[styles.linkText, styles.solutionLearnMore]} hoverStyle={styles.linkTextHover} activeStyle={styles.linkTextPressed}>LEARN MORE →</LinkText>
+                </View>
+              </View>
+            ))}
+            <View style={styles.solutionNeedCard}>
+              <Text style={styles.solutionNeedTitle}>Not Sure What{ '\n'}Solution You Need?</Text>
+              <Text style={styles.solutionNeedText}>That’s okay. You don’t need to know the technology. Just tell us what’s not working, and we’ll help identify the right solution.</Text>
+              <Btn label="TELL US YOUR BUSINESS PROBLEM →" onPress={() => onNavigate('home')} />
+            </View>
+          </View>
+        </Section>
+
+        <Section bg="#F0F7FE" shellStyle={styles.solutionApproachShell}>
+          <View style={styles.solutionSectionHeading}>
+            <View style={styles.solutionIntroCopy}>
+              <Eyebrow>OUR APPROACH TO SOLUTIONS</Eyebrow>
+              <Text style={styles.sectionTitleDark}>The Right Solution. The Right Way.</Text>
+              <Text style={styles.solutionIntroText}>We don’t believe in one-size-fits-all solutions. We take the time to understand your business, identify the real problem, and design a solution that fits your goals, people, and systems.</Text>
+            </View>
+            {!isMobile && <LinkText style={styles.linkText} hoverStyle={styles.linkTextHover} activeStyle={styles.linkTextPressed} onPress={() => onNavigate('home')}>LEARN MORE ABOUT{ '\n'}HOW WE WORK →</LinkText>}
+          </View>
+          <View style={[styles.solutionApproachRow, isMobile && styles.solutionApproachRowMobile]}>
+            {approachSteps.map((step, index) => (
+              <View key={step.number} style={[styles.solutionApproachItem, index > 0 && !isMobile && styles.solutionApproachDivider]}>
+                <Text style={styles.solutionStepNumber}>{step.number}</Text>
+                <Text style={styles.solutionStepTitle}>{step.title}</Text>
+                <Text style={styles.solutionStepText}>{step.text}</Text>
+                {index < approachSteps.length - 1 && !isMobile && <Text style={styles.solutionStepArrow}>→</Text>}
+              </View>
+            ))}
+          </View>
+        </Section>
+
+        <Section bg={NAVY} shellStyle={styles.solutionClosingShell}>
+          <View style={[styles.solutionClosingRow, isMobile && styles.solutionClosingRowMobile]}>
+            <View style={styles.solutionClosingCopy}>
+              <Eyebrow onDark>READY TO FIND THE RIGHT SOLUTION?</Eyebrow>
+              <Text style={styles.sectionTitleLight}>Let’s Solve Your Business Problem.</Text>
+              <Text style={styles.sectionSubtitleLight}>Whether you need AI, automation, better data, connected systems or a complete transformation, we’ll help you determine the best path forward.</Text>
+            </View>
+            <View style={styles.solutionClosingAction}>
+              <Btn label="TELL US YOUR BUSINESS PROBLEM →" onPress={() => onNavigate('home')} />
+              <Text style={styles.solutionClosingNote}>Confidential  •  No Obligation  •  Real Solutions</Text>
+            </View>
+          </View>
+        </Section>
+
+        <SiteFooter isMobile={isMobile} onNavigate={onNavigate} />
+      </ScrollView>
+    </SafeAreaView>
+  );
+}
+
 function WhoWeArePage({ isMobile, onNavigate }) {
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -297,7 +512,7 @@ function WhoWeArePage({ isMobile, onNavigate }) {
       <ScrollView contentContainerStyle={styles.page}>
         <Section
           bg={NAVY}
-          image={require('./assets/who-we-are/who-hero-crop.png')}
+          image={require('./assets/bg2.png')}
           scrim={['rgba(4,16,31,0.8)', 'rgba(4,16,31,0.38)', 'rgba(4,16,31,0.65)']}
           style={styles.whoHero}
           shellStyle={styles.whoShell}
@@ -313,6 +528,7 @@ function WhoWeArePage({ isMobile, onNavigate }) {
                 businesses solve real problems, improve efficiency, and unlock new opportunities through
                 intelligent solutions.
               </Text>
+              <Btn label="VIEW OUR SOLUTIONS →" onPress={() => onNavigate('solution')} style={{ marginTop: 16 }} />
             </View>
             {!isMobile && (
               <View style={styles.whoHeroQuote}>
@@ -338,7 +554,7 @@ function WhoWeArePage({ isMobile, onNavigate }) {
                 deliver practical solutions that create lasting value.
               </Text>
             </View>
-            <Image source={require('./assets/who-we-are/who-story-crop.png')} style={[styles.whoStoryImage, isMobile && styles.whoStoryImageMobile]} resizeMode="cover" />
+            <Image source={require('./assets/img1.jpg')} style={[styles.whoStoryImage, isMobile && styles.whoStoryImageMobile]} resizeMode="cover" />
             <View style={[styles.whoPrinciples, isMobile && styles.whoPrinciplesMobile]}>
               <View style={styles.whoPrincipleRow}>
                 <TrendIcon size={30} color={BLUE} />
@@ -406,7 +622,7 @@ function WhoWeArePage({ isMobile, onNavigate }) {
               </Text>
               <Btn label="MEET OUR TEAM →" />
             </View>
-            <Image source={require('./assets/who-we-are/who-team-crop.png')} style={[styles.whoTeamImage, isMobile && styles.whoTeamImageMobile]} resizeMode="cover" />
+            <Image source={require('./assets/img2.jpg')} style={[styles.whoTeamImage, isMobile && styles.whoTeamImageMobile]} resizeMode="cover" />
           </View>
           <View style={[styles.whoStatsRow, isMobile && styles.whoStatsRowMobile]}>
             {[
@@ -460,6 +676,10 @@ export default function App() {
     return <WhoWeArePage isMobile={isMobile} onNavigate={setPage} />;
   }
 
+  if (page === 'solution') {
+    return <SolutionPage isMobile={isMobile} onNavigate={setPage} />;
+  }
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <StatusBar style="light" />
@@ -496,8 +716,8 @@ export default function App() {
               </Text>
 
               <View style={styles.buttonRow}>
-                <Btn label="TELL US YOUR BUSINESS PROBLEM →" />
-                <Btn label="EXPLORE OUR SOLUTIONS" variant="outline" onDark />
+                <Btn label="TELL US YOUR BUSINESS PROBLEM →" onPress={() => setPage('home')} />
+                <Btn label="EXPLORE OUR SOLUTIONS" variant="outline" onDark onPress={() => setPage('solution')} />
               </View>
 
               <Text style={styles.heroLinkRow}>
@@ -581,7 +801,11 @@ export default function App() {
               <Eyebrow>OUR SOLUTIONS</Eyebrow>
               <Text style={styles.sectionTitleDark}>Intelligence That Works for Your Business</Text>
             </View>
-            {!isMobile && <Text style={styles.linkText}>VIEW ALL SOLUTIONS →</Text>}
+            {!isMobile && (
+              <LinkText style={styles.linkText} hoverStyle={styles.linkTextHover} activeStyle={styles.linkTextPressed} onPress={() => setPage('solution')}>
+                VIEW ALL SOLUTIONS →
+              </LinkText>
+            )}
           </View>
 
           <View style={[styles.solutionsGrid, isMobile && styles.solutionsGridMobile]}>
@@ -590,7 +814,9 @@ export default function App() {
                 <Image source={item.bg} style={styles.solutionImage} resizeMode="cover" />
                 <Text style={styles.solutionTitle}>{item.title}</Text>
                 <Text style={styles.solutionDesc}>{item.desc}</Text>
-                <Text style={styles.linkText}>LEARN MORE →</Text>
+                <LinkText style={styles.linkText} hoverStyle={styles.linkTextHover} activeStyle={styles.linkTextPressed} onPress={() => setPage('solution')}>
+                  LEARN MORE →
+                </LinkText>
               </View>
             ))}
           </View>
@@ -644,7 +870,11 @@ export default function App() {
               <Eyebrow>INDUSTRIES WE SERVE</Eyebrow>
               <Text style={styles.sectionTitleDark}>Real-World Solutions. Measurable Results.</Text>
             </View>
-            {!isMobile && <Text style={styles.linkText}>EXPLORE INDUSTRIES →</Text>}
+            {!isMobile && (
+              <LinkText style={styles.linkText} hoverStyle={styles.linkTextHover} activeStyle={styles.linkTextPressed} onPress={() => setPage('solution')}>
+                EXPLORE INDUSTRIES →
+              </LinkText>
+            )}
           </View>
 
           <View style={[styles.industriesRow, isMobile && styles.industriesRowMobile]}>
@@ -723,6 +953,10 @@ const styles = StyleSheet.create({
   section: {
     width: '100%',
   },
+  sectionBackgroundImage: {
+    width: '100%',
+    height: '100%',
+  },
   shell: {
     width: '100%',
     maxWidth: 1280,
@@ -785,6 +1019,12 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontFamily: 'Inter_600SemiBold',
   },
+  navItemHover: {
+    color: BLUE_LIGHT,
+  },
+  navItemPressed: {
+    color: '#A6D5FF',
+  },
   navItemCompact: {
     fontSize: 9,
   },
@@ -793,6 +1033,22 @@ const styles = StyleSheet.create({
     paddingHorizontal: 18,
     paddingVertical: 12,
     alignSelf: 'flex-start',
+  },
+  btnHoverSolid: {
+    backgroundColor: '#2E8CFF',
+  },
+  btnHoverOutline: {
+    borderColor: BLUE_LIGHT,
+    backgroundColor: 'rgba(79,166,255,0.12)',
+  },
+  btnTextHoverSolid: {
+    color: '#EAF4FF',
+  },
+  btnTextHoverOutline: {
+    color: BLUE_LIGHT,
+  },
+  btnTextPressed: {
+    opacity: 0.9,
   },
   headerBtn: {
     paddingHorizontal: 14,
@@ -1084,6 +1340,12 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontFamily: 'Inter_700Bold',
   },
+  linkTextHover: {
+    color: '#2E8CFF',
+  },
+  linkTextPressed: {
+    color: '#75B8FF',
+  },
   solutionsGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
@@ -1371,6 +1633,12 @@ const styles = StyleSheet.create({
     fontSize: 10,
     fontFamily: 'Inter_600SemiBold',
   },
+  footerLinkHover: {
+    color: BLUE_LIGHT,
+  },
+  footerLinkPressed: {
+    color: '#A6D5FF',
+  },
   connectWrap: {
     alignItems: 'flex-end',
   },
@@ -1427,6 +1695,293 @@ const styles = StyleSheet.create({
   },
   navItemActive: {
     color: BLUE_LIGHT,
+  },
+  solutionHero: {
+    minHeight: 430,
+    overflow: 'hidden',
+  },
+  solutionHeroRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    minHeight: 355,
+    gap: 24,
+  },
+  solutionHeroRowMobile: {
+    flexDirection: 'column',
+    alignItems: 'flex-start',
+    justifyContent: 'center',
+    paddingVertical: 32,
+  },
+  solutionHeroCopy: {
+    maxWidth: 720,
+  },
+  solutionHeroTitle: {
+    color: '#FFFFFF',
+    fontSize: 43,
+    lineHeight: 47,
+    fontFamily: 'Georgia',
+    marginBottom: 14,
+  },
+  solutionHeroTitleAccent: {
+    color: BLUE_LIGHT,
+  },
+  solutionHeroText: {
+    color: '#D3DDEB',
+    fontSize: 15,
+    lineHeight: 21,
+    fontFamily: 'Inter_400Regular',
+    maxWidth: 650,
+    marginBottom: 18,
+  },
+  solutionHeroButtons: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  solutionHeroButtonsMobile: {
+    flexDirection: 'column',
+    alignItems: 'flex-start',
+  },
+  solutionHeroQuote: {
+    width: 170,
+    alignItems: 'flex-start',
+  },
+  solutionHeroQuoteText: {
+    color: '#FFFFFF',
+    fontSize: 13,
+    lineHeight: 19,
+    fontFamily: 'Georgia',
+    textAlign: 'right',
+    width: '100%',
+  },
+  solutionHeroQuoteAccent: {
+    color: '#D3DDEB',
+    fontSize: 13,
+    lineHeight: 18,
+    fontFamily: 'Georgia',
+    fontStyle: 'italic',
+    textAlign: 'right',
+    width: '100%',
+    marginTop: 16,
+  },
+  solutionShell: {
+    paddingHorizontal: 38,
+    paddingVertical: 34,
+  },
+  solutionTrustShell: {
+    paddingHorizontal: 38,
+    paddingVertical: 18,
+  },
+  solutionTrustRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  solutionTrustRowMobile: {
+    flexDirection: 'column',
+    alignItems: 'flex-start',
+    gap: 18,
+  },
+  solutionTrustItem: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 12,
+    minHeight: 42,
+  },
+  solutionTrustDivider: {
+    borderLeftWidth: 1,
+    borderLeftColor: '#BFD8F1',
+  },
+  solutionTrustTitle: {
+    color: TEXT_DARK,
+    fontSize: 13,
+    fontFamily: 'Georgia',
+  },
+  solutionTrustText: {
+    color: TEXT_DARK,
+    fontSize: 13,
+    fontFamily: 'Georgia',
+  },
+  solutionSectionHeading: {
+    flexDirection: 'row',
+    alignItems: 'flex-end',
+    justifyContent: 'space-between',
+    gap: 22,
+    marginBottom: 20,
+  },
+  solutionIntroCopy: {
+    flex: 1,
+  },
+  solutionIntroText: {
+    color: TEXT_GREY,
+    fontSize: 13,
+    lineHeight: 19,
+    fontFamily: 'Inter_400Regular',
+    marginTop: 8,
+    maxWidth: 820,
+  },
+  solutionGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 18,
+  },
+  solutionGridMobile: {
+    flexDirection: 'column',
+  },
+  solutionVisualCard: {
+    width: '31%',
+    minWidth: 250,
+    flexGrow: 1,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 6,
+    borderWidth: 1,
+    borderColor: '#E0EAF4',
+    overflow: 'hidden',
+    shadowColor: '#0B1424',
+    shadowOpacity: 0.08,
+    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 2 },
+    elevation: 2,
+  },
+  solutionVisualImage: {
+    width: '100%',
+    height: 116,
+  },
+  solutionVisualBody: {
+    padding: 14,
+    minHeight: 236,
+  },
+  solutionVisualSubtitle: {
+    color: '#54708E',
+    fontSize: 12,
+    lineHeight: 17,
+    fontFamily: 'Georgia',
+    marginBottom: 8,
+  },
+  solutionBullet: {
+    color: '#3D5C7C',
+    fontSize: 11,
+    lineHeight: 17,
+    fontFamily: 'Georgia',
+  },
+  solutionLearnMore: {
+    marginTop: 12,
+    fontSize: 11,
+  },
+  solutionNeedCard: {
+    width: '31%',
+    minWidth: 250,
+    flexGrow: 1,
+    minHeight: 352,
+    justifyContent: 'center',
+    backgroundColor: NAVY,
+    borderRadius: 6,
+    padding: 22,
+    overflow: 'hidden',
+  },
+  solutionNeedTitle: {
+    color: '#FFFFFF',
+    fontSize: 24,
+    lineHeight: 28,
+    fontFamily: 'Georgia',
+    marginBottom: 12,
+  },
+  solutionNeedText: {
+    color: '#D3DDEB',
+    fontSize: 13,
+    lineHeight: 19,
+    fontFamily: 'Georgia',
+    marginBottom: 18,
+  },
+  solutionBoxTitle: {
+    color: TEXT_DARK,
+    fontSize: 17,
+    lineHeight: 21,
+    fontFamily: 'Georgia',
+    marginBottom: 6,
+  },
+  solutionApproachShell: {
+    paddingHorizontal: 38,
+    paddingVertical: 34,
+  },
+  solutionApproachRow: {
+    flexDirection: 'row',
+    marginTop: 22,
+  },
+  solutionApproachRowMobile: {
+    flexDirection: 'column',
+    gap: 20,
+  },
+  solutionApproachItem: {
+    flex: 1,
+    position: 'relative',
+    paddingHorizontal: 6,
+  },
+  solutionApproachDivider: {
+    borderLeftWidth: 1,
+    borderLeftColor: '#C8DDF2',
+    paddingLeft: 22,
+  },
+  solutionStepNumber: {
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    backgroundColor: BLUE,
+    color: '#FFFFFF',
+    textAlign: 'center',
+    paddingTop: 7,
+    fontSize: 11,
+    fontFamily: 'Inter_800ExtraBold',
+    marginBottom: 10,
+  },
+  solutionStepTitle: {
+    color: TEXT_DARK,
+    fontSize: 16,
+    fontFamily: 'Georgia',
+    marginBottom: 5,
+  },
+  solutionStepText: {
+    color: '#54708E',
+    fontSize: 12,
+    lineHeight: 17,
+    fontFamily: 'Georgia',
+    maxWidth: 170,
+  },
+  solutionStepArrow: {
+    position: 'absolute',
+    right: 14,
+    top: 34,
+    color: BLUE,
+    fontSize: 22,
+  },
+  solutionClosingShell: {
+    paddingHorizontal: 38,
+    paddingVertical: 34,
+  },
+  solutionClosingRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: 24,
+  },
+  solutionClosingRowMobile: {
+    flexDirection: 'column',
+    alignItems: 'flex-start',
+  },
+  solutionClosingCopy: {
+    flex: 1,
+  },
+  solutionClosingAction: {
+    alignItems: 'flex-end',
+  },
+  solutionClosingNote: {
+    color: '#B7C0CE',
+    fontSize: 10,
+    fontFamily: 'Inter_400Regular',
+    marginTop: 10,
   },
   whoHero: {
     minHeight: 245,
