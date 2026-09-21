@@ -139,10 +139,12 @@ const stats = [
 ];
 
 const footerColumns = [
-  ['Solutions', 'Industries'],
-  ['How We Work', 'Insights'],
-  ['Insights'],
-  ['Who We Are', 'Contact'],
+  'Solutions',
+  'Industries',
+  'How We Work',
+  'Insights',
+  'About',
+  'Contact',
 ];
 
 function Btn({ label, variant = 'solid', onDark = false, style, onPress }) {
@@ -182,7 +184,7 @@ function Logo({ markStyle, nameStyle, taglineStyle, showTagline = true }) {
   );
 }
 
-function Section({ bg, children, style, photo, image, scrim }) {
+function Section({ bg, children, style, shellStyle, photo, image, scrim }) {
   return (
     <View style={[styles.section, { backgroundColor: bg }, style]}>
       {image && <Image source={image} style={StyleSheet.absoluteFill} resizeMode="cover" />}
@@ -198,7 +200,7 @@ function Section({ bg, children, style, photo, image, scrim }) {
           style={StyleSheet.absoluteFill}
         />
       )}
-      <View style={styles.shell}>{children}</View>
+      <View style={[styles.shell, shellStyle]}>{children}</View>
     </View>
   );
 }
@@ -216,19 +218,27 @@ function ApproachTile({ bg }) {
 }
 
 function SiteHeader({ isMobile, onNavigate, activePage = 'home' }) {
+  const { width } = useWindowDimensions();
+  const compact = !isMobile && width < 900;
+
   return (
-    <View style={styles.topbar}>
+    <View style={[styles.topbar, compact && styles.topbarCompact]}>
       <Pressable onPress={() => onNavigate('home')}>
-        <Logo markStyle={styles.headerMark} nameStyle={styles.headerLogoName} taglineStyle={styles.hidden} showTagline={false} />
+        <Logo
+          markStyle={[styles.headerMark, compact && styles.headerMarkCompact]}
+          nameStyle={[styles.headerLogoName, compact && styles.headerLogoNameCompact]}
+          taglineStyle={styles.hidden}
+          showTagline={false}
+        />
       </Pressable>
 
       {!isMobile && (
-        <View style={styles.navWrap}>
+        <View style={[styles.navWrap, compact && styles.navWrapCompact]}>
           {navItems.map((item) => {
             const page = item === 'Who We Are' ? 'who' : 'home';
             return (
               <Pressable key={item} onPress={() => item === 'Who We Are' && onNavigate('who')}>
-                <Text style={[styles.navItem, activePage === page && item === 'Who We Are' && styles.navItemActive]}>
+                <Text style={[styles.navItem, compact && styles.navItemCompact, activePage === page && item === 'Who We Are' && styles.navItemActive]}>
                   {item}
                 </Text>
               </Pressable>
@@ -237,14 +247,14 @@ function SiteHeader({ isMobile, onNavigate, activePage = 'home' }) {
         </View>
       )}
 
-      <Btn label="TELL US YOUR BUSINESS PROBLEM →" onDark style={styles.headerBtn} />
+      {!isMobile && <Btn label="TELL US YOUR BUSINESS PROBLEM →" onDark style={[styles.headerBtn, compact && styles.headerBtnCompact]} />}
     </View>
   );
 }
 
 function SiteFooter({ isMobile, onNavigate }) {
   return (
-    <Section bg="#050B14">
+    <Section bg="#031426" style={styles.footerSection} shellStyle={styles.footerShell}>
       <View style={[styles.footerTop, isMobile && styles.footerTopMobile]}>
         <Pressable onPress={() => onNavigate('home')}>
           <Logo markStyle={styles.footerMark} nameStyle={styles.footerLogoName} taglineStyle={styles.footerLogoTagline} />
@@ -252,28 +262,28 @@ function SiteFooter({ isMobile, onNavigate }) {
 
         {!isMobile && (
           <View style={styles.footerColumns}>
-            {footerColumns.map((col, i) => (
-              <View key={i} style={styles.footerColumn}>
-                {col.map((item) => (
-                  <Pressable key={item} onPress={() => item === 'Who We Are' && onNavigate('who')}>
-                    <Text style={styles.footerLink}>{item}</Text>
-                  </Pressable>
-                ))}
-              </View>
+            {footerColumns.map((item) => (
+              <Pressable key={item} onPress={() => item === 'About' && onNavigate('who')}>
+                <Text style={styles.footerLink}>{item}</Text>
+              </Pressable>
             ))}
           </View>
         )}
 
         <View style={styles.connectWrap}>
-          <Text style={styles.connectLabel}>Let’s Stay Connected</Text>
-          <View style={styles.linkedinBadge}>
-            <Text style={styles.linkedinBadgeText}>in</Text>
+          <View style={styles.socialRow}>
+            <View style={styles.linkedinBadge}>
+              <Text style={styles.linkedinBadgeText}>in</Text>
+            </View>
+            <View style={styles.youtubeBadge}>
+              <Text style={styles.youtubeBadgeText}>▶</Text>
+            </View>
           </View>
         </View>
       </View>
       <View style={styles.footerRule} />
       <View style={[styles.footerBottom, isMobile && styles.footerBottomMobile]}>
-        <Text style={styles.footerText}>© 2024 RGF Intelligence Solutions. All rights reserved.</Text>
+        <Text style={styles.footerText}>© 2026 RGF Intelligence Solutions. All rights reserved.</Text>
         <Text style={styles.footerText}>Privacy  |  Terms  |  Sitemap</Text>
       </View>
     </Section>
@@ -287,9 +297,10 @@ function WhoWeArePage({ isMobile, onNavigate }) {
       <ScrollView contentContainerStyle={styles.page}>
         <Section
           bg={NAVY}
-          image={require('./assets/who-we-are-hero.png')}
+          image={require('./assets/who-we-are/who-hero-crop.png')}
           scrim={['rgba(4,16,31,0.8)', 'rgba(4,16,31,0.38)', 'rgba(4,16,31,0.65)']}
           style={styles.whoHero}
+          shellStyle={styles.whoShell}
         >
           <SiteHeader isMobile={isMobile} onNavigate={onNavigate} activePage="who" />
           <View style={[styles.whoHeroRow, isMobile && styles.whoHeroRowMobile]}>
@@ -312,11 +323,11 @@ function WhoWeArePage({ isMobile, onNavigate }) {
           </View>
         </Section>
 
-        <Section bg="#FFFFFF">
+        <Section bg="#FFFFFF" shellStyle={styles.whoShell}>
           <View style={[styles.whoStoryRow, isMobile && styles.whoStoryRowMobile]}>
-            <View style={styles.whoStoryCopy}>
+            <View style={[styles.whoStoryCopy, isMobile && styles.whoStoryCopyMobile]}>
               <Eyebrow>OUR STORY</Eyebrow>
-              <Text style={styles.sectionTitleDark}>Built on Experience.{"\n"}Driven by Innovation.</Text>
+              <Text style={[styles.sectionTitleDark, styles.whoSectionTitleDark]}>Built on Experience.{"\n"}Driven by Innovation.</Text>
               <Text style={styles.whoBodyText}>
                 RGF was founded with a simple belief: technology should make business easier, not harder.
                 With years of experience in business operations, data, and technology, we saw an opportunity
@@ -327,8 +338,8 @@ function WhoWeArePage({ isMobile, onNavigate }) {
                 deliver practical solutions that create lasting value.
               </Text>
             </View>
-            <Image source={require('./assets/who-we-are-story.png')} style={styles.whoStoryImage} resizeMode="cover" />
-            <View style={styles.whoPrinciples}>
+            <Image source={require('./assets/who-we-are/who-story-crop.png')} style={[styles.whoStoryImage, isMobile && styles.whoStoryImageMobile]} resizeMode="cover" />
+            <View style={[styles.whoPrinciples, isMobile && styles.whoPrinciplesMobile]}>
               <View style={styles.whoPrincipleRow}>
                 <TrendIcon size={30} color={BLUE} />
                 <View style={styles.whoPrincipleCopy}>
@@ -356,11 +367,11 @@ function WhoWeArePage({ isMobile, onNavigate }) {
           </View>
         </Section>
 
-        <Section bg={NAVY} image={require('./assets/rgf-texture.png')}>
+        <Section bg={NAVY} shellStyle={styles.whoShell}>
           <View style={[styles.whoWhyRow, isMobile && styles.whoWhyRowMobile]}>
             <View style={styles.whoWhyCopy}>
               <Eyebrow onDark>WHY CHOOSE RGF</Eyebrow>
-              <Text style={styles.sectionTitleLight}>More Than Technology.{"\n"}A True Partner.</Text>
+              <Text style={[styles.sectionTitleLight, styles.whoSectionTitleLight]}>More Than Technology.{"\n"}A True Partner.</Text>
               <Text style={styles.sectionSubtitleLight}>
                 We don’t just provide solutions. We work alongside your team to understand your goals,
                 challenges, and unique needs. Our approach combines strategy, technology, and hands-on support
@@ -384,18 +395,18 @@ function WhoWeArePage({ isMobile, onNavigate }) {
           </View>
         </Section>
 
-        <Section bg="#FFFFFF">
+        <Section bg="#FFFFFF" shellStyle={styles.whoShell}>
           <View style={[styles.whoTeamRow, isMobile && styles.whoTeamRowMobile]}>
-            <View style={styles.whoTeamCopy}>
+            <View style={[styles.whoTeamCopy, isMobile && styles.whoTeamCopyMobile]}>
               <Eyebrow>OUR TEAM</Eyebrow>
-              <Text style={styles.sectionTitleDark}>Experienced People.{"\n"}Real-World Solutions.</Text>
+              <Text style={[styles.sectionTitleDark, styles.whoSectionTitleDark]}>Experienced People.{"\n"}Real-World Solutions.</Text>
               <Text style={styles.whoBodyText}>
                 Our team brings together experts in business strategy, AI, data, and technology with deep
                 industry experience and a passion for solving problems.
               </Text>
               <Btn label="MEET OUR TEAM →" />
             </View>
-            <Image source={require('./assets/who-we-are-team.png')} style={styles.whoTeamImage} resizeMode="cover" />
+            <Image source={require('./assets/who-we-are/who-team-crop.png')} style={[styles.whoTeamImage, isMobile && styles.whoTeamImageMobile]} resizeMode="cover" />
           </View>
           <View style={[styles.whoStatsRow, isMobile && styles.whoStatsRowMobile]}>
             {[
@@ -412,11 +423,11 @@ function WhoWeArePage({ isMobile, onNavigate }) {
           </View>
         </Section>
 
-        <Section bg={NAVY} image={require('./assets/bgimg.png')} scrim={['rgba(4,16,31,0.7)', 'rgba(4,16,31,0.35)', 'rgba(4,16,31,0.72)']}>
+        <Section bg={NAVY} image={require('./assets/who-we-are/who-cta-crop.png')} scrim={['rgba(4,16,31,0.7)', 'rgba(4,16,31,0.35)', 'rgba(4,16,31,0.72)']} style={styles.whoCtaSection} shellStyle={styles.whoShell}>
           <View style={[styles.whoCtaRow, isMobile && styles.whoCtaRowMobile]}>
             <View style={styles.whoCtaCopy}>
               <Eyebrow onDark>LET’S BUILD WHAT’S NEXT</Eyebrow>
-              <Text style={styles.sectionTitleLight}>Ready to Turn Your Business{"\n"}Challenges Into Real Solutions?</Text>
+              <Text style={[styles.sectionTitleLight, styles.whoSectionTitleLight]}>Ready to Turn Your Business{"\n"}Challenges Into Real Solutions?</Text>
               <Text style={styles.sectionSubtitleLight}>Partner with RGF Intelligence Solutions and discover how intelligent technology can help you work smarter, grow faster, and achieve more.</Text>
               <Btn label="TELL US YOUR BUSINESS PROBLEM →" />
             </View>
@@ -431,7 +442,7 @@ function WhoWeArePage({ isMobile, onNavigate }) {
 
 export default function App() {
   const { width } = useWindowDimensions();
-  const isMobile = width < 860;
+  const isMobile = width < 700;
   const [page, setPage] = useState('home');
 
   const [fontsLoaded] = useFonts({
@@ -458,6 +469,7 @@ export default function App() {
           image={require('./assets/bgimg.png')}
           scrim={['rgba(4,16,31,0.5)', 'rgba(4,16,31,0.25)', 'rgba(4,16,31,0.5)']}
           style={styles.heroSection}
+          shellStyle={styles.headerShell}
         >
           <SiteHeader isMobile={isMobile} onNavigate={setPage} />
 
@@ -718,6 +730,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24,
     paddingVertical: 48,
   },
+  whoShell: {
+    paddingHorizontal: 38,
+    paddingVertical: 18,
+  },
+  headerShell: {
+    paddingHorizontal: 38,
+    paddingVertical: 18,
+  },
   hidden: {
     display: 'none',
   },
@@ -728,7 +748,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingBottom: 30,
+    paddingBottom: 18,
   },
   headerMark: {
     width: 104,
@@ -741,15 +761,32 @@ const styles = StyleSheet.create({
     letterSpacing: 1.4,
     marginTop: 3,
   },
+  topbarCompact: {
+    paddingBottom: 12,
+  },
+  headerMarkCompact: {
+    width: 82,
+    height: 26,
+  },
+  headerLogoNameCompact: {
+    fontSize: 8,
+    letterSpacing: 0.8,
+  },
   navWrap: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 22,
   },
+  navWrapCompact: {
+    gap: 10,
+  },
   navItem: {
     color: '#D6DEE8',
     fontSize: 14,
     fontFamily: 'Inter_600SemiBold',
+  },
+  navItemCompact: {
+    fontSize: 9,
   },
   btn: {
     borderRadius: 6,
@@ -761,6 +798,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     paddingVertical: 10,
   },
+  headerBtnCompact: {
+    paddingHorizontal: 7,
+    paddingVertical: 7,
+  },
   pressed: {
     opacity: 0.85,
   },
@@ -769,6 +810,10 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontFamily: 'Inter_700Bold',
     letterSpacing: 0.4,
+  },
+  headerBtnCompactText: {
+    fontSize: 8,
+    letterSpacing: 0,
   },
   heroRow: {
     flexDirection: 'row',
@@ -883,6 +928,18 @@ const styles = StyleSheet.create({
     letterSpacing: -0.6,
     marginBottom: 12,
     maxWidth: 420,
+  },
+  whoSectionTitleDark: {
+    fontSize: 27,
+    lineHeight: 30,
+    fontFamily: 'Georgia',
+    letterSpacing: 0,
+  },
+  whoSectionTitleLight: {
+    fontSize: 27,
+    lineHeight: 30,
+    fontFamily: 'Georgia',
+    letterSpacing: 0,
   },
   sectionSubtitle: {
     color: TEXT_GREY,
@@ -1269,56 +1326,62 @@ const styles = StyleSheet.create({
     fontFamily: 'Inter_400Regular',
     marginTop: 4,
   },
+  footerSection: {
+    backgroundColor: '#031426',
+  },
+  footerShell: {
+    paddingHorizontal: 38,
+    paddingVertical: 18,
+  },
   footerTop: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     gap: 24,
-    paddingBottom: 28,
+    paddingBottom: 18,
   },
   footerTopMobile: {
     flexDirection: 'column',
   },
   footerMark: {
-    width: 104,
-    height: 33,
+    width: 84,
+    height: 27,
   },
   footerLogoName: {
     color: '#FFFFFF',
-    fontSize: 11,
+    fontSize: 9,
     fontFamily: 'Inter_700Bold',
     letterSpacing: 1.4,
     marginTop: 3,
   },
   footerLogoTagline: {
     color: '#7C8798',
-    fontSize: 9,
+    fontSize: 8,
     fontFamily: 'Inter_400Regular',
     marginTop: 2,
   },
   footerColumns: {
     flexDirection: 'row',
-    gap: 36,
-  },
-  footerColumn: {
-    gap: 10,
+    alignItems: 'center',
+    gap: 22,
+    flex: 1,
+    justifyContent: 'center',
   },
   footerLink: {
     color: '#B7C0CE',
-    fontSize: 13,
+    fontSize: 10,
     fontFamily: 'Inter_600SemiBold',
   },
   connectWrap: {
-    alignItems: 'flex-start',
+    alignItems: 'flex-end',
   },
-  connectLabel: {
-    color: '#FFFFFF',
-    fontSize: 13,
-    fontFamily: 'Inter_700Bold',
-    marginBottom: 10,
+  socialRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
   },
   linkedinBadge: {
-    width: 30,
-    height: 30,
+    width: 18,
+    height: 18,
     borderRadius: 6,
     backgroundColor: BLUE,
     alignItems: 'center',
@@ -1326,13 +1389,26 @@ const styles = StyleSheet.create({
   },
   linkedinBadgeText: {
     color: '#FFFFFF',
-    fontSize: 13,
+    fontSize: 10,
     fontFamily: 'Inter_800ExtraBold',
+  },
+  youtubeBadge: {
+    width: 18,
+    height: 18,
+    borderRadius: 4,
+    backgroundColor: '#FFFFFF',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  youtubeBadgeText: {
+    color: '#031426',
+    fontSize: 8,
+    marginLeft: 1,
   },
   footerRule: {
     height: 1,
     backgroundColor: 'rgba(255,255,255,0.1)',
-    marginBottom: 20,
+    marginBottom: 12,
   },
   footerBottom: {
     flexDirection: 'row',
@@ -1346,21 +1422,24 @@ const styles = StyleSheet.create({
   },
   footerText: {
     color: '#7C8798',
-    fontSize: 12,
+    fontSize: 9,
     fontFamily: 'Inter_400Regular',
   },
   navItemActive: {
     color: BLUE_LIGHT,
   },
   whoHero: {
-    minHeight: 430,
+    minHeight: 245,
+    overflow: 'hidden',
+  },
+  whoCtaSection: {
     overflow: 'hidden',
   },
   whoHeroRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    minHeight: 300,
+    minHeight: 220,
     gap: 24,
   },
   whoHeroRowMobile: {
@@ -1374,21 +1453,21 @@ const styles = StyleSheet.create({
   },
   whoHeroTitle: {
     color: '#FFFFFF',
-    fontSize: 44,
-    lineHeight: 50,
-    fontFamily: 'Inter_800ExtraBold',
+    fontSize: 38,
+    lineHeight: 42,
+    fontFamily: 'Georgia',
   },
   whoHeroTitleAccent: {
     color: BLUE,
-    fontSize: 44,
-    lineHeight: 50,
-    fontFamily: 'Inter_800ExtraBold',
+    fontSize: 38,
+    lineHeight: 42,
+    fontFamily: 'Georgia',
     marginBottom: 18,
   },
   whoHeroText: {
     color: '#D6DEE8',
-    fontSize: 16,
-    lineHeight: 25,
+    fontSize: 14,
+    lineHeight: 19,
     fontFamily: 'Inter_400Regular',
     maxWidth: 560,
   },
@@ -1398,9 +1477,9 @@ const styles = StyleSheet.create({
   },
   whoHeroQuoteText: {
     color: '#FFFFFF',
-    fontSize: 18,
-    lineHeight: 27,
-    fontFamily: 'Inter_600SemiBold',
+    fontSize: 16,
+    lineHeight: 23,
+    fontFamily: 'Georgia',
     fontStyle: 'italic',
   },
   whoStoryRow: {
@@ -1410,29 +1489,42 @@ const styles = StyleSheet.create({
   },
   whoStoryRowMobile: {
     flexDirection: 'column',
+    alignItems: 'stretch',
   },
   whoStoryCopy: {
-    flex: 1.1,
-    justifyContent: 'center',
+    width: '31%',
+    minWidth: 0,
+    justifyContent: 'flex-start',
+  },
+  whoStoryCopyMobile: {
+    width: '100%',
   },
   whoBodyText: {
     color: TEXT_GREY,
-    fontSize: 14,
-    lineHeight: 21,
-    fontFamily: 'Inter_400Regular',
+    fontSize: 12,
+    lineHeight: 17,
+    fontFamily: 'Georgia',
     marginBottom: 14,
   },
   whoStoryImage: {
-    flex: 0.9,
-    minHeight: 280,
+    width: '31%',
+    minWidth: 0,
+    height: 238,
     borderRadius: 8,
   },
+  whoStoryImageMobile: {
+    width: '100%',
+  },
   whoPrinciples: {
-    flex: 1,
+    width: '34%',
+    minWidth: 0,
     backgroundColor: '#F0F8FF',
     borderRadius: 8,
     padding: 18,
     justifyContent: 'center',
+  },
+  whoPrinciplesMobile: {
+    width: '100%',
   },
   whoPrincipleRow: {
     flexDirection: 'row',
@@ -1445,14 +1537,14 @@ const styles = StyleSheet.create({
   whoPrincipleTitle: {
     color: TEXT_DARK,
     fontSize: 16,
-    fontFamily: 'Inter_700Bold',
+    fontFamily: 'Georgia',
     marginBottom: 4,
   },
   whoPrincipleText: {
     color: TEXT_GREY,
     fontSize: 12,
     lineHeight: 18,
-    fontFamily: 'Inter_400Regular',
+    fontFamily: 'Georgia',
   },
   whoPrincipleRule: {
     height: 1,
@@ -1492,7 +1584,7 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontSize: 14,
     lineHeight: 19,
-    fontFamily: 'Inter_700Bold',
+    fontFamily: 'Georgia',
     marginTop: 12,
     marginBottom: 6,
   },
@@ -1500,7 +1592,7 @@ const styles = StyleSheet.create({
     color: '#AAB8C8',
     fontSize: 12,
     lineHeight: 18,
-    fontFamily: 'Inter_400Regular',
+    fontFamily: 'Georgia',
   },
   whoTeamRow: {
     flexDirection: 'row',
@@ -1512,12 +1604,20 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
   },
   whoTeamCopy: {
-    flex: 0.8,
+    width: '31%',
+    minWidth: 0,
+  },
+  whoTeamCopyMobile: {
+    width: '100%',
   },
   whoTeamImage: {
-    flex: 1.4,
+    width: '66%',
+    minWidth: 0,
     height: 210,
     borderRadius: 8,
+  },
+  whoTeamImageMobile: {
+    width: '100%',
   },
   whoStatsRow: {
     flexDirection: 'row',
@@ -1539,12 +1639,12 @@ const styles = StyleSheet.create({
   whoStatValue: {
     color: BLUE,
     fontSize: 24,
-    fontFamily: 'Inter_800ExtraBold',
+    fontFamily: 'Georgia',
   },
   whoStatLabel: {
     color: TEXT_GREY,
     fontSize: 12,
-    fontFamily: 'Inter_400Regular',
+    fontFamily: 'Georgia',
     marginTop: 4,
   },
   whoCtaRow: {
