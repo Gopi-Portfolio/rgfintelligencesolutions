@@ -215,7 +215,7 @@ function Logo({ markStyle, nameStyle, taglineStyle, showTagline = true }) {
 function Section({ bg, children, style, shellStyle, photo, image, scrim }) {
   return (
     <View style={[styles.section, { backgroundColor: bg }, style]}>
-      {image && <Image source={image} style={[StyleSheet.absoluteFillObject, styles.sectionBackgroundImage]} resizeMode="stretch" />}
+      {image && <Image source={image} style={[StyleSheet.absoluteFillObject, styles.sectionBackgroundImage]} resizeMode="cover" />}
       {photo && (
         <LinearGradient colors={photo} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={StyleSheet.absoluteFill} />
       )}
@@ -263,20 +263,21 @@ function SiteHeader({ isMobile, onNavigate, activePage = 'home' }) {
       {!isMobile && (
         <View style={[styles.navWrap, compact && styles.navWrapCompact]}>
           {navItems.map((item) => {
-            const page = item === 'Who We Are' ? 'who' : item === 'Solutions' ? 'solution' : 'home';
+            const page = item === 'Who We Are' ? 'who' : item === 'Solutions' ? 'solution' : item === 'Contact' ? 'contact' : 'home';
             const isWhoLink = item === 'Who We Are';
             const isSolutionLink = item === 'Solutions';
+            const isContactLink = item === 'Contact';
             return (
               <LinkText
                 key={item}
                 onPress={() => {
-                  if (isWhoLink || isSolutionLink) onNavigate(page);
+                  if (isWhoLink || isSolutionLink || isContactLink) onNavigate(page);
                   else onNavigate('home');
                 }}
                 style={[
                   styles.navItem,
                   compact && styles.navItemCompact,
-                  activePage === page && (isWhoLink || isSolutionLink) && styles.navItemActive,
+                  activePage === page && (isWhoLink || isSolutionLink || isContactLink) && styles.navItemActive,
                 ]}
                 hoverStyle={styles.navItemHover}
                 activeStyle={styles.navItemPressed}
@@ -306,7 +307,8 @@ function SiteFooter({ isMobile, onNavigate }) {
             {footerColumns.map((item) => {
               const isWhoLink = item === 'About';
               const isSolutionLink = item === 'Solutions';
-              const targetPage = isWhoLink ? 'who' : isSolutionLink ? 'solution' : 'home';
+              const isContactLink = item === 'Contact';
+              const targetPage = isWhoLink ? 'who' : isSolutionLink ? 'solution' : isContactLink ? 'contact' : 'home';
               return (
                 <LinkText
                   key={item}
@@ -391,8 +393,8 @@ function SolutionPage({ isMobile, onNavigate }) {
       <ScrollView contentContainerStyle={styles.page}>
         <Section
           bg={NAVY}
-          image={require('./assets/our solution.png')}
-          scrim={['rgba(4,16,31,0.94)', 'rgba(4,16,31,0.72)', 'rgba(4,16,31,0.94)']}
+          image={require('./assets/solution.png')}
+          scrim={['rgba(4,16,31,0.68)', 'rgba(4,16,31,0.38)', 'rgba(4,16,31,0.72)']}
           style={styles.solutionHero}
           shellStyle={styles.headerShell}
         >
@@ -505,6 +507,92 @@ function SolutionPage({ isMobile, onNavigate }) {
   );
 }
 
+function ContactPage({ isMobile, onNavigate }) {
+  return (
+    <SafeAreaView style={styles.safeArea}>
+      <StatusBar style="light" />
+      <ScrollView contentContainerStyle={styles.page}>
+        <Section
+          bg={NAVY}
+          image={require('./assets/contact.png')}
+          scrim={['rgba(4,16,31,0.64)', 'rgba(4,16,31,0.28)', 'rgba(4,16,31,0.68)']}
+          style={styles.contactHero}
+          shellStyle={styles.headerShell}
+        >
+          <SiteHeader isMobile={isMobile} onNavigate={onNavigate} activePage="contact" />
+          <View style={[styles.contactHeroRow, isMobile && styles.contactHeroRowMobile]}>
+            <View style={styles.contactHeroCopy}>
+              <Eyebrow onDark>LET’S START A CONVERSATION</Eyebrow>
+              <Text style={styles.contactHeroTitle}>Tell Us What’s Not Working.</Text>
+              <Text style={styles.contactHeroAccent}>We’ll help you find the way forward.</Text>
+              <Text style={styles.contactHeroText}>
+                Share a little about your business challenge, and we’ll bring the right combination of people, technology, and practical next steps.
+              </Text>
+            </View>
+            {!isMobile && (
+              <View style={styles.contactHeroQuote}>
+                <Text style={styles.solutionHeroQuoteText}>REAL PROBLEMS{ '\n' }REAL PEOPLE{ '\n' }REAL SOLUTIONS</Text>
+                <View style={styles.heroWordsRule} />
+              </View>
+            )}
+          </View>
+        </Section>
+
+        <Section bg="#FFFFFF" shellStyle={styles.contactShell}>
+          <View style={[styles.contactContentRow, isMobile && styles.contactContentRowMobile]}>
+            <View style={styles.contactIntro}>
+              <Eyebrow>HOW CAN WE HELP?</Eyebrow>
+              <Text style={styles.sectionTitleDark}>Let’s Turn Your Challenge Into a Clear Next Step.</Text>
+              <Text style={styles.contactBodyText}>
+                Whether you are exploring AI, improving operations, connecting systems, or planning what comes next, start with the problem. We’ll help you define the opportunity and determine the right path forward.
+              </Text>
+              <View style={styles.contactDetails}>
+                <View style={styles.contactDetailItem}>
+                  <Text style={styles.contactDetailLabel}>EMAIL</Text>
+                  <Text style={styles.contactDetailValue}>hello@rgfintelligencesolutions.com</Text>
+                </View>
+                <View style={styles.contactDetailItem}>
+                  <Text style={styles.contactDetailLabel}>RESPONSE TIME</Text>
+                  <Text style={styles.contactDetailValue}>We’ll get back to you within one business day.</Text>
+                </View>
+              </View>
+            </View>
+
+            <View style={styles.contactForm}>
+              <Text style={styles.contactFormTitle}>Start Here</Text>
+              <TextInput style={styles.contactInput} placeholder="Your name" placeholderTextColor="#8A94A6" />
+              <TextInput style={styles.contactInput} placeholder="Work email" placeholderTextColor="#8A94A6" keyboardType="email-address" />
+              <TextInput style={styles.contactInput} placeholder="Company" placeholderTextColor="#8A94A6" />
+              <TextInput
+                style={[styles.contactInput, styles.contactMessageInput]}
+                placeholder="Tell us about your business challenge..."
+                placeholderTextColor="#8A94A6"
+                multiline
+              />
+              <Btn label="SEND MY MESSAGE →" />
+              <Text style={styles.contactFormNote}>Confidential  •  No obligation  •  Real solutions</Text>
+            </View>
+          </View>
+        </Section>
+
+        <Section bg={NAVY} shellStyle={styles.contactClosingShell}>
+          <View style={[styles.contactClosingRow, isMobile && styles.contactClosingRowMobile]}>
+            <View>
+              <Eyebrow onDark>WHAT HAPPENS NEXT</Eyebrow>
+              <Text style={styles.sectionTitleLight}>A Practical Conversation. No Pressure.</Text>
+            </View>
+            <Text style={styles.contactClosingText}>
+              We’ll learn what you’re trying to accomplish, ask the useful questions, and outline a sensible next step.
+            </Text>
+          </View>
+        </Section>
+
+        <SiteFooter isMobile={isMobile} onNavigate={onNavigate} />
+      </ScrollView>
+    </SafeAreaView>
+  );
+}
+
 function WhoWeArePage({ isMobile, onNavigate }) {
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -513,7 +601,7 @@ function WhoWeArePage({ isMobile, onNavigate }) {
         <Section
           bg={NAVY}
           image={require('./assets/bg2.png')}
-          scrim={['rgba(4,16,31,0.8)', 'rgba(4,16,31,0.38)', 'rgba(4,16,31,0.65)']}
+          scrim={['rgba(4,16,31,0.58)', 'rgba(4,16,31,0.2)', 'rgba(4,16,31,0.5)']}
           style={styles.whoHero}
           shellStyle={styles.whoShell}
         >
@@ -678,6 +766,10 @@ export default function App() {
 
   if (page === 'solution') {
     return <SolutionPage isMobile={isMobile} onNavigate={setPage} />;
+  }
+
+  if (page === 'contact') {
+    return <ContactPage isMobile={isMobile} onNavigate={setPage} />;
   }
 
   return (
@@ -1695,6 +1787,153 @@ const styles = StyleSheet.create({
   },
   navItemActive: {
     color: BLUE_LIGHT,
+  },
+  contactHero: {
+    minHeight: 430,
+    overflow: 'hidden',
+  },
+  contactHeroRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    minHeight: 355,
+    gap: 24,
+  },
+  contactHeroRowMobile: {
+    flexDirection: 'column',
+    alignItems: 'flex-start',
+    justifyContent: 'center',
+    paddingVertical: 32,
+  },
+  contactHeroCopy: {
+    maxWidth: 690,
+  },
+  contactHeroTitle: {
+    color: '#FFFFFF',
+    fontSize: 43,
+    lineHeight: 47,
+    fontFamily: 'Georgia',
+    marginBottom: 4,
+  },
+  contactHeroAccent: {
+    color: BLUE_LIGHT,
+    fontSize: 30,
+    lineHeight: 37,
+    fontFamily: 'Georgia',
+    marginBottom: 16,
+  },
+  contactHeroText: {
+    color: '#D3DDEB',
+    fontSize: 15,
+    lineHeight: 22,
+    fontFamily: 'Inter_400Regular',
+    maxWidth: 600,
+  },
+  contactHeroQuote: {
+    width: 170,
+    alignItems: 'flex-start',
+  },
+  contactShell: {
+    paddingHorizontal: 38,
+    paddingVertical: 58,
+  },
+  contactContentRow: {
+    flexDirection: 'row',
+    gap: 48,
+    alignItems: 'flex-start',
+  },
+  contactContentRowMobile: {
+    flexDirection: 'column',
+  },
+  contactIntro: {
+    flex: 1,
+    maxWidth: 520,
+  },
+  contactBodyText: {
+    color: TEXT_GREY,
+    fontSize: 15,
+    lineHeight: 23,
+    fontFamily: 'Inter_400Regular',
+    marginTop: 8,
+    maxWidth: 500,
+  },
+  contactDetails: {
+    borderTopWidth: 1,
+    borderTopColor: BORDER,
+    marginTop: 30,
+    paddingTop: 22,
+    gap: 18,
+  },
+  contactDetailItem: {
+    gap: 5,
+  },
+  contactDetailLabel: {
+    color: BLUE,
+    fontSize: 11,
+    fontFamily: 'Inter_800ExtraBold',
+    letterSpacing: 1.4,
+  },
+  contactDetailValue: {
+    color: TEXT_DARK,
+    fontSize: 14,
+    lineHeight: 20,
+    fontFamily: 'Inter_600SemiBold',
+  },
+  contactForm: {
+    flex: 1,
+    maxWidth: 500,
+    backgroundColor: '#F0F7FE',
+    borderRadius: 12,
+    padding: 26,
+  },
+  contactFormTitle: {
+    color: TEXT_DARK,
+    fontSize: 23,
+    fontFamily: 'Inter_800ExtraBold',
+    marginBottom: 16,
+  },
+  contactInput: {
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1,
+    borderColor: BORDER,
+    borderRadius: 6,
+    paddingHorizontal: 14,
+    paddingVertical: 13,
+    fontSize: 14,
+    fontFamily: 'Inter_400Regular',
+    color: TEXT_DARK,
+    marginBottom: 12,
+  },
+  contactMessageInput: {
+    minHeight: 105,
+    textAlignVertical: 'top',
+  },
+  contactFormNote: {
+    color: TEXT_GREY,
+    fontSize: 11,
+    fontFamily: 'Inter_600SemiBold',
+    marginTop: 14,
+  },
+  contactClosingShell: {
+    paddingHorizontal: 38,
+    paddingVertical: 44,
+  },
+  contactClosingRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    gap: 40,
+  },
+  contactClosingRowMobile: {
+    flexDirection: 'column',
+    alignItems: 'flex-start',
+  },
+  contactClosingText: {
+    color: '#B7C0CE',
+    fontSize: 15,
+    lineHeight: 23,
+    fontFamily: 'Inter_400Regular',
+    maxWidth: 430,
   },
   solutionHero: {
     minHeight: 430,
