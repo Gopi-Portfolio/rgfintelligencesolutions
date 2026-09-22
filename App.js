@@ -263,22 +263,24 @@ function SiteHeader({ isMobile, onNavigate, activePage = 'home' }) {
       {!isMobile && (
         <View style={[styles.navWrap, compact && styles.navWrapCompact]}>
           {navItems.map((item) => {
-            const page = item === 'Who We Are' ? 'who' : item === 'Solutions' ? 'solution' : item === 'Contact' ? 'contact' : item === 'Insights' ? 'insights' : 'home';
+            const page = item === 'Who We Are' ? 'who' : item === 'Solutions' ? 'solution' : item === 'Industries' ? 'industries' : item === 'Contact' ? 'contact' : item === 'Insights' ? 'insights' : item === 'How We Work' ? 'how' : 'home';
             const isWhoLink = item === 'Who We Are';
             const isSolutionLink = item === 'Solutions';
+            const isIndustriesLink = item === 'Industries';
             const isContactLink = item === 'Contact';
             const isInsightsLink = item === 'Insights';
+            const isHowLink = item === 'How We Work';
             return (
               <LinkText
                 key={item}
                 onPress={() => {
-                  if (isWhoLink || isSolutionLink || isContactLink || isInsightsLink) onNavigate(page);
+                  if (isWhoLink || isSolutionLink || isIndustriesLink || isContactLink || isInsightsLink || isHowLink) onNavigate(page);
                   else onNavigate('home');
                 }}
                 style={[
                   styles.navItem,
                   compact && styles.navItemCompact,
-                  activePage === page && (isWhoLink || isSolutionLink || isContactLink || isInsightsLink) && styles.navItemActive,
+                  activePage === page && (isWhoLink || isSolutionLink || isIndustriesLink || isContactLink || isInsightsLink || isHowLink) && styles.navItemActive,
                 ]}
                 hoverStyle={styles.navItemHover}
                 activeStyle={styles.navItemPressed}
@@ -308,9 +310,11 @@ function SiteFooter({ isMobile, onNavigate }) {
             {footerColumns.map((item) => {
               const isWhoLink = item === 'Who We Are';
               const isSolutionLink = item === 'Solutions';
+              const isIndustriesLink = item === 'Industries';
               const isContactLink = item === 'Contact';
               const isInsightsLink = item === 'Insights';
-              const targetPage = isWhoLink ? 'who' : isSolutionLink ? 'solution' : isContactLink ? 'contact' : isInsightsLink ? 'insights' : 'home';
+              const isHowLink = item === 'How We Work';
+              const targetPage = isWhoLink ? 'who' : isSolutionLink ? 'solution' : isIndustriesLink ? 'industries' : isContactLink ? 'contact' : isInsightsLink ? 'insights' : isHowLink ? 'how' : 'home';
               return (
                 <LinkText
                   key={item}
@@ -708,6 +712,209 @@ function InsightsPage({ isMobile, onNavigate }) {
   );
 }
 
+function HowWeWorkPage({ isMobile, onNavigate }) {
+  const steps = [
+    { number: '01', Icon: BulbIcon, title: 'Discover', subtitle: 'Understand Your Business', text: 'We learn about your organization, goals, challenges, people, processes and existing technology.', image: require('./assets/1.admin.png') },
+    { number: '02', Icon: BarChartIcon, title: 'Diagnose', subtitle: 'Identify Opportunities', text: 'We analyze your operations, data and systems to find root causes, inefficiencies, bottlenecks and high-value opportunities.', image: require('./assets/03-data-analytics.png') },
+    { number: '03', Icon: BulbIcon, title: 'Design', subtitle: 'Create the Right Solution', text: 'We design a tailored solution that aligns with your goals, people, processes and technology environment.', image: require('./assets/2.arch.png') },
+    { number: '04', Icon: GearIcon, title: 'Build', subtitle: 'Develop & Configure', text: 'We develop, configure, and integrate the solution using the right technologies, tools and best practices.', image: require('./assets/3.sales.png') },
+    { number: '05', Icon: TrendIcon, title: 'Implement', subtitle: 'Deploy & Enable', text: 'We deploy the solution, test thoroughly, provide training and ensure smooth adoption across your organization.', image: require('./assets/05-business-advisory.png') },
+    { number: '06', Icon: BarChartIcon, title: 'Optimize', subtitle: 'Measure & Grow', text: 'We monitor performance, refine as needed and help you scale results with continuous improvement.', image: require('./assets/04-cloud-transformation.png') },
+  ];
+  const principles = [['Collaborative', 'We listen and work as an extension of your team.'], ['Practical', 'Real-world solutions, not just theory.'], ['Results-Focused', 'We measure what matters.'], ['Long-Term', 'Ongoing support to help you grow.']];
+  const outcomes = [['Higher Efficiency', 'Eliminate manual work and reduce costs.', ClockIcon], ['Better Decision-Making', 'Turn data into actionable insights.', BarChartIcon], ['Improved Customer Experience', 'Faster, more consistent service.', UsersIcon], ['Stronger Operations', 'Connected systems and streamlined workflows.', GearIcon], ['Measurable Growth', 'Real results that scale with your business.', TrendIcon]];
+
+  return (
+    <SafeAreaView style={styles.safeArea}>
+      <StatusBar style="light" />
+      <ScrollView contentContainerStyle={styles.page}>
+        <Section bg={NAVY} image={require('./assets/howweworkbg.png')} scrim={['rgba(4,16,31,0.76)', 'rgba(4,16,31,0.2)', 'rgba(4,16,31,0.48)']} style={styles.howHero} shellStyle={styles.headerShell}>
+          <SiteHeader isMobile={isMobile} onNavigate={onNavigate} activePage="how" />
+          <View style={[styles.howHeroRow, isMobile && styles.howHeroRowMobile]}>
+            <View style={styles.howHeroCopy}>
+              <Eyebrow onDark>HOW WE WORK</Eyebrow>
+              <Text style={styles.howHeroTitle}>A Clear Process.</Text>
+              <Text style={styles.howHeroAccent}>Real Results.</Text>
+              <Text style={styles.howHeroText}>We take a business-first approach, combining strategy, technology, and real-world execution to solve your most important challenges and create lasting results.</Text>
+              <View style={[styles.howHeroButtons, isMobile && styles.howHeroButtonsMobile]}><Btn label="SCHEDULE A CONSULTATION  →" onPress={() => onNavigate('contact')} /><Btn label="EXPLORE OUR APPROACH" variant="outline" onDark /></View>
+              <View style={[styles.howHeroTrust, isMobile && styles.howHeroTrustMobile]}>{[[UsersIcon, 'People', 'Focused'], [GearIcon, 'Technology', 'Enabled'], [BarChartIcon, 'Results', 'Driven']].map(([Icon, title, text]) => <View key={title} style={styles.howHeroTrustItem}><Icon size={28} color={BLUE_LIGHT} /><View><Text style={styles.howHeroTrustTitle}>{title}</Text><Text style={styles.howHeroTrustText}>{text}</Text></View></View>)}</View>
+            </View>
+            {!isMobile && <View style={styles.howHeroAside}><Text style={styles.howHeroAsideText}>STRATEGY{ '\n' }PEOPLE{ '\n' }TECHNOLOGY{ '\n' }EXECUTION{ '\n' }RESULTS</Text><View style={styles.heroWordsRule} /><Text style={styles.howHeroQuote}>Turning business{ '\n' }problems into{ '\n' }real solutions.</Text></View>}
+          </View>
+        </Section>
+
+        <Section bg="#FFFFFF" shellStyle={styles.howShell}>
+          <View style={styles.howHeading}><View><Eyebrow>OUR PROCESS</Eyebrow><Text style={styles.howSectionTitle}>From Challenge to Opportunity.</Text><Text style={styles.howIntroText}>We follow a proven, step-by-step approach designed to understand your business, design the right solution, and deliver measurable results.</Text></View>{!isMobile && <LinkText style={styles.linkText} hoverStyle={styles.linkTextHover} activeStyle={styles.linkTextPressed}>OUR APPROACH  →</LinkText>}</View>
+          <View style={[styles.howStepsGrid, isMobile && styles.howStepsGridMobile]}>{steps.map(({ number, Icon, title, subtitle, text, image }) => <View key={number} style={styles.howStep}><View style={styles.howStepImageWrap}><Image source={image} style={styles.howStepImage} resizeMode="cover" /><Text style={styles.howStepNumber}>{number}</Text><View style={styles.howStepIcon}><Icon size={20} color={BLUE} /></View></View><View style={styles.howStepTitleRow}><View><Text style={styles.howStepTitle}>{title}</Text><Text style={styles.howStepSubtitle}>{subtitle}</Text></View><Text style={styles.howStepArrow}>→</Text></View><Text style={styles.howStepText}>{text}</Text></View>)}</View>
+        </Section>
+
+        <Section bg="#F0F7FE" shellStyle={styles.howPartnershipShell}><View style={[styles.howPartnershipRow, isMobile && styles.howPartnershipRowMobile]}><View style={styles.howPartnershipCopy}><Eyebrow>PARTNERSHIP APPROACH</Eyebrow><Text style={styles.howSectionTitle}>More Than a Vendor — A True Partner.</Text><Text style={styles.howIntroText}>We work alongside your team, combining our expertise with your industry knowledge to deliver practical solutions that create real, measurable value.</Text></View><View style={[styles.howPrinciples, isMobile && styles.howPrinciplesMobile]}>{principles.map(([title, text], index) => <View key={title} style={[styles.howPrinciple, index > 0 && !isMobile && styles.howPrincipleDivider]}><UsersIcon size={30} color={BLUE} /><Text style={styles.howPrincipleTitle}>{title}</Text><Text style={styles.howPrincipleText}>{text}</Text></View>)}</View></View></Section>
+
+        <Section bg="#FFFFFF" shellStyle={styles.howOutcomeShell}><View style={[styles.howOutcomeRow, isMobile && styles.howOutcomeRowMobile]}><View style={styles.howWhy}><Eyebrow>WHY IT WORKS</Eyebrow><Text style={styles.howSectionTitle}>Business First.{ '\n' }Technology Second.{ '\n'}<Text style={{ color: BLUE }}>Results Always.</Text></Text><Text style={styles.howIntroText}>We start with your business problem, not a predefined technology. This ensures the right solution, greater adoption and measurable outcomes.</Text><Btn label="SEE REAL-WORLD EXAMPLES  →" /></View><View style={styles.howOutcomeImage}><Image source={require('./assets/whyit.png')} style={StyleSheet.absoluteFillObject} resizeMode="cover" /><View style={styles.howOutcomeOverlay} /><Text style={styles.howOutcomePath}>STRATEGY{ '\n' }  SOLUTION{ '\n' }    EXECUTION{ '\n' }      RESULTS</Text></View><View style={styles.howOutcomeList}><Eyebrow>TYPICAL OUTCOMES</Eyebrow>{outcomes.map(([title, text, Icon]) => <View key={title} style={styles.howOutcomeItem}><Icon size={26} color={BLUE} /><View><Text style={styles.howOutcomeTitle}>{title}</Text><Text style={styles.howOutcomeText}>{text}</Text></View></View>)}</View></View></Section>
+
+        <Section bg={NAVY} image={require('./assets/bgimg.png')} scrim={['rgba(4,16,31,0.82)', 'rgba(4,16,31,0.42)', 'rgba(4,16,31,0.75)']} shellStyle={styles.howClosingShell}><View style={[styles.howClosingRow, isMobile && styles.howClosingRowMobile]}><View><Eyebrow onDark>READY TO GET STARTED?</Eyebrow><Text style={styles.sectionTitleLight}>Let’s Solve Your Business Problem.</Text><Text style={styles.howClosingText}>Tell us about your challenges and we’ll help you identify the right next step.</Text></View><Btn label="TELL US YOUR BUSINESS PROBLEM  →" onPress={() => onNavigate('contact')} /></View></Section>
+        <SiteFooter isMobile={isMobile} onNavigate={onNavigate} />
+      </ScrollView>
+    </SafeAreaView>
+  );
+}
+
+function IndustriesPage({ isMobile, onNavigate }) {
+  const industries = [
+    { Icon: HouseIcon, title: 'Healthcare & Provider Organizations', text: 'Secure workflows, operational visibility, patient experience improvements, and digital modernization for healthcare teams.', points: ['Patient operations support', 'Workflow automation', 'Secure digital transformation'] },
+    { Icon: BuildingIcon, title: 'Financial Services & Fintech', text: 'Operational efficiency, transaction workflows, compliance support, and digital enablement for finance-focused organizations.', points: ['Operations modernization', 'Process automation', 'Scalable financial workflows'] },
+    { Icon: ShieldIcon, title: 'Insurance & Risk Management', text: 'Policy, claims, and service workflows designed to improve speed, accuracy, and customer experience.', points: ['Claims process improvement', 'Customer service enablement', 'Operational analytics'] },
+    { Icon: StoreIcon, title: 'Commercial & Business Services', text: 'Back-office productivity, customer experience, CRM support, and practical digital systems for growing businesses.', points: ['CRM & service workflows', 'Business operations support', 'Growth-focused automation'] },
+    { Icon: GearIcon, title: 'ERP, CRM & Business Systems', text: 'Architecture, integration, and optimization for enterprise platforms that keep teams connected and operating efficiently.', points: ['ERP strategy & support', 'CRM modernization', 'System integration design'] },
+    { Icon: TruckIcon, title: 'Cloud & Digital Transformation', text: 'Migration planning, cloud architecture, platform modernization, and secure execution across business-critical systems.', points: ['Cloud strategy', 'Modern architecture', 'Migration support & governance'] },
+    { Icon: UsersIcon, title: 'Professional Services', text: 'Client delivery, resource planning, document management, and modernization of business operations.', points: ['Service delivery excellence', 'Operational visibility', 'AI-enabled productivity'] },
+    { Icon: BuildingIcon, title: 'Manufacturing & Industrial Operations', text: 'Production visibility, operational efficiency, process improvement, and connected systems for modern manufacturing environments.', points: ['Production workflow support', 'Operational analytics', 'Process automation'] },
+    { Icon: BuildingIcon, title: 'Construction, Real Estate & Property Operations', text: 'Workforce coordination, service workflows, portfolio reporting, and operational consistency across locations.', points: ['Field operations', 'Portfolio analytics', 'Maintenance & tenant experience'] },
+    { Icon: StoreIcon, title: 'Retail, Franchises & Consumer Businesses', text: 'Sales enablement, customer engagement, operating insights, and digital experience improvements.', points: ['Store operations support', 'Customer experience design', 'Digital transformation planning'] },
+    { Icon: HouseIcon, title: 'Transportation & Logistics', text: 'Fleet visibility, dispatch optimization, route efficiency, and data-backed operational decision making.', points: ['Operations visibility', 'Routing & scheduling', 'Inventory and delivery insights'] },
+    { Icon: GearIcon, title: 'Other Industries & Growth Businesses', text: 'Tailored strategy, architecture, development, and transformation support for organizations with unique operating demands.', points: ['Custom digital strategy', 'Industry-specific automation', 'Operational modernization'] },
+  ];
+
+  const capabilities = [
+    ['Business Strategy', 'We help leaders clarify objectives, improve operations, and align technology investments with long-term business goals across regulated and growth-focused environments.'],
+    ['Cloud & Infrastructure', 'From cloud migration planning to platform modernization, we support secure, scalable, and resilient environments that business teams can rely on.'],
+    ['Architecture & Governance', 'We design systems and standards that support reliability, integration, security, and long-term maintainability, including ERP and cloud ecosystems.'],
+    ['AI & Automation', 'We build AI-assisted workflows, intelligent automation, and practical business solutions that reduce friction and increase throughput across departments.'],
+    ['Application Development', 'We design and implement custom tools, client portals, automations, and digital experiences tailored to your business, industry, and operational realities.'],
+    ['Data & Analytics', 'We turn operational data into dashboards, reporting, and decision-ready insights that improve visibility, performance, and business accountability.'],
+    ['Domain-Specific Enablement', 'From healthcare and insurance workflows to financial operations and commercial services, we adapt strategy and solutions to each market’s demands and constraints.'],
+  ];
+
+  const process = [
+    ['Discover', 'We understand your industry, your operations, and your business objectives.'],
+    ['Design', 'We define the right strategy, architecture, and technology approach for your environment.'],
+    ['Deliver', 'We implement practical solutions and support adoption so results can be measured and scaled.'],
+  ];
+
+  return (
+    <SafeAreaView style={styles.safeArea}>
+      <StatusBar style="light" />
+      <ScrollView contentContainerStyle={styles.page}>
+        <Section
+          bg={NAVY}
+          image={require('./assets/industriesbg.png')}
+          scrim={['rgba(4,16,31,0.76)', 'rgba(4,16,31,0.2)', 'rgba(4,16,31,0.48)']}
+          style={styles.solutionHero}
+          shellStyle={styles.headerShell}
+        >
+          <SiteHeader isMobile={isMobile} onNavigate={onNavigate} activePage="industries" />
+          <View style={[styles.solutionHeroRow, isMobile && styles.solutionHeroRowMobile]}>
+            <View style={styles.solutionHeroCopy}>
+              <Eyebrow onDark>INDUSTRIES</Eyebrow>
+              <Text style={styles.solutionHeroTitle}>Flexible Solutions for the Industries You Serve.</Text>
+              <Text style={styles.solutionHeroText}>
+                We support organizations across healthcare, financial services, insurance, commercial businesses, ERP-driven companies, and cloud-focused transformation programs. From strategy and architecture to development, migration, and operational enablement, we help businesses modernize with confidence and deliver measurable results.
+              </Text>
+              <View style={[styles.solutionHeroButtons, isMobile && styles.solutionHeroButtonsMobile]}>
+                <Btn label="TELL US YOUR BUSINESS PROBLEM →" onPress={() => onNavigate('contact')} />
+                <Btn label="SCHEDULE A CONSULTATION" variant="outline" onDark onPress={() => onNavigate('contact')} />
+              </View>
+            </View>
+            {!isMobile && (
+              <View style={styles.solutionHeroQuote}>
+                <Text style={styles.solutionHeroQuoteText}>STRATEGY{ '\n' }CLOUD{ '\n' }ARCHITECTURE{ '\n' }DEVELOPMENT{ '\n' }RESULTS</Text>
+                <View style={styles.heroWordsRule} />
+                <Text style={styles.solutionHeroQuoteAccent}>“Technology should support how your business actually works.”</Text>
+              </View>
+            )}
+          </View>
+        </Section>
+
+        <Section bg="#F0F7FE" shellStyle={styles.solutionTrustShell}>
+          <View style={[styles.solutionTrustRow, isMobile && styles.solutionTrustRowMobile]}>
+            {[
+              { Icon: GearIcon, title: 'Business & Industry', text: 'Context' },
+              { Icon: BuildingIcon, title: 'Cloud', text: 'Support' },
+              { Icon: BarChartIcon, title: 'Data &', text: 'Insights' },
+              { Icon: ShieldIcon, title: 'Trusted', text: 'Execution' },
+            ].map((item, index) => (
+              <View key={item.title} style={[styles.solutionTrustItem, index > 0 && !isMobile && styles.solutionTrustDivider]}>
+                <item.Icon size={30} color={BLUE} />
+                <View><Text style={styles.solutionTrustTitle}>{item.title}</Text><Text style={styles.solutionTrustText}>{item.text}</Text></View>
+              </View>
+            ))}
+          </View>
+        </Section>
+
+        <Section bg="#FFFFFF" shellStyle={styles.solutionShell}>
+          <View style={styles.solutionSectionHeading}>
+            <View style={styles.solutionIntroCopy}>
+              <Eyebrow>INDUSTRY FOCUS</Eyebrow>
+              <Text style={styles.sectionTitleDark}>Built for the Real Demands of Modern Operations.</Text>
+              <Text style={styles.solutionIntroText}>We work with organizations that need practical support across strategy, process improvement, systems, cloud, and digital execution. The challenges may differ by industry, but the need for clarity, scalability, and measurable value is consistent.</Text>
+            </View>
+          </View>
+          <View style={[styles.solutionGrid, isMobile && styles.solutionGridMobile]}>
+            {industries.map((item) => (
+              <View key={item.title} style={styles.solutionVisualCard}>
+                <View style={styles.industryCardTop}><item.Icon size={28} color={BLUE} /><Text style={styles.industryCardTitle}>{item.title}</Text></View>
+                <View style={styles.solutionVisualBody}>
+                  <Text style={styles.solutionVisualSubtitle}>{item.text}</Text>
+                  {item.points.map((point) => <Text key={point} style={styles.solutionBullet}>•  {point}</Text>)}
+                </View>
+              </View>
+            ))}
+          </View>
+        </Section>
+
+        <Section bg="#F0F7FE" shellStyle={styles.solutionApproachShell}>
+          <View style={styles.solutionSectionHeading}>
+            <View style={styles.solutionIntroCopy}>
+              <Eyebrow>WHAT WE DELIVER</Eyebrow>
+              <Text style={styles.sectionTitleDark}>Support for Strategy, Systems, and Growth.</Text>
+              <Text style={styles.solutionIntroText}>Our work is designed to help your business improve how it operates — with the right mix of technology, process, governance, and execution support.</Text>
+            </View>
+          </View>
+          <View style={[styles.industryCapabilityGrid, isMobile && styles.industryCapabilityGridMobile]}>
+            {capabilities.map(([title, text]) => (
+              <View key={title} style={styles.industryCapabilityItem}>
+                <Text style={styles.industryCapabilityTitle}>{title}</Text>
+                <Text style={styles.industryCapabilityText}>{text}</Text>
+              </View>
+            ))}
+          </View>
+        </Section>
+
+        <Section bg="#FFFFFF" shellStyle={styles.solutionApproachShell}>
+          <View style={styles.solutionSectionHeading}>
+            <View style={styles.solutionIntroCopy}>
+              <Eyebrow>OUR APPROACH</Eyebrow>
+              <Text style={styles.sectionTitleDark}>A Practical Path From Challenge to Value.</Text>
+            </View>
+          </View>
+          <View style={[styles.solutionApproachRow, isMobile && styles.solutionApproachRowMobile]}>
+            {process.map((step, index) => (
+              <View key={step[0]} style={[styles.solutionApproachItem, index > 0 && !isMobile && styles.solutionApproachDivider]}>
+                <Text style={styles.solutionStepNumber}>{String(index + 1).padStart(2, '0')}</Text>
+                <Text style={styles.solutionStepTitle}>{step[0]}</Text>
+                <Text style={styles.solutionStepText}>{step[1]}</Text>
+              </View>
+            ))}
+          </View>
+        </Section>
+
+        <Section bg={NAVY} image={require('./assets/bgimg.png')} scrim={['rgba(4,16,31,0.82)', 'rgba(4,16,31,0.42)', 'rgba(4,16,31,0.75)']} shellStyle={styles.howClosingShell}>
+          <View style={[styles.howClosingRow, isMobile && styles.howClosingRowMobile]}>
+            <View>
+              <Eyebrow onDark>READY TO BUILD FOR YOUR INDUSTRY?</Eyebrow>
+              <Text style={styles.sectionTitleLight}>Let’s Solve Your Business Problem.</Text>
+              <Text style={styles.howClosingText}>Tell us where your operations are challenged and we’ll help identify the right strategy, technology, and delivery path for your business.</Text>
+            </View>
+            <Btn label="TELL US YOUR BUSINESS PROBLEM  →" onPress={() => onNavigate('contact')} />
+          </View>
+        </Section>
+
+        <SiteFooter isMobile={isMobile} onNavigate={onNavigate} />
+      </ScrollView>
+    </SafeAreaView>
+  );
+}
+
 function WhoWeArePage({ isMobile, onNavigate }) {
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -883,12 +1090,20 @@ export default function App() {
     return <SolutionPage isMobile={isMobile} onNavigate={setPage} />;
   }
 
+  if (page === 'industries') {
+    return <IndustriesPage isMobile={isMobile} onNavigate={setPage} />;
+  }
+
   if (page === 'contact') {
     return <ContactPage isMobile={isMobile} onNavigate={setPage} />;
   }
 
   if (page === 'insights') {
     return <InsightsPage isMobile={isMobile} onNavigate={setPage} />;
+  }
+
+  if (page === 'how') {
+    return <HowWeWorkPage isMobile={isMobile} onNavigate={setPage} />;
   }
 
   return (
@@ -1079,7 +1294,7 @@ export default function App() {
               <Text style={styles.sectionTitleDark}>Real-World Solutions. Measurable Results.</Text>
             </View>
             {!isMobile && (
-              <LinkText style={styles.linkText} hoverStyle={styles.linkTextHover} activeStyle={styles.linkTextPressed} onPress={() => setPage('solution')}>
+              <LinkText style={styles.linkText} hoverStyle={styles.linkTextHover} activeStyle={styles.linkTextPressed} onPress={() => setPage('industries')}>
                 EXPLORE INDUSTRIES →
               </LinkText>
             )}
@@ -2515,6 +2730,332 @@ const styles = StyleSheet.create({
     fontFamily: 'Inter_400Regular',
     marginTop: 5,
   },
+  howHero: {
+    minHeight: 430,
+    overflow: 'hidden',
+  },
+  howHeroRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    minHeight: 355,
+  },
+  howHeroRowMobile: {
+    flexDirection: 'column',
+    alignItems: 'flex-start',
+    justifyContent: 'center',
+    paddingVertical: 30,
+  },
+  howHeroCopy: {
+    maxWidth: 570,
+  },
+  howHeroTitle: {
+    color: '#FFFFFF',
+    fontSize: 45,
+    lineHeight: 49,
+    fontFamily: 'Georgia',
+    marginTop: 12,
+  },
+  howHeroAccent: {
+    color: BLUE_LIGHT,
+    fontSize: 45,
+    lineHeight: 49,
+    fontFamily: 'Georgia',
+    marginBottom: 12,
+  },
+  howHeroText: {
+    color: '#D3DDEB',
+    fontSize: 15,
+    lineHeight: 21,
+    fontFamily: 'Inter_400Regular',
+    maxWidth: 520,
+    marginBottom: 17,
+  },
+  howHeroButtons: {
+    flexDirection: 'row',
+    gap: 12,
+  },
+  howHeroButtonsMobile: {
+    flexDirection: 'column',
+    alignItems: 'flex-start',
+  },
+  howHeroTrust: {
+    flexDirection: 'row',
+    marginTop: 24,
+    gap: 0,
+  },
+  howHeroTrustMobile: {
+    flexDirection: 'column',
+    gap: 12,
+  },
+  howHeroTrustItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 9,
+    paddingHorizontal: 18,
+    borderRightWidth: 1,
+    borderRightColor: 'rgba(79,166,255,0.55)',
+  },
+  howHeroTrustTitle: {
+    color: '#FFFFFF',
+    fontSize: 12,
+    fontFamily: 'Georgia',
+  },
+  howHeroTrustText: {
+    color: '#D3DDEB',
+    fontSize: 11,
+    fontFamily: 'Georgia',
+    marginTop: 2,
+  },
+  howHeroAside: {
+    width: 160,
+    alignItems: 'flex-end',
+  },
+  howHeroAsideText: {
+    color: '#FFFFFF',
+    fontSize: 13,
+    lineHeight: 20,
+    fontFamily: 'Inter_700Bold',
+    textAlign: 'right',
+  },
+  howHeroQuote: {
+    color: '#D3DDEB',
+    fontSize: 13,
+    lineHeight: 18,
+    fontFamily: 'Georgia',
+    textAlign: 'right',
+    marginTop: 14,
+  },
+  howShell: {
+    paddingHorizontal: 38,
+    paddingVertical: 30,
+  },
+  howHeading: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-end',
+    gap: 20,
+    marginBottom: 22,
+  },
+  howSectionTitle: {
+    color: '#122D69',
+    fontSize: 30,
+    lineHeight: 34,
+    fontFamily: 'Georgia',
+    marginTop: 6,
+  },
+  howIntroText: {
+    color: '#304B7C',
+    fontSize: 14,
+    lineHeight: 20,
+    fontFamily: 'Georgia',
+    marginTop: 6,
+    maxWidth: 800,
+  },
+  howStepsGrid: {
+    flexDirection: 'row',
+    gap: 14,
+  },
+  howStepsGridMobile: {
+    flexDirection: 'column',
+  },
+  howStep: {
+    flex: 1,
+    minWidth: 140,
+  },
+  howStepImageWrap: {
+    height: 112,
+    position: 'relative',
+    overflow: 'visible',
+  },
+  howStepImage: {
+    width: '100%',
+    height: '100%',
+    borderRadius: 4,
+  },
+  howStepNumber: {
+    position: 'absolute',
+    top: -11,
+    left: -6,
+    width: 38,
+    height: 38,
+    borderRadius: 20,
+    backgroundColor: BLUE,
+    color: '#FFFFFF',
+    textAlign: 'center',
+    paddingTop: 10,
+    fontSize: 12,
+    fontFamily: 'Inter_700Bold',
+  },
+  howStepIcon: {
+    position: 'absolute',
+    bottom: -12,
+    left: 10,
+    width: 34,
+    height: 34,
+    borderRadius: 20,
+    backgroundColor: '#FFFFFF',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  howStepTitleRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    marginTop: 18,
+  },
+  howStepTitle: {
+    color: '#122D69',
+    fontSize: 18,
+    fontFamily: 'Georgia',
+  },
+  howStepSubtitle: {
+    color: '#163F6D',
+    fontSize: 12,
+    lineHeight: 16,
+    fontFamily: 'Georgia',
+    marginTop: 2,
+  },
+  howStepArrow: {
+    color: BLUE,
+    fontSize: 22,
+  },
+  howStepText: {
+    color: '#304B7C',
+    fontSize: 12,
+    lineHeight: 17,
+    fontFamily: 'Georgia',
+    marginTop: 9,
+  },
+  howPartnershipShell: {
+    paddingHorizontal: 38,
+    paddingVertical: 24,
+  },
+  howPartnershipRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 25,
+  },
+  howPartnershipRowMobile: {
+    flexDirection: 'column',
+    alignItems: 'flex-start',
+  },
+  howPartnershipCopy: {
+    flex: 1.2,
+  },
+  howPrinciples: {
+    flex: 2,
+    flexDirection: 'row',
+  },
+  howPrinciplesMobile: {
+    flexDirection: 'column',
+    width: '100%',
+    gap: 16,
+  },
+  howPrinciple: {
+    flex: 1,
+    alignItems: 'center',
+    paddingHorizontal: 12,
+  },
+  howPrincipleDivider: {
+    borderLeftWidth: 1,
+    borderLeftColor: '#BFD8F1',
+  },
+  howPrincipleTitle: {
+    color: '#122D69',
+    fontSize: 15,
+    fontFamily: 'Georgia',
+    marginTop: 6,
+  },
+  howPrincipleText: {
+    color: '#304B7C',
+    fontSize: 11,
+    lineHeight: 16,
+    fontFamily: 'Georgia',
+    textAlign: 'center',
+    marginTop: 3,
+  },
+  howOutcomeShell: {
+    paddingHorizontal: 0,
+    paddingVertical: 0,
+  },
+  howOutcomeRow: {
+    flexDirection: 'row',
+    minHeight: 285,
+  },
+  howOutcomeRowMobile: {
+    flexDirection: 'column',
+  },
+  howWhy: {
+    flex: 1.1,
+    backgroundColor: NAVY,
+    paddingHorizontal: 38,
+    paddingVertical: 28,
+  },
+  howOutcomeImage: {
+    flex: 1.1,
+    minHeight: 285,
+    overflow: 'hidden',
+    position: 'relative',
+    backgroundColor: '#071C2E',
+  },
+  howOutcomeOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(4,16,31,0.28)',
+  },
+  howOutcomePath: {
+    position: 'absolute',
+    right: 35,
+    bottom: 25,
+    color: '#FFFFFF',
+    fontSize: 13,
+    lineHeight: 35,
+    fontFamily: 'Inter_700Bold',
+    textAlign: 'right',
+  },
+  howOutcomeList: {
+    flex: 0.95,
+    paddingHorizontal: 28,
+    paddingVertical: 27,
+  },
+  howOutcomeItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    marginTop: 12,
+  },
+  howOutcomeTitle: {
+    color: '#122D69',
+    fontSize: 13,
+    fontFamily: 'Georgia',
+  },
+  howOutcomeText: {
+    color: '#304B7C',
+    fontSize: 11,
+    fontFamily: 'Georgia',
+    marginTop: 2,
+  },
+  howClosingShell: {
+    paddingHorizontal: 38,
+    paddingVertical: 28,
+  },
+  howClosingRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    gap: 24,
+  },
+  howClosingRowMobile: {
+    flexDirection: 'column',
+    alignItems: 'flex-start',
+  },
+  howClosingText: {
+    color: '#B7C0CE',
+    fontSize: 14,
+    lineHeight: 20,
+    fontFamily: 'Inter_400Regular',
+    marginTop: 4,
+  },
   solutionHero: {
     minHeight: 430,
     overflow: 'hidden',
@@ -2670,20 +3211,20 @@ const styles = StyleSheet.create({
     height: 116,
   },
   solutionVisualBody: {
-    padding: 14,
-    minHeight: 236,
+    padding: 12,
+    minHeight: 180,
   },
   solutionVisualSubtitle: {
     color: '#54708E',
     fontSize: 12,
     lineHeight: 17,
     fontFamily: 'Georgia',
-    marginBottom: 8,
+    marginBottom: 6,
   },
   solutionBullet: {
     color: '#3D5C7C',
     fontSize: 11,
-    lineHeight: 17,
+    lineHeight: 15,
     fontFamily: 'Georgia',
   },
   solutionLearnMore: {
@@ -2721,6 +3262,54 @@ const styles = StyleSheet.create({
     lineHeight: 21,
     fontFamily: 'Georgia',
     marginBottom: 6,
+  },
+  industryCardTop: {
+    paddingHorizontal: 14,
+    paddingTop: 14,
+    paddingBottom: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#E5EDF7',
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+  },
+  industryCardTitle: {
+    color: TEXT_DARK,
+    fontSize: 15,
+    lineHeight: 18,
+    fontFamily: 'Georgia',
+    flex: 1,
+  },
+  industryCapabilityGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 18,
+    marginTop: 10,
+  },
+  industryCapabilityGridMobile: {
+    flexDirection: 'column',
+  },
+  industryCapabilityItem: {
+    width: '31%',
+    minWidth: 220,
+    flexGrow: 1,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#DCE7F3',
+    padding: 16,
+  },
+  industryCapabilityTitle: {
+    color: TEXT_DARK,
+    fontSize: 15,
+    fontFamily: 'Inter_700Bold',
+    marginBottom: 8,
+  },
+  industryCapabilityText: {
+    color: TEXT_GREY,
+    fontSize: 13,
+    lineHeight: 19,
+    fontFamily: 'Inter_400Regular',
   },
   solutionApproachShell: {
     paddingHorizontal: 38,
