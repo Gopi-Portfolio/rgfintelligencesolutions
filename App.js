@@ -143,7 +143,7 @@ const footerColumns = [
   'Industries',
   'How We Work',
   'Insights',
-  'About',
+  'Who We Are',
   'Contact',
 ];
 
@@ -212,10 +212,10 @@ function Logo({ markStyle, nameStyle, taglineStyle, showTagline = true }) {
   );
 }
 
-function Section({ bg, children, style, shellStyle, photo, image, scrim }) {
+function Section({ bg, children, style, shellStyle, photo, image, imageStyle, scrim }) {
   return (
     <View style={[styles.section, { backgroundColor: bg }, style]}>
-      {image && <Image source={image} style={[StyleSheet.absoluteFillObject, styles.sectionBackgroundImage]} resizeMode="cover" />}
+      {image && <Image source={image} style={[StyleSheet.absoluteFillObject, styles.sectionBackgroundImage, imageStyle]} resizeMode="cover" />}
       {photo && (
         <LinearGradient colors={photo} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={StyleSheet.absoluteFill} />
       )}
@@ -263,21 +263,22 @@ function SiteHeader({ isMobile, onNavigate, activePage = 'home' }) {
       {!isMobile && (
         <View style={[styles.navWrap, compact && styles.navWrapCompact]}>
           {navItems.map((item) => {
-            const page = item === 'Who We Are' ? 'who' : item === 'Solutions' ? 'solution' : item === 'Contact' ? 'contact' : 'home';
+            const page = item === 'Who We Are' ? 'who' : item === 'Solutions' ? 'solution' : item === 'Contact' ? 'contact' : item === 'Insights' ? 'insights' : 'home';
             const isWhoLink = item === 'Who We Are';
             const isSolutionLink = item === 'Solutions';
             const isContactLink = item === 'Contact';
+            const isInsightsLink = item === 'Insights';
             return (
               <LinkText
                 key={item}
                 onPress={() => {
-                  if (isWhoLink || isSolutionLink || isContactLink) onNavigate(page);
+                  if (isWhoLink || isSolutionLink || isContactLink || isInsightsLink) onNavigate(page);
                   else onNavigate('home');
                 }}
                 style={[
                   styles.navItem,
                   compact && styles.navItemCompact,
-                  activePage === page && (isWhoLink || isSolutionLink || isContactLink) && styles.navItemActive,
+                  activePage === page && (isWhoLink || isSolutionLink || isContactLink || isInsightsLink) && styles.navItemActive,
                 ]}
                 hoverStyle={styles.navItemHover}
                 activeStyle={styles.navItemPressed}
@@ -305,10 +306,11 @@ function SiteFooter({ isMobile, onNavigate }) {
         {!isMobile && (
           <View style={styles.footerColumns}>
             {footerColumns.map((item) => {
-              const isWhoLink = item === 'About';
+              const isWhoLink = item === 'Who We Are';
               const isSolutionLink = item === 'Solutions';
               const isContactLink = item === 'Contact';
-              const targetPage = isWhoLink ? 'who' : isSolutionLink ? 'solution' : isContactLink ? 'contact' : 'home';
+              const isInsightsLink = item === 'Insights';
+              const targetPage = isWhoLink ? 'who' : isSolutionLink ? 'solution' : isContactLink ? 'contact' : isInsightsLink ? 'insights' : 'home';
               return (
                 <LinkText
                   key={item}
@@ -454,7 +456,6 @@ function SolutionPage({ isMobile, onNavigate }) {
                   <Text style={styles.solutionBoxTitle}>{item.title}</Text>
                   <Text style={styles.solutionVisualSubtitle}>{item.subtitle}</Text>
                   {item.bullets.map((bullet) => <Text key={bullet} style={styles.solutionBullet}>•  {bullet}</Text>)}
-                  <LinkText style={[styles.linkText, styles.solutionLearnMore]} hoverStyle={styles.linkTextHover} activeStyle={styles.linkTextPressed}>LEARN MORE →</LinkText>
                 </View>
               </View>
             ))}
@@ -473,7 +474,6 @@ function SolutionPage({ isMobile, onNavigate }) {
               <Text style={styles.sectionTitleDark}>The Right Solution. The Right Way.</Text>
               <Text style={styles.solutionIntroText}>We don’t believe in one-size-fits-all solutions. We take the time to understand your business, identify the real problem, and design a solution that fits your goals, people, and systems.</Text>
             </View>
-            {!isMobile && <LinkText style={styles.linkText} hoverStyle={styles.linkTextHover} activeStyle={styles.linkTextPressed} onPress={() => onNavigate('home')}>LEARN MORE ABOUT{ '\n'}HOW WE WORK →</LinkText>}
           </View>
           <View style={[styles.solutionApproachRow, isMobile && styles.solutionApproachRowMobile]}>
             {approachSteps.map((step, index) => (
@@ -514,79 +514,194 @@ function ContactPage({ isMobile, onNavigate }) {
       <ScrollView contentContainerStyle={styles.page}>
         <Section
           bg={NAVY}
-          image={require('./assets/contact.png')}
-          scrim={['rgba(4,16,31,0.64)', 'rgba(4,16,31,0.28)', 'rgba(4,16,31,0.68)']}
+          image={require('./assets/contactus.png')}
+          scrim={['rgba(4,16,31,0.82)', 'rgba(4,16,31,0.1)', 'rgba(4,16,31,0.28)']}
           style={styles.contactHero}
           shellStyle={styles.headerShell}
         >
           <SiteHeader isMobile={isMobile} onNavigate={onNavigate} activePage="contact" />
           <View style={[styles.contactHeroRow, isMobile && styles.contactHeroRowMobile]}>
             <View style={styles.contactHeroCopy}>
-              <Eyebrow onDark>LET’S START A CONVERSATION</Eyebrow>
-              <Text style={styles.contactHeroTitle}>Tell Us What’s Not Working.</Text>
-              <Text style={styles.contactHeroAccent}>We’ll help you find the way forward.</Text>
+              <Eyebrow onDark>CONTACT US</Eyebrow>
+              <Text style={styles.contactHeroTitle}>Let’s Start the</Text>
+              <Text style={styles.contactHeroAccent}>Conversation.</Text>
               <Text style={styles.contactHeroText}>
-                Share a little about your business challenge, and we’ll bring the right combination of people, technology, and practical next steps.
+                Tell us about your business challenges, goals, or ideas. Our team will get back to you quickly to discuss how RGF Intelligence Solutions can help.
               </Text>
-            </View>
-            {!isMobile && (
-              <View style={styles.contactHeroQuote}>
-                <Text style={styles.solutionHeroQuoteText}>REAL PROBLEMS{ '\n' }REAL PEOPLE{ '\n' }REAL SOLUTIONS</Text>
-                <View style={styles.heroWordsRule} />
+              <View style={[styles.contactPromiseRow, isMobile && styles.contactPromiseRowMobile]}>
+                {[
+                  { Icon: UsersIcon, title: 'Real People', text: 'Real Conversations' },
+                  { Icon: BulbIcon, title: 'Practical Solutions', text: 'Tailored to You' },
+                  { Icon: BarChartIcon, title: 'A Partner', text: 'For What’s Next' },
+                ].map(({ Icon, title, text }, index) => (
+                  <View key={title} style={[styles.contactPromise, index > 0 && !isMobile && styles.contactPromiseDivider]}>
+                    <Icon size={32} color={BLUE_LIGHT} />
+                    <View><Text style={styles.contactPromiseTitle}>{title}</Text><Text style={styles.contactPromiseText}>{text}</Text></View>
+                  </View>
+                ))}
               </View>
-            )}
+            </View>
           </View>
         </Section>
 
         <Section bg="#FFFFFF" shellStyle={styles.contactShell}>
           <View style={[styles.contactContentRow, isMobile && styles.contactContentRowMobile]}>
             <View style={styles.contactIntro}>
-              <Eyebrow>HOW CAN WE HELP?</Eyebrow>
-              <Text style={styles.sectionTitleDark}>Let’s Turn Your Challenge Into a Clear Next Step.</Text>
-              <Text style={styles.contactBodyText}>
-                Whether you are exploring AI, improving operations, connecting systems, or planning what comes next, start with the problem. We’ll help you define the opportunity and determine the right path forward.
-              </Text>
-              <View style={styles.contactDetails}>
-                <View style={styles.contactDetailItem}>
-                  <Text style={styles.contactDetailLabel}>EMAIL</Text>
-                  <Text style={styles.contactDetailValue}>hello@rgfintelligencesolutions.com</Text>
-                </View>
-                <View style={styles.contactDetailItem}>
-                  <Text style={styles.contactDetailLabel}>RESPONSE TIME</Text>
-                  <Text style={styles.contactDetailValue}>We’ll get back to you within one business day.</Text>
-                </View>
+              <Eyebrow>GET IN TOUCH</Eyebrow>
+              <Text style={styles.sectionTitleDark}>Multiple Ways to Connect.</Text>
+              <Text style={styles.contactBodyText}>Choose the option that works best for you. We’re here to help.</Text>
+              <View style={[styles.contactCardGrid, isMobile && styles.contactCardGridMobile]}>
+                {[
+                  { Icon: ClockIcon, title: 'Phone', value: '469-726-8900', text: 'Mon – Fri\n9:00 AM – 6:00 PM CST' },
+                  { Icon: LinkIcon, title: 'Email', value: 'info@rgfintelligencesolutions.com', text: 'We typically respond\nwithin 1 business day.' },
+                  { Icon: HouseIcon, title: 'Let’s Meet', value: 'Virtual or In Person', text: 'We’re happy to schedule\na call or meeting at your convenience.' },
+                  { Icon: UsersIcon, title: 'Follow Us', value: 'LinkedIn   YouTube', text: 'Stay connected for the latest\ninsights and updates.' },
+                ].map(({ Icon, title, value, text }) => (
+                  <View key={title} style={[styles.contactInfoCard, isMobile && styles.contactCardGridMobileItem]}>
+                    <View style={styles.contactInfoIcon}><Icon size={24} color="#FFFFFF" /></View>
+                    <Text style={styles.contactInfoTitle}>{title}</Text>
+                    <Text style={styles.contactInfoValue}>{value}</Text>
+                    <Text style={styles.contactInfoText}>{text}</Text>
+                  </View>
+                ))}
               </View>
             </View>
 
             <View style={styles.contactForm}>
-              <Text style={styles.contactFormTitle}>Start Here</Text>
-              <TextInput style={styles.contactInput} placeholder="Your name" placeholderTextColor="#8A94A6" />
-              <TextInput style={styles.contactInput} placeholder="Work email" placeholderTextColor="#8A94A6" keyboardType="email-address" />
-              <TextInput style={styles.contactInput} placeholder="Company" placeholderTextColor="#8A94A6" />
+              <Eyebrow>SEND US A MESSAGE</Eyebrow>
+              <Text style={styles.contactFormTitle}>Tell Us About Your Business</Text>
+              <View style={[styles.contactFormGrid, isMobile && styles.contactFormGridMobile]}>
+                <TextInput style={styles.contactInputHalf} placeholder="First Name *" placeholderTextColor="#344A72" />
+                <TextInput style={styles.contactInputHalf} placeholder="Last Name *" placeholderTextColor="#344A72" />
+              </View>
+              <TextInput style={styles.contactInput} placeholder="Company Name *" placeholderTextColor="#344A72" />
+              <View style={[styles.contactFormGrid, isMobile && styles.contactFormGridMobile]}>
+                <TextInput style={styles.contactInputHalf} placeholder="Email *" placeholderTextColor="#344A72" keyboardType="email-address" />
+                <TextInput style={styles.contactInputHalf} placeholder="Phone Number *" placeholderTextColor="#344A72" keyboardType="phone-pad" />
+              </View>
+              <TextInput style={styles.contactInput} placeholder="Industry   Select an industry" placeholderTextColor="#344A72" />
               <TextInput
                 style={[styles.contactInput, styles.contactMessageInput]}
-                placeholder="Tell us about your business challenge..."
-                placeholderTextColor="#8A94A6"
+                placeholder="How Can We Help? *\nTell us about your business, challenges, or goals..."
+                placeholderTextColor="#344A72"
                 multiline
               />
-              <Btn label="SEND MY MESSAGE →" />
-              <Text style={styles.contactFormNote}>Confidential  •  No obligation  •  Real solutions</Text>
+              <Btn label="SEND MESSAGE  →" style={styles.contactSendButton} />
+              <Text style={styles.contactFormNote}>🔒  Your information is confidential. We will never share your details.</Text>
             </View>
           </View>
         </Section>
 
-        <Section bg={NAVY} shellStyle={styles.contactClosingShell}>
+        <Section bg="#F0F7FE" shellStyle={styles.contactLocationShell}>
+          <View style={[styles.contactLocationRow, isMobile && styles.contactLocationRowMobile]}>
+            <View style={styles.contactLocationCopy}>
+              <Eyebrow>OUR LOCATION</Eyebrow>
+              <Text style={styles.sectionTitleDark}>Based in Frisco, TX{ '\n' }Serving Businesses{ '\n' }Everywhere.</Text>
+              <Text style={styles.contactBodyText}>We work with clients across the U.S. and globally, with a strong focus on the Dallas–Fort Worth area and beyond.</Text>
+              <Btn label="SCHEDULE A CALL  →" />
+            </View>
+            <View style={styles.contactMap}>
+              <Image source={require('./assets/dallas.png')} style={styles.contactMapImage} resizeMode="contain" />
+              <Text style={styles.contactMapLabel}>UNITED STATES</Text>
+              <View style={styles.contactMapLine} />
+              <View style={styles.contactMapPin}><Text style={styles.contactMapPinText}>Frisco, TX</Text></View>
+            </View>
+            <View style={styles.contactLocationPoints}>
+              {[
+                ['Local Expertise', 'Global Reach'],
+                ['Onsite or Virtual Meetings', 'Your Preference'],
+                ['Responsive Communication', 'We’re Here When You Need Us'],
+                ['Long-Term Partnership', 'Built On Trust'],
+              ].map(([title, text], index) => <View key={title} style={styles.contactLocationPoint}><Text style={styles.contactLocationPointIcon}>{['◎', '♧', '◷', '◇'][index]}</Text><View><Text style={styles.contactLocationPointTitle}>{title}</Text><Text style={styles.contactLocationPointText}>{text}</Text></View></View>)}
+            </View>
+          </View>
+        </Section>
+
+        <Section bg={NAVY} image={require('./assets/bgimg.png')} scrim={['rgba(4,16,31,0.72)', 'rgba(4,16,31,0.42)', 'rgba(4,16,31,0.68)']} shellStyle={styles.contactClosingShell}>
           <View style={[styles.contactClosingRow, isMobile && styles.contactClosingRowMobile]}>
             <View>
-              <Eyebrow onDark>WHAT HAPPENS NEXT</Eyebrow>
-              <Text style={styles.sectionTitleLight}>A Practical Conversation. No Pressure.</Text>
+              <Eyebrow onDark>READY TO TAKE THE NEXT STEP?</Eyebrow>
+              <Text style={styles.sectionTitleLight}>Turn Your Business Challenges{ '\n' }Into Real Solutions.</Text>
+              <Text style={styles.contactClosingText}>Whether you’re exploring ideas or ready to get started, we’d love to hear from you.</Text>
             </View>
-            <Text style={styles.contactClosingText}>
-              We’ll learn what you’re trying to accomplish, ask the useful questions, and outline a sensible next step.
-            </Text>
+            <Btn label="TELL US YOUR BUSINESS PROBLEM  →" onPress={() => onNavigate('home')} />
           </View>
         </Section>
 
+        <SiteFooter isMobile={isMobile} onNavigate={onNavigate} />
+      </ScrollView>
+    </SafeAreaView>
+  );
+}
+
+function InsightsPage({ isMobile, onNavigate }) {
+  const featured = [
+    { tag: 'TREND', title: 'The Practical Impact of AI\nfor Growing Businesses', text: 'How small and mid-sized companies are using AI and automation to save time, reduce costs, and compete at a higher level.', image: require('./assets/01-ai-intelligence.png') },
+    { tag: 'GUIDE', title: 'A Step-by-Step Guide to\nProcess Automation', text: 'A practical framework to identify, prioritize, and automate the right processes in your business.', image: require('./assets/1.admin.png') },
+    { tag: 'CASE STUDY', title: 'From Manual to Modern:\nA Real-World Transformation', text: 'How a mid-market company streamlined operations, integrated systems, and achieved measurable results.', image: require('./assets/05-business-advisory.png') },
+  ];
+  const topics = [
+    [BulbIcon, 'AI & Automation'], [BarChartIcon, 'Data & Analytics'], [TrendIcon, 'Business Strategy'],
+    [LinkIcon, 'Technology & Integration'], [GearIcon, 'Operational Excellence'], [BuildingIcon, 'Industry Perspectives'], [StoreIcon, 'Customer Success'],
+  ];
+  const latest = [
+    ['5 Ways Automation Helps You Scale Without Adding Overhead', 'Sep 12, 2026', require('./assets/2.arch.png')],
+    ['Turning Data into Decisions: A Practical Guide for Business Leaders', 'Sep 5, 2026', require('./assets/03-data-analytics.png')],
+    ['Why Integration Matters: Breaking Down Silos for Real Growth', 'Aug 28, 2026', require('./assets/04-cloud-transformation.png')],
+  ];
+
+  return (
+    <SafeAreaView style={styles.safeArea}>
+      <StatusBar style="light" />
+      <ScrollView contentContainerStyle={styles.page}>
+        <Section
+          bg={NAVY}
+          image={require('./assets/insightsbg.png')}
+          scrim={['rgba(4,16,31,0.86)', 'rgba(4,16,31,0.42)', 'rgba(4,16,31,0.7)']}
+          style={styles.insightsHero}
+          shellStyle={styles.headerShell}
+        >
+          <SiteHeader isMobile={isMobile} onNavigate={onNavigate} activePage="insights" />
+          <View style={[styles.insightsHeroRow, isMobile && styles.insightsHeroRowMobile]}>
+            <View style={styles.insightsHeroCopy}>
+              <Eyebrow onDark>INSIGHTS</Eyebrow>
+              <Text style={styles.insightsHeroTitle}>Real Ideas.</Text>
+              <Text style={styles.insightsHeroAccent}>Real Impact.</Text>
+              <Text style={styles.insightsHeroText}>Practical insights, proven strategies, and real-world examples to help you solve today’s challenges and prepare for tomorrow.</Text>
+              <Btn label="EXPLORE INSIGHTS  →" onPress={() => {}} />
+            </View>
+            {!isMobile && <View style={styles.insightsHeroAside}><Text style={styles.insightsHeroAsideText}>TRENDS{ '\n' }IDEAS{ '\n' }GUIDES{ '\n' }CASE STUDIES{ '\n' }EXPERT PERSPECTIVES</Text><View style={styles.heroWordsRule} /><Text style={styles.insightsHeroQuote}>“Knowledge{ '\n' }turns challenges{ '\n' }into opportunities.”</Text></View>}
+          </View>
+        </Section>
+
+        <Section bg="#F0F7FE" shellStyle={styles.insightsTopicStripShell}>
+          <View style={[styles.insightsTopicStrip, isMobile && styles.insightsTopicStripMobile]}>
+            {[[BarChartIcon, 'Industry Trends', "What's shaping tomorrow"], [DatabaseIcon, 'Practical Guides', 'Actionable strategies'], [UsersIcon, 'Expert Perspectives', 'Real-world experience'], [BulbIcon, 'Customer Success', 'Ideas in action']].map(([Icon, title, text]) => (
+              <View key={title} style={styles.insightsTopicFeature}><Icon size={32} color={BLUE} /><View><Text style={styles.insightsTopicTitle}>{title}</Text><Text style={styles.insightsTopicText}>{text}</Text></View></View>
+            ))}
+          </View>
+        </Section>
+
+        <Section bg="#FFFFFF" shellStyle={styles.insightsShell}>
+          <View style={styles.insightsHeading}><View><Eyebrow>FEATURED INSIGHTS</Eyebrow><Text style={styles.insightsSectionTitle}>Ideas and Knowledge to Move Your Business Forward.</Text></View>{!isMobile && <LinkText style={styles.linkText} hoverStyle={styles.linkTextHover} activeStyle={styles.linkTextPressed}>VIEW ALL INSIGHTS  →</LinkText>}</View>
+          <View style={[styles.insightsFeaturedGrid, isMobile && styles.insightsFeaturedGridMobile]}>
+            {featured.map((item) => <View key={item.title} style={styles.insightCard}><View style={styles.insightCardImageWrap}><Image source={item.image} style={styles.insightCardImage} resizeMode="cover" /><Text style={styles.insightCardTag}>{item.tag}</Text></View><View style={styles.insightCardBody}><Text style={styles.insightCardTitle}>{item.title}</Text><Text style={styles.insightCardText}>{item.text}</Text></View></View>)}
+          </View>
+
+          <Eyebrow>BROWSE INSIGHTS BY TOPIC</Eyebrow>
+          <View style={[styles.insightsTopicGrid, isMobile && styles.insightsTopicGridMobile]}>
+            {topics.map(([Icon, title]) => <View key={title} style={styles.insightsTopicCard}><Image source={require('./assets/03-data-analytics.png')} style={styles.insightsTopicCardImage} resizeMode="cover" /><Icon size={22} color={BLUE} /><Text style={styles.insightsTopicCardTitle}>{title}</Text></View>)}
+          </View>
+
+          <View style={[styles.insightsLatestRow, isMobile && styles.insightsLatestRowMobile]}>
+            <View style={styles.insightsLatest}><Eyebrow>LATEST INSIGHTS</Eyebrow>{latest.map(([title, date, image]) => <View key={title} style={styles.insightsLatestItem}><Image source={image} style={styles.insightsLatestImage} resizeMode="cover" /><View style={styles.insightsLatestCopy}><Text style={styles.insightsLatestTitle}>{title}</Text><Text style={styles.insightsLatestDate}>{date}</Text></View><Text style={styles.insightsLatestArrow}>→</Text></View>)}</View>
+            <View style={styles.insightsSubscribe}><Eyebrow>STAY INFORMED</Eyebrow><Text style={styles.insightsSubscribeTitle}>Insights Delivered{ '\n' }to Your Inbox.</Text><Text style={styles.insightsSubscribeText}>Get the latest articles, guides, and industry perspectives — no spam, just valuable insights.</Text><View style={styles.insightsSubscribeForm}><TextInput style={styles.insightsSubscribeInput} placeholder="Enter your email address" placeholderTextColor="#6D7890" /><Btn label="SUBSCRIBE  →" /></View></View>
+          </View>
+        </Section>
+
+        <Section bg={NAVY} image={require('./assets/bgimg.png')} scrim={['rgba(4,16,31,0.82)', 'rgba(4,16,31,0.42)', 'rgba(4,16,31,0.75)']} shellStyle={styles.insightsClosingShell}>
+          <View style={[styles.insightsClosingRow, isMobile && styles.insightsClosingRowMobile]}><View><Eyebrow onDark>TURN INSIGHTS INTO ACTION</Eyebrow><Text style={styles.sectionTitleLight}>Let’s Solve Your Business Problem.</Text><Text style={styles.insightsClosingText}>Talk with our team to explore how these insights can create real results for your organization.</Text></View><Btn label="SCHEDULE A CONSULTATION  →" onPress={() => onNavigate('contact')} /></View>
+        </Section>
         <SiteFooter isMobile={isMobile} onNavigate={onNavigate} />
       </ScrollView>
     </SafeAreaView>
@@ -772,6 +887,10 @@ export default function App() {
     return <ContactPage isMobile={isMobile} onNavigate={setPage} />;
   }
 
+  if (page === 'insights') {
+    return <InsightsPage isMobile={isMobile} onNavigate={setPage} />;
+  }
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <StatusBar style="light" />
@@ -906,9 +1025,6 @@ export default function App() {
                 <Image source={item.bg} style={styles.solutionImage} resizeMode="cover" />
                 <Text style={styles.solutionTitle}>{item.title}</Text>
                 <Text style={styles.solutionDesc}>{item.desc}</Text>
-                <LinkText style={styles.linkText} hoverStyle={styles.linkTextHover} activeStyle={styles.linkTextPressed} onPress={() => setPage('solution')}>
-                  LEARN MORE →
-                </LinkText>
               </View>
             ))}
           </View>
@@ -1789,14 +1905,13 @@ const styles = StyleSheet.create({
     color: BLUE_LIGHT,
   },
   contactHero: {
-    minHeight: 430,
+    minHeight: 390,
     overflow: 'hidden',
   },
   contactHeroRow: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
-    minHeight: 355,
+    minHeight: 320,
     gap: 24,
   },
   contactHeroRowMobile: {
@@ -1806,19 +1921,19 @@ const styles = StyleSheet.create({
     paddingVertical: 32,
   },
   contactHeroCopy: {
-    maxWidth: 690,
+    maxWidth: 520,
   },
   contactHeroTitle: {
     color: '#FFFFFF',
-    fontSize: 43,
-    lineHeight: 47,
+    fontSize: 48,
+    lineHeight: 52,
     fontFamily: 'Georgia',
-    marginBottom: 4,
+    marginTop: 12,
   },
   contactHeroAccent: {
     color: BLUE_LIGHT,
-    fontSize: 30,
-    lineHeight: 37,
+    fontSize: 48,
+    lineHeight: 52,
     fontFamily: 'Georgia',
     marginBottom: 16,
   },
@@ -1829,94 +1944,256 @@ const styles = StyleSheet.create({
     fontFamily: 'Inter_400Regular',
     maxWidth: 600,
   },
-  contactHeroQuote: {
-    width: 170,
-    alignItems: 'flex-start',
+  contactPromiseRow: {
+    flexDirection: 'row',
+    marginTop: 28,
+    gap: 0,
+  },
+  contactPromiseRowMobile: {
+    flexDirection: 'column',
+    gap: 16,
+  },
+  contactPromise: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    paddingRight: 18,
+    marginRight: 18,
+  },
+  contactPromiseDivider: {
+    borderLeftWidth: 1,
+    borderLeftColor: 'rgba(79,166,255,0.65)',
+    paddingLeft: 18,
+  },
+  contactPromiseTitle: {
+    color: '#FFFFFF',
+    fontSize: 12,
+    fontFamily: 'Georgia',
+  },
+  contactPromiseText: {
+    color: '#D3DDEB',
+    fontSize: 11,
+    lineHeight: 16,
+    fontFamily: 'Georgia',
   },
   contactShell: {
-    paddingHorizontal: 38,
-    paddingVertical: 58,
+    paddingHorizontal: 44,
+    paddingVertical: 22,
   },
   contactContentRow: {
     flexDirection: 'row',
-    gap: 48,
+    gap: 28,
     alignItems: 'flex-start',
   },
   contactContentRowMobile: {
     flexDirection: 'column',
   },
   contactIntro: {
-    flex: 1,
-    maxWidth: 520,
+    flex: 1.15,
+    maxWidth: 560,
   },
   contactBodyText: {
     color: TEXT_GREY,
     fontSize: 15,
     lineHeight: 23,
     fontFamily: 'Inter_400Regular',
-    marginTop: 8,
+    marginTop: 4,
     maxWidth: 500,
   },
-  contactDetails: {
-    borderTopWidth: 1,
-    borderTopColor: BORDER,
-    marginTop: 30,
-    paddingTop: 22,
-    gap: 18,
+  contactCardGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 12,
+    marginTop: 18,
   },
-  contactDetailItem: {
-    gap: 5,
+  contactCardGridMobile: {
+    flexDirection: 'column',
   },
-  contactDetailLabel: {
-    color: BLUE,
-    fontSize: 11,
-    fontFamily: 'Inter_800ExtraBold',
-    letterSpacing: 1.4,
+  contactCardGridMobileItem: {
+    width: '100%',
   },
-  contactDetailValue: {
+  contactInfoCard: {
+    width: '48%',
+    minHeight: 145,
+    backgroundColor: '#F0F7FE',
+    padding: 14,
+  },
+  contactInfoIcon: {
+    width: 44,
+    height: 44,
+    borderRadius: 24,
+    backgroundColor: BLUE,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 8,
+  },
+  contactInfoTitle: {
     color: TEXT_DARK,
-    fontSize: 14,
+    fontSize: 18,
+    fontFamily: 'Georgia',
+  },
+  contactInfoValue: {
+    color: '#122D69',
+    fontSize: 15,
     lineHeight: 20,
-    fontFamily: 'Inter_600SemiBold',
+    fontFamily: 'Georgia',
+  },
+  contactInfoText: {
+    color: '#304B7C',
+    fontSize: 12,
+    lineHeight: 17,
+    fontFamily: 'Georgia',
+  },
+  contactFormGrid: {
+    flexDirection: 'row',
+    gap: 10,
+  },
+  contactFormGridMobile: {
+    flexDirection: 'column',
+    gap: 0,
+  },
+  contactInputHalf: {
+    flex: 1,
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1,
+    borderColor: '#B5D5FA',
+    borderRadius: 4,
+    paddingHorizontal: 10,
+    paddingVertical: 10,
+    fontSize: 12,
+    fontFamily: 'Inter_400Regular',
+    color: TEXT_DARK,
+    marginBottom: 10,
   },
   contactForm: {
     flex: 1,
-    maxWidth: 500,
+    maxWidth: 480,
     backgroundColor: '#F0F7FE',
-    borderRadius: 12,
-    padding: 26,
+    padding: 24,
   },
   contactFormTitle: {
-    color: TEXT_DARK,
-    fontSize: 23,
-    fontFamily: 'Inter_800ExtraBold',
-    marginBottom: 16,
+    color: '#122D69',
+    fontSize: 27,
+    lineHeight: 31,
+    fontFamily: 'Georgia',
+    marginBottom: 12,
   },
   contactInput: {
     backgroundColor: '#FFFFFF',
     borderWidth: 1,
-    borderColor: BORDER,
-    borderRadius: 6,
-    paddingHorizontal: 14,
-    paddingVertical: 13,
-    fontSize: 14,
+    borderColor: '#B5D5FA',
+    borderRadius: 4,
+    paddingHorizontal: 10,
+    paddingVertical: 10,
+    fontSize: 12,
     fontFamily: 'Inter_400Regular',
     color: TEXT_DARK,
-    marginBottom: 12,
+    marginBottom: 10,
   },
   contactMessageInput: {
-    minHeight: 105,
+    minHeight: 92,
     textAlignVertical: 'top',
   },
+  contactSendButton: {
+    width: '100%',
+    justifyContent: 'center',
+  },
   contactFormNote: {
-    color: TEXT_GREY,
+    color: '#304B7C',
+    fontSize: 10,
+    fontFamily: 'Inter_400Regular',
+    marginTop: 10,
+    textAlign: 'center',
+  },
+  contactLocationShell: {
+    paddingHorizontal: 44,
+    paddingVertical: 26,
+  },
+  contactLocationRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 24,
+  },
+  contactLocationRowMobile: {
+    flexDirection: 'column',
+    alignItems: 'flex-start',
+  },
+  contactLocationCopy: {
+    flex: 1,
+    maxWidth: 330,
+  },
+  contactMap: {
+    flex: 1.2,
+    minHeight: 190,
+    backgroundColor: 'transparent',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 4,
+    overflow: 'hidden',
+  },
+  contactMapImage: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    width: '100%',
+    height: '100%',
+    alignSelf: 'center',
+  },
+  contactMapLabel: {
+    color: '#163F6D',
+    fontSize: 34,
+    fontFamily: 'Georgia',
+    letterSpacing: 3,
+    textShadowColor: 'rgba(255,255,255,0.85)',
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 3,
+    zIndex: 2,
+  },
+  contactMapLine: {
+    width: '70%',
+    height: 1,
+    backgroundColor: '#67A9EF',
+    marginVertical: 18,
+  },
+  contactMapPin: {
+    backgroundColor: BLUE,
+    paddingHorizontal: 12,
+    paddingVertical: 7,
+    borderRadius: 4,
+  },
+  contactMapPinText: {
+    color: '#FFFFFF',
+    fontSize: 12,
+    fontFamily: 'Inter_700Bold',
+  },
+  contactLocationPoints: {
+    flex: 0.9,
+    gap: 15,
+  },
+  contactLocationPoint: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+  },
+  contactLocationPointIcon: {
+    color: BLUE,
+    fontSize: 30,
+    width: 34,
+    textAlign: 'center',
+  },
+  contactLocationPointTitle: {
+    color: '#122D69',
+    fontSize: 13,
+    fontFamily: 'Georgia',
+  },
+  contactLocationPointText: {
+    color: '#304B7C',
     fontSize: 11,
-    fontFamily: 'Inter_600SemiBold',
-    marginTop: 14,
+    fontFamily: 'Georgia',
   },
   contactClosingShell: {
-    paddingHorizontal: 38,
-    paddingVertical: 44,
+    paddingHorizontal: 44,
+    paddingVertical: 30,
   },
   contactClosingRow: {
     flexDirection: 'row',
@@ -1933,7 +2210,310 @@ const styles = StyleSheet.create({
     fontSize: 15,
     lineHeight: 23,
     fontFamily: 'Inter_400Regular',
-    maxWidth: 430,
+    maxWidth: 470,
+  },
+  insightsHero: {
+    minHeight: 390,
+    overflow: 'hidden',
+  },
+  insightsHeroRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    minHeight: 320,
+  },
+  insightsHeroRowMobile: {
+    flexDirection: 'column',
+    alignItems: 'flex-start',
+    justifyContent: 'center',
+    paddingVertical: 32,
+  },
+  insightsHeroCopy: {
+    maxWidth: 560,
+  },
+  insightsHeroTitle: {
+    color: '#FFFFFF',
+    fontSize: 48,
+    lineHeight: 51,
+    fontFamily: 'Georgia',
+    marginTop: 12,
+  },
+  insightsHeroAccent: {
+    color: BLUE_LIGHT,
+    fontSize: 48,
+    lineHeight: 51,
+    fontFamily: 'Georgia',
+    marginBottom: 14,
+  },
+  insightsHeroText: {
+    color: '#D3DDEB',
+    fontSize: 15,
+    lineHeight: 22,
+    fontFamily: 'Inter_400Regular',
+    maxWidth: 500,
+    marginBottom: 18,
+  },
+  insightsHeroAside: {
+    width: 190,
+    alignItems: 'flex-end',
+  },
+  insightsHeroAsideText: {
+    color: '#FFFFFF',
+    fontSize: 12,
+    lineHeight: 21,
+    fontFamily: 'Inter_600SemiBold',
+    textAlign: 'right',
+  },
+  insightsHeroQuote: {
+    color: '#D3DDEB',
+    fontSize: 13,
+    lineHeight: 18,
+    fontFamily: 'Georgia',
+    fontStyle: 'italic',
+    textAlign: 'right',
+    marginTop: 16,
+  },
+  insightsTopicStripShell: {
+    paddingHorizontal: 38,
+    paddingVertical: 17,
+  },
+  insightsTopicStrip: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    gap: 14,
+  },
+  insightsTopicStripMobile: {
+    flexDirection: 'column',
+  },
+  insightsTopicFeature: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    paddingHorizontal: 10,
+    borderRightWidth: 1,
+    borderRightColor: '#AFCDF0',
+  },
+  insightsTopicTitle: {
+    color: '#122D69',
+    fontSize: 14,
+    fontFamily: 'Georgia',
+  },
+  insightsTopicText: {
+    color: '#304B7C',
+    fontSize: 11,
+    fontFamily: 'Georgia',
+    marginTop: 2,
+  },
+  insightsShell: {
+    paddingHorizontal: 38,
+    paddingVertical: 28,
+  },
+  insightsHeading: {
+    flexDirection: 'row',
+    alignItems: 'flex-end',
+    justifyContent: 'space-between',
+    gap: 20,
+    marginBottom: 18,
+  },
+  insightsSectionTitle: {
+    color: '#122D69',
+    fontSize: 29,
+    lineHeight: 34,
+    fontFamily: 'Georgia',
+    marginTop: 6,
+  },
+  insightsFeaturedGrid: {
+    flexDirection: 'row',
+    gap: 18,
+    marginBottom: 28,
+  },
+  insightsFeaturedGridMobile: {
+    flexDirection: 'column',
+  },
+  insightCard: {
+    flex: 1,
+    borderWidth: 1,
+    borderColor: '#D7E4F2',
+    borderRadius: 4,
+    overflow: 'hidden',
+    backgroundColor: '#FFFFFF',
+  },
+  insightCardImageWrap: {
+    height: 145,
+    position: 'relative',
+    backgroundColor: '#0A2442',
+  },
+  insightCardImage: {
+    width: '100%',
+    height: '100%',
+  },
+  insightCardTag: {
+    position: 'absolute',
+    top: 12,
+    left: 12,
+    color: '#FFFFFF',
+    backgroundColor: BLUE,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    fontSize: 10,
+    fontFamily: 'Inter_700Bold',
+  },
+  insightCardBody: {
+    padding: 13,
+    minHeight: 150,
+  },
+  insightCardTitle: {
+    color: '#122D69',
+    fontSize: 19,
+    lineHeight: 22,
+    fontFamily: 'Georgia',
+  },
+  insightCardText: {
+    color: '#304B7C',
+    fontSize: 12,
+    lineHeight: 17,
+    fontFamily: 'Georgia',
+    marginTop: 6,
+  },
+  insightReadMore: {
+    color: BLUE,
+    fontSize: 12,
+    fontFamily: 'Georgia',
+    marginTop: 10,
+  },
+  insightsTopicGrid: {
+    flexDirection: 'row',
+    gap: 10,
+    marginTop: 12,
+    marginBottom: 28,
+  },
+  insightsTopicGridMobile: {
+    flexWrap: 'wrap',
+  },
+  insightsTopicCard: {
+    flex: 1,
+    minWidth: 100,
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#D7E4F2',
+    borderRadius: 4,
+    paddingBottom: 11,
+    overflow: 'hidden',
+    backgroundColor: '#FFFFFF',
+  },
+  insightsTopicCardImage: {
+    width: '100%',
+    height: 64,
+    marginBottom: 8,
+  },
+  insightsTopicCardTitle: {
+    color: '#122D69',
+    fontSize: 12,
+    lineHeight: 16,
+    fontFamily: 'Georgia',
+    textAlign: 'center',
+    marginTop: 5,
+  },
+  insightsLatestRow: {
+    flexDirection: 'row',
+    gap: 28,
+    alignItems: 'flex-start',
+  },
+  insightsLatestRowMobile: {
+    flexDirection: 'column',
+  },
+  insightsLatest: {
+    flex: 1,
+  },
+  insightsLatestItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    minHeight: 56,
+    borderBottomWidth: 1,
+    borderBottomColor: '#D7E4F2',
+  },
+  insightsLatestImage: {
+    width: 72,
+    height: 45,
+    borderRadius: 3,
+  },
+  insightsLatestCopy: {
+    flex: 1,
+  },
+  insightsLatestTitle: {
+    color: '#122D69',
+    fontSize: 13,
+    fontFamily: 'Georgia',
+  },
+  insightsLatestDate: {
+    color: '#6D7890',
+    fontSize: 10,
+    fontFamily: 'Inter_400Regular',
+    marginTop: 3,
+  },
+  insightsLatestArrow: {
+    color: BLUE,
+    fontSize: 22,
+  },
+  insightsSubscribe: {
+    flex: 1,
+    backgroundColor: '#F0F7FE',
+    padding: 19,
+    minHeight: 190,
+  },
+  insightsSubscribeTitle: {
+    color: '#122D69',
+    fontSize: 26,
+    lineHeight: 29,
+    fontFamily: 'Georgia',
+    marginTop: 5,
+  },
+  insightsSubscribeText: {
+    color: '#304B7C',
+    fontSize: 12,
+    lineHeight: 17,
+    fontFamily: 'Georgia',
+    marginTop: 5,
+    maxWidth: 360,
+  },
+  insightsSubscribeForm: {
+    flexDirection: 'row',
+    alignItems: 'stretch',
+    marginTop: 14,
+  },
+  insightsSubscribeInput: {
+    flex: 1,
+    minWidth: 0,
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1,
+    borderColor: '#B5D5FA',
+    paddingHorizontal: 10,
+    fontSize: 11,
+    fontFamily: 'Inter_400Regular',
+    color: TEXT_DARK,
+  },
+  insightsClosingShell: {
+    paddingHorizontal: 38,
+    paddingVertical: 28,
+  },
+  insightsClosingRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    gap: 24,
+  },
+  insightsClosingRowMobile: {
+    flexDirection: 'column',
+    alignItems: 'flex-start',
+  },
+  insightsClosingText: {
+    color: '#B7C0CE',
+    fontSize: 14,
+    lineHeight: 20,
+    fontFamily: 'Inter_400Regular',
+    marginTop: 5,
   },
   solutionHero: {
     minHeight: 430,
