@@ -36,6 +36,7 @@ import {
   ClockIcon,
   CheckIcon,
 } from './icons';
+import { submitContactForm } from './services/emailService';
 
 const NAVY = '#04101F';
 const BLUE = '#0B7DFC';
@@ -511,6 +512,205 @@ function SolutionPage({ isMobile, onNavigate }) {
   );
 }
 
+function InquiryForm({
+  title = 'Tell Us About Your Business',
+  buttonLabel = 'SEND MESSAGE  →',
+  includeCompany = true,
+  includeIndustry = true,
+  includePhone = true,
+  source = 'contact',
+  compact = false,
+}) {
+  const [form, setForm] = useState({
+    firstName: '',
+    lastName: '',
+    company: '',
+    email: '',
+    phone: '',
+    industry: '',
+    message: '',
+  });
+  const [status, setStatus] = useState('');
+  const [submitting, setSubmitting] = useState(false);
+
+  const updateField = (field, value) => setForm((current) => ({ ...current, [field]: value }));
+
+  const isValidEmail = (value) => {
+    const email = value.trim();
+    if (!email || email.length > 254) return false;
+    if (email.indexOf('@') === -1 || email.indexOf('@') !== email.lastIndexOf('@')) return false;
+    const [localPart, domainPart] = email.split('@');
+    if (!localPart || !domainPart || localPart.length > 64 || domainPart.length > 255) return false;
+    if (domainPart.startsWith('.') || domainPart.endsWith('.') || domainPart.includes('..')) return false;
+    if (!domainPart.includes('.') || domainPart.split('.').some((segment) => segment.length < 2 || segment.length > 63)) return false;
+    return /^[A-Za-z0-9.!#$%&'*+/=?^_`{|}~-]+$/.test(localPart) && /^[A-Za-z0-9.-]+$/.test(domainPart.replace(/\./g, ''));
+  };
+
+  const formatPhone = (value) => {
+    const digits = value.replace(/\D/g, '').slice(0, 10);
+
+    if (digits.length <= 3) return digits;
+    if (digits.length <= 6) return `(${digits.slice(0, 3)})-${digits.slice(3)}`;
+    return `(${digits.slice(0, 3)})-${digits.slice(3, 6)}-${digits.slice(6, 10)}`;
+  };
+
+  const isValidPhone = (value) => value.replace(/\D/g, '').length === 10;
+
+  const handleSubmit = async () => {
+    const requiredFields = ['firstName', 'lastName', 'email', 'message'];
+    if (includeCompany) requiredFields.push('company');
+    if (includeIndustry) requiredFields.push('industry');
+    if (includePhone) requiredFields.push('phone');
+
+    const missing = requiredFields.filter((field) => !String(form[field] || '').trim());
+    if (missing.length > 0) {
+      const labels = missing.map((field) => {
+        if (field === 'firstName') return 'First Name';
+        if (field === 'lastName') return 'Last Name';
+        if (field === 'email') return 'Email';
+        if (field === 'message') return 'Message';
+        if (field === 'company') return 'Company';
+        if (field === 'industry') return 'Industry';
+        if (field === 'phone') return 'Phone';
+        return field;
+      });
+      setStatus(`Please complete the required field(s): ${labels.join(', ')}.`);
+      return;
+    }
+
+    if (!isValidEmail(form.email)) {
+      setStatus('Email: invalid format. Please enter a valid email address, such as name@example.com.');
+      return;
+    }
+
+    if (includePhone && !isValidPhone(form.phone)) {
+      setStatus('Phone: 10 digits required. Please enter a valid number, for example: (310)-754-5644.');
+      return;
+    }
+
+    setSubmitting(true);
+    setStatus('');
+
+    const payload = {
+      source,
+      subject: title,
+      firstName: form.firstName.trim(),
+      lastName: form.lastName.trim(),
+      company: form.company.trim(),
+      email: form.email.trim(),
+      phone: form.phone.trim(),
+      industry: form.industry.trim(),
+      message: form.message.trim(),
+    };
+
+    const result = await submitContactForm(payload);
+
+    setSubmitting(false);
+
+    if (result.ok) {
+      setForm({
+        firstName: '',
+        lastName: '',
+        company: '',
+        email: '',
+        phone: '',
+        industry: '',
+        message: '',
+      });
+      setStatus('Thank you. Your message has been submitted successfully.');
+      return;
+    }
+
+    setStatus(result.error || 'There was a problem sending your inquiry. Please try again.');
+  };
+
+  return (
+    <View style={styles.contactForm}>
+      <Eyebrow>SEND US A MESSAGE</Eyebrow>
+      <Text style={styles.contactFormTitle}>{title}</Text>
+      <View style={[styles.contactFormGrid, compact && styles.contactFormGridMobile]}>
+        <TextInput
+          style={styles.contactInputHalf}
+          placeholder="First Name *"
+          placeholderTextColor="#344A72"
+          value={form.firstName}
+          onChangeText={(value) => updateField('firstName', value)}
+        />
+        <TextInput
+          style={styles.contactInputHalf}
+          placeholder="Last Name *"
+          placeholderTextColor="#344A72"
+          value={form.lastName}
+          onChangeText={(value) => updateField('lastName', value)}
+        />
+      </View>
+      {includeCompany && (
+        <TextInput
+          style={styles.contactInput}
+          placeholder="Company Name *"
+          placeholderTextColor="#344A72"
+          value={form.company}
+          onChangeText={(value) => updateField('company', value)}
+        />
+      )}
+      <View style={[styles.contactFormGrid, compact && styles.contactFormGridMobile]}>
+        <TextInput
+          style={styles.contactInputHalf}
+          placeholder="Email *"
+          placeholderTextColor="#344A72"
+          keyboardType="email-address"
+          value={form.email}
+          onChangeText={(value) => updateField('email', value)}
+          autoCapitalize="none"
+        />
+        {includePhone && (
+          <TextInput
+            style={styles.contactInputHalf}
+            placeholder="Phone Number *"
+            placeholderTextColor="#344A72"
+            keyboardType="number-pad"
+            value={form.phone}
+            onChangeText={(value) => updateField('phone', formatPhone(value))}
+            maxLength={14}
+          />
+        )}
+      </View>
+      {includeIndustry && (
+        <TextInput
+          style={styles.contactInput}
+          placeholder="Industry *"
+          placeholderTextColor="#344A72"
+          value={form.industry}
+          onChangeText={(value) => updateField('industry', value)}
+        />
+      )}
+      <TextInput
+        style={[styles.contactInput, styles.contactMessageInput]}
+        placeholder={source === 'business-problem' ? 'Describe your biggest business challenge...\nWhat is not working today and what outcome are you trying to achieve?' : 'How Can We Help? *\nTell us about your business, challenges, or goals...'}
+        placeholderTextColor="#344A72"
+        multiline
+        value={form.message}
+        onChangeText={(value) => updateField('message', value)}
+      />
+      <Btn label={buttonLabel} style={styles.contactSendButton} onPress={handleSubmit} disabled={submitting} />
+      {status ? (
+        <Text
+          style={[
+            styles.formStatus,
+            (status.toLowerCase().includes('please complete') ||
+              status.toLowerCase().startsWith('email:') ||
+              status.toLowerCase().startsWith('phone:')) && styles.formStatusError,
+            status.toLowerCase().includes('thank you') && styles.formStatusSuccess,
+          ]}
+        >
+          {status}
+        </Text>
+      ) : null}
+      <Text style={styles.contactFormNote}>🔒  Your information is confidential. We will never share your details.</Text>
+    </View>
+  );
+}
+
 function ContactPage({ isMobile, onNavigate }) {
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -571,28 +771,7 @@ function ContactPage({ isMobile, onNavigate }) {
               </View>
             </View>
 
-            <View style={styles.contactForm}>
-              <Eyebrow>SEND US A MESSAGE</Eyebrow>
-              <Text style={styles.contactFormTitle}>Tell Us About Your Business</Text>
-              <View style={[styles.contactFormGrid, isMobile && styles.contactFormGridMobile]}>
-                <TextInput style={styles.contactInputHalf} placeholder="First Name *" placeholderTextColor="#344A72" />
-                <TextInput style={styles.contactInputHalf} placeholder="Last Name *" placeholderTextColor="#344A72" />
-              </View>
-              <TextInput style={styles.contactInput} placeholder="Company Name *" placeholderTextColor="#344A72" />
-              <View style={[styles.contactFormGrid, isMobile && styles.contactFormGridMobile]}>
-                <TextInput style={styles.contactInputHalf} placeholder="Email *" placeholderTextColor="#344A72" keyboardType="email-address" />
-                <TextInput style={styles.contactInputHalf} placeholder="Phone Number *" placeholderTextColor="#344A72" keyboardType="phone-pad" />
-              </View>
-              <TextInput style={styles.contactInput} placeholder="Industry   Select an industry" placeholderTextColor="#344A72" />
-              <TextInput
-                style={[styles.contactInput, styles.contactMessageInput]}
-                placeholder="How Can We Help? *\nTell us about your business, challenges, or goals..."
-                placeholderTextColor="#344A72"
-                multiline
-              />
-              <Btn label="SEND MESSAGE  →" style={styles.contactSendButton} />
-              <Text style={styles.contactFormNote}>🔒  Your information is confidential. We will never share your details.</Text>
-            </View>
+            <InquiryForm source="contact" includePhone />
           </View>
         </Section>
 
@@ -1255,12 +1434,15 @@ export default function App() {
               <Text style={styles.sectionSubtitleLight}>
                 Describe what’s not working, and our AI will help analyze your challenge and recommend next steps.
               </Text>
-              <TextInput
-                style={styles.input}
-                placeholder="Describe your biggest business challenge..."
-                placeholderTextColor="#8A94A6"
+              <InquiryForm
+                title="Tell Us About Your Business Problem"
+                buttonLabel="ANALYZE MY BUSINESS PROBLEM →"
+                includeCompany={false}
+                includeIndustry={false}
+                includePhone={false}
+                source="business-problem"
+                compact
               />
-              <Btn label="ANALYZE MY BUSINESS PROBLEM →" style={{ marginTop: 14, marginBottom: 20 }} />
 
               <View style={styles.trustRowWrap}>
                 {trustPoints.map((item) => (
@@ -2319,6 +2501,20 @@ const styles = StyleSheet.create({
     fontFamily: 'Inter_400Regular',
     marginTop: 10,
     textAlign: 'center',
+  },
+  formStatus: {
+    color: '#122D69',
+    fontSize: 12,
+    lineHeight: 18,
+    fontFamily: 'Inter_600SemiBold',
+    marginTop: 10,
+    marginBottom: 4,
+  },
+  formStatusError: {
+    color: '#C0392B',
+  },
+  formStatusSuccess: {
+    color: '#0F7A45',
   },
   contactLocationShell: {
     paddingHorizontal: 44,
