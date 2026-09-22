@@ -626,7 +626,7 @@ function InquiryForm({
 
   return (
     <View style={styles.contactForm}>
-      <Eyebrow>SEND US A MESSAGE</Eyebrow>
+      <Text style={[styles.eyebrow, styles.formEyebrow]}>SEND US A MESSAGE</Text>
       <Text style={styles.contactFormTitle}>{title}</Text>
       <View style={[styles.contactFormGrid, compact && styles.contactFormGridMobile]}>
         <TextInput
@@ -1424,7 +1424,7 @@ export default function App() {
           </View>
         </Section>
 
-        <Section bg={NAVY} photo={TELLUS_PHOTO}>
+        <Section bg={NAVY} image={require('./assets/mount.png')}>
           <View style={[styles.tellUsRow, isMobile && styles.tellUsRowMobile]}>
             <View style={styles.tellUsCopy}>
               <Eyebrow onDark>TELL US YOUR BUSINESS PROBLEM</Eyebrow>
@@ -1454,18 +1454,11 @@ export default function App() {
               </View>
             </View>
 
-            {!isMobile && (
-              <View style={styles.tellUsCard}>
-                <Text style={styles.tellUsCardTitle}>Turn Questions Into Opportunities</Text>
-                <View style={styles.tellUsCardRule} />
-                {checklist.map((item) => (
-                  <View key={item} style={styles.checkRow}>
-                    <CheckIcon size={15} color={BLUE_LIGHT} />
-                    <Text style={styles.checkText}>{item}</Text>
-                  </View>
-                ))}
-              </View>
-            )}
+            <View style={[styles.ctaCopy, isMobile && styles.ctaCopyMobile]}>
+              <Text style={styles.ctaTitle}>Your Business Has the Problem.</Text>
+              <Text style={[styles.ctaTitle, { color: BLUE_LIGHT }]}>Let’s Build the Solution.</Text>
+              <Text style={styles.ctaText}>Human Expertise + AI + Automation + Technology = Real Results.</Text>
+            </View>
           </View>
         </Section>
 
@@ -1526,28 +1519,36 @@ export default function App() {
           </View>
         </Section>
 
-        <Section bg={NAVY} photo={CTA_PHOTO}>
-          <View style={[styles.ctaRow, isMobile && styles.ctaRowMobile]}>
-            <View style={styles.ctaCopy}>
-              <Text style={styles.ctaTitle}>Your Business Has the Problem.</Text>
-              <Text style={[styles.ctaTitle, { color: BLUE_LIGHT }]}>Let’s Build the Solution.</Text>
-              <Text style={styles.ctaText}>Human Expertise + AI + Automation + Technology = Real Results.</Text>
-              <Btn label="TELL US YOUR BUSINESS PROBLEM →" style={{ marginTop: 18 }} />
-            </View>
-
-            {!isMobile && (
-              <Logo markStyle={styles.ctaMark} nameStyle={styles.ctaLogoName} taglineStyle={styles.ctaLogoTagline} />
-            )}
-          </View>
-        </Section>
-
         <SiteFooter isMobile={isMobile} onNavigate={setPage} />
       </ScrollView>
     </SafeAreaView>
   );
 }
 
-const styles = StyleSheet.create({
+const headerFontStyles = new Set([
+  'headerLogoName',
+  'headerLogoNameCompact',
+  'navItem',
+  'navItemCompact',
+  'headerBtnCompactText',
+]);
+
+const increaseContentFontSizes = (styleMap) => Object.fromEntries(
+  Object.entries(styleMap).map(([name, style]) => {
+    const normalizedStyle = style.fontFamily === 'Georgia'
+      ? { ...style, fontFamily: 'Inter_400Regular' }
+      : style;
+
+    return [
+      name,
+      !headerFontStyles.has(name) && typeof normalizedStyle.fontSize === 'number'
+        ? { ...normalizedStyle, fontSize: normalizedStyle.fontSize + 2 }
+        : normalizedStyle,
+    ];
+  })
+);
+
+const styles = StyleSheet.create(increaseContentFontSizes({
   safeArea: {
     flex: 1,
     backgroundColor: NAVY,
@@ -1621,7 +1622,7 @@ const styles = StyleSheet.create({
   },
   navItem: {
     color: '#D6DEE8',
-    fontSize: 14,
+    fontSize: 16,
     fontFamily: 'Inter_600SemiBold',
   },
   navItemHover: {
@@ -1631,7 +1632,7 @@ const styles = StyleSheet.create({
     color: '#A6D5FF',
   },
   navItemCompact: {
-    fontSize: 9,
+    fontSize: 11,
   },
   btn: {
     borderRadius: 6,
@@ -1986,9 +1987,11 @@ const styles = StyleSheet.create({
   tellUsRow: {
     flexDirection: 'row',
     gap: 32,
+    alignItems: 'center',
   },
   tellUsRowMobile: {
     flexDirection: 'column',
+    alignItems: 'stretch',
   },
   tellUsCopy: {
     flex: 1.3,
@@ -2161,6 +2164,9 @@ const styles = StyleSheet.create({
   ctaCopy: {
     flex: 1.3,
   },
+  ctaCopyMobile: {
+    width: '100%',
+  },
   ctaTitle: {
     color: '#FFFFFF',
     fontSize: 28,
@@ -2235,7 +2241,7 @@ const styles = StyleSheet.create({
   },
   footerLink: {
     color: '#B7C0CE',
-    fontSize: 10,
+    fontSize: 12,
     fontFamily: 'Inter_600SemiBold',
   },
   footerLinkHover: {
@@ -2475,6 +2481,10 @@ const styles = StyleSheet.create({
     fontFamily: 'Georgia',
     marginBottom: 12,
   },
+  formEyebrow: {
+    alignSelf: 'center',
+    textAlign: 'center',
+  },
   contactInput: {
     backgroundColor: '#FFFFFF',
     borderWidth: 1,
@@ -2493,6 +2503,7 @@ const styles = StyleSheet.create({
   },
   contactSendButton: {
     width: '100%',
+    alignItems: 'center',
     justifyContent: 'center',
   },
   contactFormNote: {
@@ -3816,4 +3827,4 @@ const styles = StyleSheet.create({
   whoCtaCopy: {
     maxWidth: 650,
   },
-});
+}));
