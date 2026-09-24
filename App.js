@@ -249,6 +249,7 @@ function ApproachTile({ bg }) {
 function SiteHeader({ isMobile, onNavigate, activePage = 'home' }) {
   const { width } = useWindowDimensions();
   const compact = !isMobile && width < 900;
+  const visibleNavItems = activePage === 'home' ? navItems : ['Home', ...navItems];
 
   return (
     <View style={[styles.topbar, compact && styles.topbarCompact]}>
@@ -263,7 +264,7 @@ function SiteHeader({ isMobile, onNavigate, activePage = 'home' }) {
 
       {!isMobile && (
         <View style={[styles.navWrap, compact && styles.navWrapCompact]}>
-          {navItems.map((item) => {
+          {visibleNavItems.map((item) => {
             const page = item === 'Who We Are' ? 'who' : item === 'Solutions' ? 'solution' : item === 'Industries' ? 'industries' : item === 'Contact' ? 'contact' : item === 'Insights' ? 'insights' : item === 'How We Work' ? 'how' : 'home';
             const isWhoLink = item === 'Who We Are';
             const isSolutionLink = item === 'Solutions';
@@ -293,12 +294,11 @@ function SiteHeader({ isMobile, onNavigate, activePage = 'home' }) {
         </View>
       )}
 
-      {!isMobile && <Btn label="TELL US YOUR BUSINESS PROBLEM →" onDark style={[styles.headerBtn, compact && styles.headerBtnCompact]} />}
     </View>
   );
 }
 
-function SiteFooter({ isMobile, onNavigate }) {
+function SiteFooter({ isMobile, onNavigate, showHomeLink = false }) {
   return (
     <Section bg="#031426" style={styles.footerSection} shellStyle={styles.footerShell}>
       <View style={[styles.footerTop, isMobile && styles.footerTopMobile]}>
@@ -308,7 +308,7 @@ function SiteFooter({ isMobile, onNavigate }) {
 
         {!isMobile && (
           <View style={styles.footerColumns}>
-            {footerColumns.map((item) => {
+            {(showHomeLink ? ['Home', ...footerColumns] : footerColumns).map((item) => {
               const isWhoLink = item === 'Who We Are';
               const isSolutionLink = item === 'Solutions';
               const isIndustriesLink = item === 'Industries';
@@ -506,7 +506,7 @@ function SolutionPage({ isMobile, onNavigate }) {
           </View>
         </Section>
 
-        <SiteFooter isMobile={isMobile} onNavigate={onNavigate} />
+        <SiteFooter isMobile={isMobile} onNavigate={onNavigate} showHomeLink />
       </ScrollView>
     </SafeAreaView>
   );
@@ -811,7 +811,7 @@ function ContactPage({ isMobile, onNavigate }) {
           </View>
         </Section>
 
-        <SiteFooter isMobile={isMobile} onNavigate={onNavigate} />
+        <SiteFooter isMobile={isMobile} onNavigate={onNavigate} showHomeLink />
       </ScrollView>
     </SafeAreaView>
   );
@@ -885,7 +885,7 @@ function InsightsPage({ isMobile, onNavigate }) {
         <Section bg={NAVY} image={require('./assets/bgimg.png')} scrim={['rgba(4,16,31,0.82)', 'rgba(4,16,31,0.42)', 'rgba(4,16,31,0.75)']} shellStyle={styles.insightsClosingShell}>
           <View style={[styles.insightsClosingRow, isMobile && styles.insightsClosingRowMobile]}><View><Eyebrow onDark>TURN INSIGHTS INTO ACTION</Eyebrow><Text style={styles.sectionTitleLight}>Let’s Solve Your Business Problem.</Text><Text style={styles.insightsClosingText}>Talk with our team to explore how these insights can create real results for your organization.</Text></View><Btn label="SCHEDULE A CONSULTATION  →" onPress={() => onNavigate('contact')} /></View>
         </Section>
-        <SiteFooter isMobile={isMobile} onNavigate={onNavigate} />
+        <SiteFooter isMobile={isMobile} onNavigate={onNavigate} showHomeLink />
       </ScrollView>
     </SafeAreaView>
   );
@@ -932,7 +932,7 @@ function HowWeWorkPage({ isMobile, onNavigate }) {
         <Section bg="#FFFFFF" shellStyle={styles.howOutcomeShell}><View style={[styles.howOutcomeRow, isMobile && styles.howOutcomeRowMobile]}><View style={styles.howWhy}><Eyebrow>WHY IT WORKS</Eyebrow><Text style={styles.howSectionTitle}>Business First.{ '\n' }Technology Second.{ '\n'}<Text style={{ color: BLUE }}>Results Always.</Text></Text><Text style={styles.howIntroText}>We start with your business problem, not a predefined technology. This ensures the right solution, greater adoption and measurable outcomes.</Text><Btn label="SEE REAL-WORLD EXAMPLES  →" /></View><View style={styles.howOutcomeImage}><Image source={require('./assets/whyit.png')} style={StyleSheet.absoluteFillObject} resizeMode="cover" /><View style={styles.howOutcomeOverlay} /><Text style={styles.howOutcomePath}>STRATEGY{ '\n' }  SOLUTION{ '\n' }    EXECUTION{ '\n' }      RESULTS</Text></View><View style={styles.howOutcomeList}><Eyebrow>TYPICAL OUTCOMES</Eyebrow>{outcomes.map(([title, text, Icon]) => <View key={title} style={styles.howOutcomeItem}><Icon size={26} color={BLUE} /><View><Text style={styles.howOutcomeTitle}>{title}</Text><Text style={styles.howOutcomeText}>{text}</Text></View></View>)}</View></View></Section>
 
         <Section bg={NAVY} image={require('./assets/bgimg.png')} scrim={['rgba(4,16,31,0.82)', 'rgba(4,16,31,0.42)', 'rgba(4,16,31,0.75)']} shellStyle={styles.howClosingShell}><View style={[styles.howClosingRow, isMobile && styles.howClosingRowMobile]}><View><Eyebrow onDark>READY TO GET STARTED?</Eyebrow><Text style={styles.sectionTitleLight}>Let’s Solve Your Business Problem.</Text><Text style={styles.howClosingText}>Tell us about your challenges and we’ll help you identify the right next step.</Text></View><Btn label="TELL US YOUR BUSINESS PROBLEM  →" onPress={() => onNavigate('contact')} /></View></Section>
-        <SiteFooter isMobile={isMobile} onNavigate={onNavigate} />
+        <SiteFooter isMobile={isMobile} onNavigate={onNavigate} showHomeLink />
       </ScrollView>
     </SafeAreaView>
   );
@@ -1088,7 +1088,7 @@ function IndustriesPage({ isMobile, onNavigate }) {
           </View>
         </Section>
 
-        <SiteFooter isMobile={isMobile} onNavigate={onNavigate} />
+        <SiteFooter isMobile={isMobile} onNavigate={onNavigate} showHomeLink />
       </ScrollView>
     </SafeAreaView>
   );
@@ -1239,7 +1239,7 @@ function WhoWeArePage({ isMobile, onNavigate }) {
           </View>
         </Section>
 
-        <SiteFooter isMobile={isMobile} onNavigate={onNavigate} />
+        <SiteFooter isMobile={isMobile} onNavigate={onNavigate} showHomeLink />
       </ScrollView>
     </SafeAreaView>
   );
@@ -1321,7 +1321,6 @@ export default function App() {
               </Text>
 
               <View style={styles.buttonRow}>
-                <Btn label="TELL US YOUR BUSINESS PROBLEM →" onPress={() => setPage('home')} />
                 <Btn label="EXPLORE OUR SOLUTIONS" variant="outline" onDark onPress={() => setPage('solution')} />
               </View>
 
