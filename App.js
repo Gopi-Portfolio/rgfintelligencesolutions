@@ -50,6 +50,10 @@ const BORDER = '#E3E7EE';
 const STACKED_FLEX_ITEM = { flexGrow: 0, flexShrink: 0, flexBasis: 'auto' };
 const STACKED_CONTENT = { ...STACKED_FLEX_ITEM, width: '100%', maxWidth: '100%', alignSelf: 'center' };
 // Narrow-viewport grids: items wrap into as many columns as their minWidth allows.
+// Closing call-to-action sections are centered on phones and tablets.
+const CENTER_BLOCK = { alignItems: 'center' };
+const CENTER_TEXT = { textAlign: 'center', alignSelf: 'center' };
+const CENTER_SELF = { alignSelf: 'center' };
 const STACKED_GRID = { flexDirection: 'row', flexWrap: 'wrap', alignItems: 'stretch', columnGap: 20, rowGap: 24 };
 const gridItem = (minWidth, flexBasis = '40%') => ({ flexGrow: 1, flexShrink: 1, flexBasis, minWidth, width: 'auto', maxWidth: '100%' });
 // Drops the desktop column-divider indent so stacked items line up with the section heading.
@@ -212,9 +216,9 @@ function Btn({ label, variant = 'solid', onDark = false, style, onPress, disable
   );
 }
 
-function Logo({ markStyle, nameStyle, taglineStyle, showTagline = true }) {
+function Logo({ markStyle, nameStyle, taglineStyle, showTagline = true, centered = false }) {
   return (
-    <View>
+    <View style={centered && CENTER_BLOCK}>
       <Image source={require('./assets/RGF-logo-mark.png')} style={markStyle} resizeMode="contain" />
       <Text style={nameStyle}>
         INTELLIGENCE <Text style={{ color: BLUE_LIGHT }}>SOLUTIONS</Text>
@@ -287,8 +291,8 @@ function Section({ bg, children, style, shellStyle, photo, image, imageStyle, sc
   );
 }
 
-function Eyebrow({ children, onDark = false }) {
-  return <Text style={[styles.eyebrow, onDark && { color: '#8CB4E0' }]}>{children}</Text>;
+function Eyebrow({ children, onDark = false, style }) {
+  return <Text style={[styles.eyebrow, onDark && { color: '#8CB4E0' }, style]}>{children}</Text>;
 }
 
 function ApproachTile({ bg }) {
@@ -389,7 +393,7 @@ function SiteFooter({ isMobile, onNavigate, showHomeLink = false }) {
     <Section bg="#031426" style={styles.footerSection} shellStyle={styles.footerShell}>
       <View style={[styles.footerTop, isMobile && styles.footerTopMobile]}>
         <Pressable onPress={() => onNavigate('home')} style={isMobile && styles.footerLogoMobile}>
-          <Logo markStyle={styles.footerMark} nameStyle={styles.footerLogoName} taglineStyle={styles.footerLogoTagline} />
+          <Logo markStyle={styles.footerMark} nameStyle={[styles.footerLogoName, isMobile && CENTER_TEXT]} taglineStyle={[styles.footerLogoTagline, isMobile && CENTER_TEXT]} centered={isMobile} />
         </Pressable>
 
         <View style={[styles.footerColumns, isMobile && styles.footerColumnsMobile]}>
@@ -579,14 +583,14 @@ function SolutionPage({ isMobile, isPhone, onNavigate, section }) {
 
         <Section bg={NAVY} shellStyle={styles.solutionClosingShell}>
           <View style={[styles.solutionClosingRow, isMobile && styles.solutionClosingRowMobile]}>
-            <View style={[styles.solutionClosingCopy, isMobile && STACKED_FLEX_ITEM]}>
-              <Eyebrow onDark>READY TO FIND THE RIGHT SOLUTION?</Eyebrow>
-              <Text style={styles.sectionTitleLight}>Let’s Solve Your Business Problem.</Text>
-              <Text style={styles.sectionSubtitleLight}>Whether you need AI, automation, better data, connected systems or a complete transformation, we’ll help you determine the best path forward.</Text>
+            <View style={[styles.solutionClosingCopy, isMobile && STACKED_FLEX_ITEM, isMobile && CENTER_BLOCK]}>
+              <Eyebrow onDark style={isMobile && CENTER_TEXT}>READY TO FIND THE RIGHT SOLUTION?</Eyebrow>
+              <Text style={[styles.sectionTitleLight, isMobile && CENTER_TEXT]}>Let’s Solve Your Business Problem.</Text>
+              <Text style={[styles.sectionSubtitleLight, isMobile && CENTER_TEXT]}>Whether you need AI, automation, better data, connected systems or a complete transformation, we’ll help you determine the best path forward.</Text>
             </View>
-            <View style={styles.solutionClosingAction}>
-              <Btn label="TELL US YOUR BUSINESS PROBLEM →" onPress={() => onNavigate('contact', 'form')} />
-              <Text style={styles.solutionClosingNote}>Confidential  •  No Obligation  •  Real Solutions</Text>
+            <View style={[styles.solutionClosingAction, isMobile && CENTER_SELF, isMobile && CENTER_BLOCK]}>
+              <Btn label="TELL US YOUR BUSINESS PROBLEM →" onPress={() => onNavigate('contact', 'form')} style={isMobile && CENTER_SELF} />
+              <Text style={[styles.solutionClosingNote, isMobile && CENTER_TEXT]}>Confidential  •  No Obligation  •  Real Solutions</Text>
             </View>
           </View>
         </Section>
@@ -895,12 +899,12 @@ function ContactPage({ isMobile, isPhone, onNavigate, section }) {
 
         <Section bg={NAVY} image={require('./assets/bgimg.png')} scrim={['rgba(4,16,31,0.72)', 'rgba(4,16,31,0.42)', 'rgba(4,16,31,0.68)']} shellStyle={styles.contactClosingShell}>
           <View style={[styles.contactClosingRow, isMobile && styles.contactClosingRowMobile]}>
-            <View>
-              <Eyebrow onDark>READY TO TAKE THE NEXT STEP?</Eyebrow>
-              <Text style={styles.sectionTitleLight}>Turn Your Business Challenges{ '\n' }Into Real Solutions.</Text>
-              <Text style={styles.contactClosingText}>Whether you’re exploring ideas or ready to get started, we’d love to hear from you.</Text>
+            <View style={isMobile && CENTER_BLOCK}>
+              <Eyebrow onDark style={isMobile && CENTER_TEXT}>READY TO TAKE THE NEXT STEP?</Eyebrow>
+              <Text style={[styles.sectionTitleLight, isMobile && CENTER_TEXT]}>Turn Your Business Challenges{isMobile ? ' ' : '\n'}Into Real Solutions.</Text>
+              <Text style={[styles.contactClosingText, isMobile && CENTER_TEXT]}>Whether you’re exploring ideas or ready to get started, we’d love to hear from you.</Text>
             </View>
-            <Btn label="TELL US YOUR BUSINESS PROBLEM  →" onPress={() => scrollToAnchor('form')} />
+            <Btn label="TELL US YOUR BUSINESS PROBLEM  →" onPress={() => scrollToAnchor('form')} style={isMobile && CENTER_SELF} />
           </View>
         </Section>
 
@@ -1026,7 +1030,7 @@ function InsightsPage({ isMobile, isPhone, onNavigate, section }) {
         </Section>
 
         <Section bg={NAVY} image={require('./assets/bgimg.png')} scrim={['rgba(4,16,31,0.82)', 'rgba(4,16,31,0.42)', 'rgba(4,16,31,0.75)']} shellStyle={styles.insightsClosingShell}>
-          <View style={[styles.insightsClosingRow, isMobile && styles.insightsClosingRowMobile]}><View style={[styles.insightsClosingCopy, isMobile && STACKED_CONTENT]}><Eyebrow onDark>TURN INSIGHTS INTO ACTION</Eyebrow><Text style={styles.sectionTitleLight}>Let’s Solve Your Business Problem.</Text><Text style={styles.insightsClosingText}>Talk with our team to explore how these insights can create real results for your organization.</Text></View><Btn label="SCHEDULE A CONSULTATION  →" onPress={() => onNavigate('contact', 'form')} /></View>
+          <View style={[styles.insightsClosingRow, isMobile && styles.insightsClosingRowMobile]}><View style={[styles.insightsClosingCopy, isMobile && STACKED_CONTENT, isMobile && CENTER_BLOCK]}><Eyebrow onDark style={isMobile && CENTER_TEXT}>TURN INSIGHTS INTO ACTION</Eyebrow><Text style={[styles.sectionTitleLight, isMobile && CENTER_TEXT]}>Let’s Solve Your Business Problem.</Text><Text style={[styles.insightsClosingText, isMobile && CENTER_TEXT]}>Talk with our team to explore how these insights can create real results for your organization.</Text></View><Btn label="SCHEDULE A CONSULTATION  →" onPress={() => onNavigate('contact', 'form')} style={isMobile && CENTER_SELF} /></View>
         </Section>
         <SiteFooter isMobile={isMobile} onNavigate={onNavigate} showHomeLink />
       </ScrollView>
@@ -1034,8 +1038,21 @@ function InsightsPage({ isMobile, isPhone, onNavigate, section }) {
   );
 }
 
+// whyit.png is 2073x758 and its only focal point (the four-circle graphic) spans 58%–82% of the
+// width. Scale the image to the panel height and slide it so that graphic ends 16px from the
+// panel's right edge, leaving the left side free for the STRATEGY → RESULTS labels.
+const WHY_IMAGE_RATIO = 2073 / 758;
+const WHY_FOCUS_RIGHT = 0.82;
+
+function whyImageFrame({ width, height }) {
+  const imageWidth = height * WHY_IMAGE_RATIO;
+  const left = Math.min(0, Math.max(width - imageWidth, width - 16 - WHY_FOCUS_RIGHT * imageWidth));
+  return { left, width: imageWidth, height };
+}
+
 function HowWeWorkPage({ isMobile, isPhone, onNavigate, section }) {
   const { scrollRef, anchor, scrollToAnchor } = useAnchors(section);
+  const [whyPanel, setWhyPanel] = useState(null);
   const steps = [
     { number: '01', Icon: BulbIcon, title: 'Discover', subtitle: 'Understand Your Business', text: 'We learn about your organization, goals, challenges, people, processes and existing technology.', image: require('./assets/1.admin.png') },
     { number: '02', Icon: BarChartIcon, title: 'Diagnose', subtitle: 'Identify Opportunities', text: 'We analyze your operations, data and systems to find root causes, inefficiencies, bottlenecks and high-value opportunities.', image: require('./assets/03-data-analytics.png') },
@@ -1073,9 +1090,9 @@ function HowWeWorkPage({ isMobile, isPhone, onNavigate, section }) {
 
         <Section bg="#F0F7FE" shellStyle={styles.howPartnershipShell} {...anchor('partnership')}><View style={[styles.howPartnershipRow, isMobile && styles.howPartnershipRowMobile]}><View style={[styles.howPartnershipCopy, isMobile && STACKED_FLEX_ITEM]}><Eyebrow>PARTNERSHIP APPROACH</Eyebrow><Text style={styles.howSectionTitle}>More Than a Vendor — A True Partner.</Text><Text style={styles.howIntroText}>We work alongside your team, combining our expertise with your industry knowledge to deliver practical solutions that create real, measurable value.</Text></View><View style={[styles.howPrinciples, isMobile && STACKED_FLEX_ITEM, isMobile && STACKED_GRID, isMobile && styles.howPrinciplesMobile]}>{principles.map(([title, text], index) => <View key={title} style={[styles.howPrinciple, isMobile && GRID_ITEM_HALF, index > 0 && !isMobile && styles.howPrincipleDivider]}><UsersIcon size={30} color={BLUE} /><Text style={styles.howPrincipleTitle}>{title}</Text><Text style={styles.howPrincipleText}>{text}</Text></View>)}</View></View></Section>
 
-        <Section bg="#FFFFFF" shellStyle={styles.howOutcomeShell}><View style={[styles.howOutcomeRow, isMobile && styles.howOutcomeRowMobile]}><View style={[styles.howWhy, isMobile && STACKED_FLEX_ITEM, isMobile && styles.howWhyMobile]}><Eyebrow onDark>WHY IT WORKS</Eyebrow><Text style={[styles.howSectionTitle, styles.howWhyTitle]}>Business First.{ '\n' }Technology Second.{ '\n'}<Text style={{ color: BLUE_LIGHT }}>Results Always.</Text></Text><Text style={[styles.howIntroText, styles.howWhyText]}>We start with your business problem, not a predefined technology. This ensures the right solution, greater adoption and measurable outcomes.</Text><Btn label="SEE REAL-WORLD EXAMPLES  →" onPress={() => onNavigate('insights', 'featured')} /></View><View style={[styles.howOutcomeImage, isMobile && STACKED_FLEX_ITEM]}><Image source={require('./assets/whyit.png')} style={styles.howOutcomePhoto} resizeMode="cover" /><View style={styles.howOutcomeOverlay} /><Text style={styles.howOutcomePath}>STRATEGY{ '\n' }  SOLUTION{ '\n' }    EXECUTION{ '\n' }      RESULTS</Text></View><View style={[styles.howOutcomeList, isMobile && STACKED_FLEX_ITEM, isMobile && styles.howOutcomeListMobile]}><Eyebrow>TYPICAL OUTCOMES</Eyebrow>{outcomes.map(([title, text, Icon]) => <View key={title} style={styles.howOutcomeItem}><Icon size={26} color={BLUE} /><View style={styles.howOutcomeCopy}><Text style={styles.howOutcomeTitle}>{title}</Text><Text style={styles.howOutcomeText}>{text}</Text></View></View>)}</View></View></Section>
+        <Section bg="#FFFFFF" shellStyle={styles.howOutcomeShell}><View style={[styles.howOutcomeRow, isMobile && styles.howOutcomeRowMobile]}><View style={[styles.howWhy, isMobile && STACKED_FLEX_ITEM, isMobile && styles.howWhyMobile]}><Eyebrow onDark>WHY IT WORKS</Eyebrow><Text style={[styles.howSectionTitle, styles.howWhyTitle]}>Business First.{ '\n' }Technology Second.{ '\n'}<Text style={{ color: BLUE_LIGHT }}>Results Always.</Text></Text><Text style={[styles.howIntroText, styles.howWhyText]}>We start with your business problem, not a predefined technology. This ensures the right solution, greater adoption and measurable outcomes.</Text><Btn label="SEE REAL-WORLD EXAMPLES  →" onPress={() => onNavigate('insights', 'featured')} /></View><View style={[styles.howOutcomeImage, isMobile && STACKED_FLEX_ITEM]} onLayout={(event) => setWhyPanel(event.nativeEvent.layout)}>{whyPanel && <Image source={require('./assets/whyit.png')} style={[styles.howOutcomePhoto, whyImageFrame(whyPanel)]} resizeMode="cover" />}<View style={styles.howOutcomeOverlay} /><Text style={[styles.howOutcomePath, isPhone && styles.howOutcomePathPhone]}>STRATEGY{ '\n' }  SOLUTION{ '\n' }    EXECUTION{ '\n' }      RESULTS</Text></View><View style={[styles.howOutcomeList, isMobile && STACKED_FLEX_ITEM, isMobile && styles.howOutcomeListMobile]}><Eyebrow>TYPICAL OUTCOMES</Eyebrow>{outcomes.map(([title, text, Icon]) => <View key={title} style={styles.howOutcomeItem}><Icon size={26} color={BLUE} /><View style={styles.howOutcomeCopy}><Text style={styles.howOutcomeTitle}>{title}</Text><Text style={styles.howOutcomeText}>{text}</Text></View></View>)}</View></View></Section>
 
-        <Section bg={NAVY} image={require('./assets/bgimg.png')} scrim={['rgba(4,16,31,0.82)', 'rgba(4,16,31,0.42)', 'rgba(4,16,31,0.75)']} shellStyle={styles.howClosingShell}><View style={[styles.howClosingRow, isMobile && styles.howClosingRowMobile]}><View style={[styles.howClosingCopy, isMobile && STACKED_CONTENT]}><Eyebrow onDark>READY TO GET STARTED?</Eyebrow><Text style={styles.sectionTitleLight}>Let’s Solve Your Business Problem.</Text><Text style={styles.howClosingText}>Tell us about your challenges and we’ll help you identify the right next step.</Text></View><Btn label="TELL US YOUR BUSINESS PROBLEM  →" onPress={() => onNavigate('contact', 'form')} /></View></Section>
+        <Section bg={NAVY} image={require('./assets/bgimg.png')} scrim={['rgba(4,16,31,0.82)', 'rgba(4,16,31,0.42)', 'rgba(4,16,31,0.75)']} shellStyle={styles.howClosingShell}><View style={[styles.howClosingRow, isMobile && styles.howClosingRowMobile]}><View style={[styles.howClosingCopy, isMobile && STACKED_CONTENT, isMobile && CENTER_BLOCK]}><Eyebrow onDark style={isMobile && CENTER_TEXT}>READY TO GET STARTED?</Eyebrow><Text style={[styles.sectionTitleLight, isMobile && CENTER_TEXT]}>Let’s Solve Your Business Problem.</Text><Text style={[styles.howClosingText, isMobile && CENTER_TEXT]}>Tell us about your challenges and we’ll help you identify the right next step.</Text></View><Btn label="TELL US YOUR BUSINESS PROBLEM  →" onPress={() => onNavigate('contact', 'form')} style={isMobile && CENTER_SELF} /></View></Section>
         <SiteFooter isMobile={isMobile} onNavigate={onNavigate} showHomeLink />
       </ScrollView>
     </SafeAreaView>
@@ -1224,12 +1241,12 @@ function IndustriesPage({ isMobile, isPhone, onNavigate, section }) {
 
         <Section bg={NAVY} image={require('./assets/bgimg.png')} scrim={['rgba(4,16,31,0.82)', 'rgba(4,16,31,0.42)', 'rgba(4,16,31,0.75)']} shellStyle={styles.howClosingShell}>
           <View style={[styles.howClosingRow, isMobile && styles.howClosingRowMobile]}>
-            <View style={[styles.howClosingCopy, isMobile && STACKED_CONTENT]}>
-              <Eyebrow onDark>READY TO BUILD FOR YOUR INDUSTRY?</Eyebrow>
-              <Text style={styles.sectionTitleLight}>Let’s Solve Your Business Problem.</Text>
-              <Text style={styles.howClosingText}>Tell us where your operations are challenged and we’ll help identify the right strategy, technology, and delivery path for your business.</Text>
+            <View style={[styles.howClosingCopy, isMobile && STACKED_CONTENT, isMobile && CENTER_BLOCK]}>
+              <Eyebrow onDark style={isMobile && CENTER_TEXT}>READY TO BUILD FOR YOUR INDUSTRY?</Eyebrow>
+              <Text style={[styles.sectionTitleLight, isMobile && CENTER_TEXT]}>Let’s Solve Your Business Problem.</Text>
+              <Text style={[styles.howClosingText, isMobile && CENTER_TEXT]}>Tell us where your operations are challenged and we’ll help identify the right strategy, technology, and delivery path for your business.</Text>
             </View>
-            <Btn label="TELL US YOUR BUSINESS PROBLEM  →" onPress={() => onNavigate('contact', 'form')} />
+            <Btn label="TELL US YOUR BUSINESS PROBLEM  →" onPress={() => onNavigate('contact', 'form')} style={isMobile && CENTER_SELF} />
           </View>
         </Section>
 
@@ -1376,11 +1393,11 @@ function WhoWeArePage({ isMobile, isPhone, onNavigate, section }) {
 
         <Section bg={NAVY} image={require('./assets/who-we-are/who-cta-crop.png')} scrim={['rgba(4,16,31,0.7)', 'rgba(4,16,31,0.35)', 'rgba(4,16,31,0.72)']} style={styles.whoCtaSection} shellStyle={styles.whoShell}>
           <View style={[styles.whoCtaRow, isMobile && styles.whoCtaRowMobile]}>
-            <View style={styles.whoCtaCopy}>
-              <Eyebrow onDark>LET’S BUILD WHAT’S NEXT</Eyebrow>
-              <Text style={[styles.sectionTitleLight, styles.whoSectionTitleLight]}>Ready to Turn Your Business{isMobile ? ' ' : '\n'}Challenges Into Real Solutions?</Text>
-              <Text style={styles.sectionSubtitleLight}>Partner with RGF Intelligence Solutions and discover how intelligent technology can help you work smarter, grow faster, and achieve more.</Text>
-              <Btn label="TELL US YOUR BUSINESS PROBLEM →" onPress={() => onNavigate('contact', 'form')} />
+            <View style={[styles.whoCtaCopy, isMobile && CENTER_BLOCK, isMobile && CENTER_SELF]}>
+              <Eyebrow onDark style={isMobile && CENTER_TEXT}>LET’S BUILD WHAT’S NEXT</Eyebrow>
+              <Text style={[styles.sectionTitleLight, styles.whoSectionTitleLight, isMobile && CENTER_TEXT]}>Ready to Turn Your Business{isMobile ? ' ' : '\n'}Challenges Into Real Solutions?</Text>
+              <Text style={[styles.sectionSubtitleLight, isMobile && CENTER_TEXT]}>Partner with RGF Intelligence Solutions and discover how intelligent technology can help you work smarter, grow faster, and achieve more.</Text>
+              <Btn label="TELL US YOUR BUSINESS PROBLEM →" onPress={() => onNavigate('contact', 'form')} style={isMobile && CENTER_SELF} />
             </View>
           </View>
         </Section>
@@ -2893,7 +2910,7 @@ const styles = StyleSheet.create(increaseContentFontSizes({
   },
   contactClosingRowMobile: {
     flexDirection: 'column',
-    alignItems: 'flex-start',
+    alignItems: 'center',
   },
   contactClosingText: {
     color: '#B7C0CE',
@@ -3197,7 +3214,7 @@ const styles = StyleSheet.create(increaseContentFontSizes({
   },
   insightsClosingRowMobile: {
     flexDirection: 'column',
-    alignItems: 'flex-start',
+    alignItems: 'center',
   },
   insightsClosingText: {
     color: '#B7C0CE',
@@ -3500,9 +3517,11 @@ const styles = StyleSheet.create(increaseContentFontSizes({
   howOutcomePhoto: {
     position: 'absolute',
     top: 0,
-    right: 0,
-    height: '100%',
-    aspectRatio: 2073 / 758,
+  },
+  howOutcomePathPhone: {
+    left: 18,
+    fontSize: 12,
+    lineHeight: 28,
   },
   howOutcomeListMobile: {
     paddingHorizontal: 0,
@@ -3562,7 +3581,7 @@ const styles = StyleSheet.create(increaseContentFontSizes({
   },
   howClosingRowMobile: {
     flexDirection: 'column',
-    alignItems: 'flex-start',
+    alignItems: 'center',
   },
   howClosingText: {
     color: '#B7C0CE',
@@ -3898,7 +3917,7 @@ const styles = StyleSheet.create(increaseContentFontSizes({
   },
   solutionClosingRowMobile: {
     flexDirection: 'column',
-    alignItems: 'flex-start',
+    alignItems: 'center',
   },
   solutionClosingCopy: {
     flex: 1,
