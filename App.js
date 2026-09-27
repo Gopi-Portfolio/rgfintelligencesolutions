@@ -1430,6 +1430,12 @@ export default function App() {
   const { width } = useWindowDimensions();
   const isPhone = width < 700;
   const isMobile = width < 900;
+  // "Reimagine with AI." needs ~410px at full size; shrink the hero headline on narrower phones so it stays on one line.
+  const heroScale = Math.min(1, (width - 32) / 410);
+  const heroFit = heroScale < 1 ? {
+    title: { fontSize: 40 * heroScale, lineHeight: 47 * heroScale },
+    initial: { fontSize: 54 * heroScale, lineHeight: 56 * heroScale },
+  } : {};
   const [route, setRoute] = useState({ page: 'home', section: null, key: 0 });
   const { page } = route;
   // A new key remounts the page, so every navigation starts at the top (or at `section`).
@@ -1486,17 +1492,17 @@ export default function App() {
           <View style={[styles.heroRow, isMobile && styles.heroRowMobile]}>
             <View style={[styles.heroTextWrap, isMobile && STACKED_CONTENT]}>
               <Text style={styles.heroKicker}>INTELLIGENCE. EXECUTION. REAL RESULTS.</Text>
-              <Text style={styles.heroTitle}>
+              <Text style={[styles.heroTitle, heroFit.title]}>
                 <Text style={{ color: BLUE_LIGHT }}>
-                  <Text style={styles.heroInitial}>R</Text>eimagine
+                  <Text style={[styles.heroInitial, heroFit.initial]}>R</Text>eimagine
                 </Text>{' '}
                 with AI.{'\n'}
                 <Text style={{ color: BLUE_LIGHT }}>
-                  <Text style={[styles.heroInitial, styles.heroInitialG]}>G</Text>enerate
+                  <Text style={[styles.heroInitial, styles.heroInitialG, heroFit.initial]}>G</Text>enerate
                 </Text>{' '}
                 Value.{'\n'}
                 <Text style={{ color: BLUE_LIGHT }}>
-                  <Text style={styles.heroInitial}>F</Text>orge
+                  <Text style={[styles.heroInitial, heroFit.initial]}>F</Text>orge
                 </Text>{' '}
                 <Text style={{ color: '#FFFFFF' }}>the Future.</Text>
               </Text>
