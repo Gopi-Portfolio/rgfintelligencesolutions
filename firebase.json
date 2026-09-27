@@ -1,6 +1,15 @@
 {
   "functions": {
-    "source": "functions"
+    "source": "functions",
+    "ignore": [
+      "node_modules",
+      ".git",
+      "firebase-debug.log",
+      "firebase-debug.*.log",
+      "*.local",
+      "scripts",
+      "test"
+    ]
   },
   "hosting": {
     "public": "dist",
@@ -10,6 +19,13 @@
       "node_modules/**"
     ],
     "rewrites": [
+      {
+        "source": "/api/askRgf",
+        "function": {
+          "functionId": "askRgf",
+          "region": "us-central1"
+        }
+      },
       {
         "source": "**",
         "destination": "/index.html"

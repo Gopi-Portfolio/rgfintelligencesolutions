@@ -55,3 +55,47 @@ exports.submitContactForm = functions.https.onRequest(async (req, res) => {
     res.status(500).json({ ok: false, error: 'Failed to send email' });
   }
 });
+
+// ---------------------------------------------------------------------------------------------
+// Ask RGF website assistant. Browser -> Hosting rewrite (/api/askRgf) -> this function -> OpenAI.
+// The OpenAI key and vector store ID live only in Secret Manager.
+const { onRequest } = require('firebase-functions/v2/https');
+const { defineSecret } = require('firebase-functions/params');
+const logger = require('firebase-functions/logger');
+const { allowedOrigins } = require('./askRgf/config');
+const { createAskRgfHandler } = require('./askRgf/handler');
+const { createRateLimiter } = require('./askRgf/rateLimit');
+const { createOpenAiCaller } = require('./askRgf/openaiClient');
+
+const OPENAI_API_KEY = defineSecret('OPENAI_API_KEY');
+const OPENAI_VECTOR_STORE_ID = defineSecret('OPENAI_VECTOR_STORE_ID');
+
+let modelCaller;
+const askRgfHandler = createAskRgfHandler({
+  getModelCaller: () => {
+    modelCaller ||= createOpenAiCaller({
+      apiKey: OPENAI_API_KEY.value(),
+      vectorStoreId: OPENAI_VECTOR_STORE_ID.value(),
+    });
+    return modelCaller;
+  },
+  rateLimiter: createRateLimiter(),
+  allowedOrigins: allowedOrigins(),
+  logger,
+  verifyAppCheck:
+    process.env.ASK_RGF_ENFORCE_APP_CHECK === 'true'
+      ? async (token) => Boolean(token) && Boolean(await admin.appCheck().verifyToken(token))
+      : undefined,
+});
+
+exports.askRgf = onRequest(
+  {
+    region: 'us-central1',
+    secrets: [OPENAI_API_KEY, OPENAI_VECTOR_STORE_ID],
+    invoker: 'public',
+    maxInstances: 5,
+    timeoutSeconds: 30,
+    memory: '256MiB',
+  },
+  askRgfHandler
+);

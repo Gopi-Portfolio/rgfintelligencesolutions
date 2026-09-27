@@ -41,6 +41,7 @@ import {
   YouTubeIcon,
 } from './icons';
 import { submitContactForm } from './services/emailService';
+import { AskRgfProvider } from './components/askRgf/AskRgfProvider';
 
 // Web only: spread headings across lines evenly so a single word never wraps onto its own line.
 const BALANCED_TEXT = Platform.OS === 'web' ? { textWrap: 'balance' } : {};
@@ -1428,7 +1429,50 @@ function WhoWeArePage({ isMobile, isPhone, onNavigate, section }) {
   );
 }
 
+// Web URL for each page, so links such as /contact work on direct load and refresh
+// (firebase.json rewrites every path to index.html) and the browser back button works.
+const PAGE_PATHS = {
+  home: '/',
+  solution: '/solutions',
+  industries: '/industries',
+  how: '/how-we-work',
+  insights: '/insights',
+  who: '/who-we-are',
+  contact: '/contact',
+};
+const isWeb = Platform.OS === 'web' && typeof window !== 'undefined';
+
+function pageFromLocation() {
+  if (!isWeb) return 'home';
+  const path = window.location.pathname.replace(/\/+$/, '') || '/';
+  return Object.keys(PAGE_PATHS).find((page) => PAGE_PATHS[page] === path) || 'home';
+}
+
 export default function App() {
+  const [route, setRoute] = useState(() => ({ page: pageFromLocation(), section: null, key: 0 }));
+  // A new key remounts the page, so every navigation starts at the top (or at `section`).
+  const navigate = (nextPage, section = null) => {
+    if (isWeb && window.location.pathname !== PAGE_PATHS[nextPage]) {
+      window.history.pushState(null, '', PAGE_PATHS[nextPage] || '/');
+    }
+    setRoute((current) => ({ page: nextPage, section, key: current.key + 1 }));
+  };
+
+  useEffect(() => {
+    if (!isWeb) return undefined;
+    const onPopState = () => setRoute((current) => ({ page: pageFromLocation(), section: null, key: current.key + 1 }));
+    window.addEventListener('popstate', onPopState);
+    return () => window.removeEventListener('popstate', onPopState);
+  }, []);
+
+  return (
+    <AskRgfProvider onNavigate={navigate}>
+      <SitePages route={route} navigate={navigate} />
+    </AskRgfProvider>
+  );
+}
+
+function SitePages({ route, navigate }) {
   const { width } = useWindowDimensions();
   const isPhone = width < 700;
   const isMobile = width < 900;
@@ -1438,10 +1482,7 @@ export default function App() {
     title: { fontSize: 40 * heroScale, lineHeight: 47 * heroScale },
     initial: { fontSize: 54 * heroScale, lineHeight: 56 * heroScale },
   } : {};
-  const [route, setRoute] = useState({ page: 'home', section: null, key: 0 });
   const { page } = route;
-  // A new key remounts the page, so every navigation starts at the top (or at `section`).
-  const navigate = (nextPage, section = null) => setRoute((current) => ({ page: nextPage, section, key: current.key + 1 }));
 
   const [fontsLoaded] = useFonts({
     Inter_400Regular,
