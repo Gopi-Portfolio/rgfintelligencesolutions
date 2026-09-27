@@ -37,6 +37,8 @@ import {
   ShieldIcon,
   ClockIcon,
   CheckIcon,
+  LinkedInIcon,
+  YouTubeIcon,
 } from './icons';
 import { submitContactForm } from './services/emailService';
 
@@ -849,16 +851,32 @@ function ContactPage({ isMobile, isPhone, onNavigate, section }) {
               <Text style={styles.contactBodyText}>Choose the option that works best for you. We’re here to help.</Text>
               <View style={[styles.contactCardGrid, isMobile && STACKED_GRID]}>
                 {[
-                  { Icon: ClockIcon, title: 'Phone', value: '469-726-8900', url: 'tel:+14697268900', text: 'Mon – Fri\n9:00 AM – 6:00 PM CST' },
-                  { Icon: LinkIcon, title: 'Email', value: 'info@rgfintelligencesolutions.com', url: 'mailto:info@rgfintelligencesolutions.com', text: 'We typically respond\nwithin 1 business day.' },
+                  { Icon: ClockIcon, title: 'Phone', links: [
+                    { value: '+1 214-620-0483', url: 'tel:+12146200483' },
+                    { value: '+1 214-531-7929', url: 'tel:+12145317929' },
+                    { value: '+1 214-631-9325', url: 'tel:+12146319325' },
+                  ], text: 'Mon – Fri\n9:00 AM – 6:00 PM CST' },
+                  { Icon: LinkIcon, title: 'Email', links: [{ value: 'info@rgfintelligencesolutions.com', url: 'mailto:info@rgfintelligencesolutions.com' }], text: 'We typically respond\nwithin 1 business day.' },
                   { Icon: HouseIcon, title: 'Let’s Meet', value: 'Virtual or In Person', text: 'We’re happy to schedule\na call or meeting at your convenience.' },
-                  { Icon: UsersIcon, title: 'Follow Us', value: 'LinkedIn   YouTube', text: 'Stay connected for the latest\ninsights and updates.' },
-                ].map(({ Icon, title, value, url, text }) => (
+                  { Icon: UsersIcon, title: 'Follow Us', socials: [
+                    { Icon: LinkedInIcon, label: 'LinkedIn' },
+                    { Icon: YouTubeIcon, label: 'YouTube' },
+                  ], text: 'Stay connected for the latest\ninsights and updates.' },
+                ].map(({ Icon, title, value, links, socials, text }) => (
                   <View key={title} style={[styles.contactInfoCard, isMobile && GRID_ITEM_WIDE]}>
                     <View style={styles.contactInfoIcon}><Icon size={24} color="#FFFFFF" /></View>
                     <Text style={styles.contactInfoTitle}>{title}</Text>
-                    {url ? (
-                      <LinkText style={styles.contactInfoValue} hoverStyle={styles.linkTextHover} activeStyle={styles.linkTextPressed} onPress={() => Linking.openURL(url)}>{value}</LinkText>
+                    {links ? links.map((link) => (
+                      <LinkText key={link.url} style={styles.contactInfoValue} hoverStyle={styles.linkTextHover} activeStyle={styles.linkTextPressed} onPress={() => Linking.openURL(link.url)}>{link.value}</LinkText>
+                    )) : socials ? (
+                      <View style={styles.contactSocialRow}>
+                        {socials.map(({ Icon: SocialIcon, label }) => (
+                          <View key={label} style={styles.contactSocialItem}>
+                            <SocialIcon size={20} />
+                            <Text style={styles.contactInfoValue}>{label}</Text>
+                          </View>
+                        ))}
+                      </View>
                     ) : (
                       <Text style={styles.contactInfoValue}>{value}</Text>
                     )}
@@ -2706,6 +2724,17 @@ const styles = StyleSheet.create(increaseContentFontSizes({
     lineHeight: 20,
     fontFamily: 'Georgia',
   },
+  contactSocialRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 14,
+    marginVertical: 2,
+  },
+  contactSocialItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
   contactInfoText: {
     color: '#304B7C',
     fontSize: 12,
@@ -2722,6 +2751,7 @@ const styles = StyleSheet.create(increaseContentFontSizes({
   },
   contactInputHalf: {
     flex: 1,
+    minWidth: 0, // web inputs have an intrinsic min width that otherwise overflows the row
     backgroundColor: '#FFFFFF',
     borderWidth: 1,
     borderColor: '#B5D5FA',

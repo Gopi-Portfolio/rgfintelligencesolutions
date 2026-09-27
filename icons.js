@@ -162,3 +162,23 @@ export function CheckIcon({ size = 16, color = '#3B9EFF' }) {
     </Svg>
   );
 }
+
+export function LinkedInIcon({ size = 24, color = '#0A66C2' }) {
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24">
+      <Rect x="0" y="0" width="24" height="24" rx="4" fill={color} />
+      <Rect x="5" y="9.5" width="3" height="9" fill="#FFFFFF" />
+      <Circle cx="6.5" cy="6.5" r="1.75" fill="#FFFFFF" />
+      <Path d="M10.5 9.5h2.9v1.3c.45-.8 1.5-1.55 3.05-1.55 3.1 0 3.55 2 3.55 4.6v4.65h-3v-4.1c0-1-.02-2.3-1.4-2.3-1.4 0-1.6 1.1-1.6 2.22v4.18h-3z" fill="#FFFFFF" />
+    </Svg>
+  );
+}
+
+export function YouTubeIcon({ size = 24, color = '#FF0000' }) {
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24">
+      <Rect x="0.5" y="4" width="23" height="16" rx="4.5" fill={color} />
+      <Path d="M9.75 8.5v7l6-3.5z" fill="#FFFFFF" />
+    </Svg>
+  );
+}
