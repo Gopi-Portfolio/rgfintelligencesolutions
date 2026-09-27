@@ -6,7 +6,7 @@ const getEnv = (key, fallback = '') => {
 };
 
 const defaultRecipients = ['gopi@rgfintelligencesolutions.com', 'rose@rgfintelligencesolutions.com'];
-const fallbackEndpoint = 'https://us-central1-rgf-website-app.cloudfunctions.net/submitContactForm';
+const fallbackEndpoint = 'https://us-central1-AI & Technology Consulting | RGF Intelligence Solutions.cloudfunctions.net/submitContactForm';
 
 export const EMAIL_RECIPIENTS = (() => {
   const configured = getEnv('EXPO_PUBLIC_CONTACT_EMAILS', defaultRecipients.join(','));

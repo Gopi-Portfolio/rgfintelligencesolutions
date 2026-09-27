@@ -7,7 +7,7 @@ function buildWebhookPayload(payload, recipients) {
     ...payload,
     to: recipients,
     subject,
-    source: 'rgf-website-app',
+    source: 'AI & Technology Consulting | RGF Intelligence Solutions',
     submittedAt: new Date().toISOString(),
   };
 
