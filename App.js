@@ -42,6 +42,8 @@ import {
 } from './icons';
 import { submitContactForm } from './services/emailService';
 
+// Web only: spread headings across lines evenly so a single word never wraps onto its own line.
+const BALANCED_TEXT = Platform.OS === 'web' ? { textWrap: 'balance' } : {};
 const NAVY = '#04101F';
 const BLUE = '#0B7DFC';
 const BLUE_LIGHT = '#4FA6FF';
@@ -211,7 +213,7 @@ function Btn({ label, variant = 'solid', onDark = false, style, onPress, disable
             pressed && styles.btnTextPressed,
           ]}
         >
-          {label}
+          {label.replace(/\s+→/, '\u00A0\u00A0→')}
         </Text>
       )}
     </Pressable>
@@ -1944,6 +1946,7 @@ const styles = StyleSheet.create(increaseContentFontSizes({
     maxWidth: 520,
   },
   heroKicker: {
+    ...BALANCED_TEXT,
     color: '#B7C0CE',
     fontSize: 12,
     fontFamily: 'Inter_700Bold',
@@ -1951,6 +1954,7 @@ const styles = StyleSheet.create(increaseContentFontSizes({
     marginBottom: 14,
   },
   heroTitle: {
+    ...BALANCED_TEXT,
     color: '#FFFFFF',
     fontSize: 40,
     lineHeight: 47,
@@ -2031,6 +2035,7 @@ const styles = StyleSheet.create(increaseContentFontSizes({
     maxWidth: 220,
   },
   eyebrow: {
+    ...BALANCED_TEXT,
     color: BLUE,
     fontSize: 12,
     fontFamily: 'Inter_800ExtraBold',
@@ -2038,6 +2043,7 @@ const styles = StyleSheet.create(increaseContentFontSizes({
     marginBottom: 10,
   },
   sectionTitleDark: {
+    ...BALANCED_TEXT,
     color: TEXT_DARK,
     fontSize: 32,
     lineHeight: 38,
@@ -2047,6 +2053,7 @@ const styles = StyleSheet.create(increaseContentFontSizes({
     maxWidth: 640,
   },
   sectionTitleLight: {
+    ...BALANCED_TEXT,
     color: '#FFFFFF',
     fontSize: 30,
     lineHeight: 37,
@@ -2056,18 +2063,21 @@ const styles = StyleSheet.create(increaseContentFontSizes({
     maxWidth: 420,
   },
   whoSectionTitleDark: {
+    ...BALANCED_TEXT,
     fontSize: 27,
     lineHeight: 30,
     fontFamily: 'Georgia',
     letterSpacing: 0,
   },
   whoSectionTitleLight: {
+    ...BALANCED_TEXT,
     fontSize: 27,
     lineHeight: 30,
     fontFamily: 'Georgia',
     letterSpacing: 0,
   },
   sectionSubtitle: {
+    ...BALANCED_TEXT,
     color: TEXT_GREY,
     fontSize: 16,
     fontFamily: 'Inter_400Regular',
@@ -2442,6 +2452,7 @@ const styles = StyleSheet.create(increaseContentFontSizes({
     width: '100%',
   },
   ctaTitle: {
+    ...BALANCED_TEXT,
     color: '#FFFFFF',
     fontSize: 28,
     lineHeight: 34,
@@ -2622,6 +2633,7 @@ const styles = StyleSheet.create(increaseContentFontSizes({
     maxWidth: 520,
   },
   contactHeroTitle: {
+    ...BALANCED_TEXT,
     color: '#FFFFFF',
     fontSize: 48,
     lineHeight: 52,
@@ -2629,6 +2641,7 @@ const styles = StyleSheet.create(increaseContentFontSizes({
     marginTop: 12,
   },
   contactHeroAccent: {
+    ...BALANCED_TEXT,
     color: BLUE_LIGHT,
     fontSize: 48,
     lineHeight: 52,
@@ -2786,6 +2799,7 @@ const styles = StyleSheet.create(increaseContentFontSizes({
     alignSelf: 'center',
   },
   contactFormTitle: {
+    ...BALANCED_TEXT,
     color: '#122D69',
     fontSize: 27,
     lineHeight: 31,
@@ -2975,6 +2989,7 @@ const styles = StyleSheet.create(increaseContentFontSizes({
     maxWidth: 560,
   },
   insightsHeroTitle: {
+    ...BALANCED_TEXT,
     color: '#FFFFFF',
     fontSize: 48,
     lineHeight: 51,
@@ -2982,6 +2997,7 @@ const styles = StyleSheet.create(increaseContentFontSizes({
     marginTop: 12,
   },
   insightsHeroAccent: {
+    ...BALANCED_TEXT,
     color: BLUE_LIGHT,
     fontSize: 48,
     lineHeight: 51,
@@ -3061,6 +3077,7 @@ const styles = StyleSheet.create(increaseContentFontSizes({
     alignItems: 'stretch',
   },
   insightsSectionTitle: {
+    ...BALANCED_TEXT,
     color: '#122D69',
     fontSize: 29,
     lineHeight: 34,
@@ -3208,6 +3225,7 @@ const styles = StyleSheet.create(increaseContentFontSizes({
     minHeight: 190,
   },
   insightsSubscribeTitle: {
+    ...BALANCED_TEXT,
     color: '#122D69',
     fontSize: 26,
     lineHeight: 29,
@@ -3283,6 +3301,7 @@ const styles = StyleSheet.create(increaseContentFontSizes({
     maxWidth: 570,
   },
   howHeroTitle: {
+    ...BALANCED_TEXT,
     color: '#FFFFFF',
     fontSize: 45,
     lineHeight: 49,
@@ -3290,6 +3309,7 @@ const styles = StyleSheet.create(increaseContentFontSizes({
     marginTop: 12,
   },
   howHeroAccent: {
+    ...BALANCED_TEXT,
     color: BLUE_LIGHT,
     fontSize: 45,
     lineHeight: 49,
@@ -3379,6 +3399,7 @@ const styles = StyleSheet.create(increaseContentFontSizes({
     alignItems: 'stretch',
   },
   howSectionTitle: {
+    ...BALANCED_TEXT,
     color: '#122D69',
     fontSize: 30,
     lineHeight: 34,
@@ -3647,6 +3668,7 @@ const styles = StyleSheet.create(increaseContentFontSizes({
     maxWidth: 720,
   },
   solutionHeroTitle: {
+    ...BALANCED_TEXT,
     color: '#FFFFFF',
     fontSize: 43,
     lineHeight: 47,
@@ -3816,6 +3838,7 @@ const styles = StyleSheet.create(increaseContentFontSizes({
     minWidth: 0,
   },
   solutionNeedTitle: {
+    ...BALANCED_TEXT,
     color: '#FFFFFF',
     fontSize: 24,
     lineHeight: 28,
@@ -3991,12 +4014,14 @@ const styles = StyleSheet.create(increaseContentFontSizes({
     maxWidth: 620,
   },
   whoHeroTitle: {
+    ...BALANCED_TEXT,
     color: '#FFFFFF',
     fontSize: 38,
     lineHeight: 42,
     fontFamily: 'Georgia',
   },
   whoHeroTitleAccent: {
+    ...BALANCED_TEXT,
     color: BLUE,
     fontSize: 38,
     lineHeight: 42,
