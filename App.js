@@ -45,6 +45,8 @@ const RGF_ACCENT = '#A6D5FF';
 const TEXT_DARK = '#0B1424';
 const TEXT_GREY = '#5B6472';
 const BORDER = '#E3E7EE';
+const STACKED_FLEX_ITEM = { flexGrow: 0, flexShrink: 0, flexBasis: 'auto' };
+const STACKED_CONTENT = { ...STACKED_FLEX_ITEM, width: '100%', alignSelf: 'center' };
 
 const APPROACH_PHOTO = ['#060B13', '#101B28'];
 const TELLUS_PHOTO = ['#0A121C', '#182634'];
@@ -159,11 +161,13 @@ function LinkText({ children, style, hoverStyle, activeStyle, onPress }) {
 }
 
 function Btn({ label, variant = 'solid', onDark = false, style, onPress }) {
+  const { width } = useWindowDimensions();
   const outline = variant === 'outline';
   return (
     <Pressable
       style={({ hovered, pressed }) => [
         styles.btn,
+        width < 900 && styles.btnNarrow,
         outline
           ? {
               borderWidth: 1.5,
@@ -214,6 +218,9 @@ function Logo({ markStyle, nameStyle, taglineStyle, showTagline = true }) {
 }
 
 function Section({ bg, children, style, shellStyle, photo, image, imageStyle, scrim }) {
+  const { width } = useWindowDimensions();
+  const responsiveShellStyle = width < 700 ? styles.shellPhone : width < 900 ? styles.shellTablet : null;
+
   return (
     <View style={[styles.section, { backgroundColor: bg }, style]}>
       {image && <Image source={image} style={[StyleSheet.absoluteFillObject, styles.sectionBackgroundImage, imageStyle]} resizeMode="cover" />}
@@ -229,7 +236,7 @@ function Section({ bg, children, style, shellStyle, photo, image, imageStyle, sc
           style={StyleSheet.absoluteFill}
         />
       )}
-      <View style={[styles.shell, shellStyle]}>{children}</View>
+      <View style={[styles.shell, shellStyle, responsiveShellStyle]}>{children}</View>
     </View>
   );
 }
@@ -252,7 +259,7 @@ function SiteHeader({ isMobile, onNavigate, activePage = 'home' }) {
   const visibleNavItems = activePage === 'home' ? navItems : ['Home', ...navItems];
 
   return (
-    <View style={[styles.topbar, compact && styles.topbarCompact]}>
+    <View style={[styles.topbar, isMobile && styles.topbarPhone, compact && styles.topbarCompact]}>
       <Pressable onPress={() => onNavigate('home')}>
         <Logo
           markStyle={[styles.headerMark, compact && styles.headerMarkCompact]}
@@ -302,12 +309,11 @@ function SiteFooter({ isMobile, onNavigate, showHomeLink = false }) {
   return (
     <Section bg="#031426" style={styles.footerSection} shellStyle={styles.footerShell}>
       <View style={[styles.footerTop, isMobile && styles.footerTopMobile]}>
-        <Pressable onPress={() => onNavigate('home')}>
+        <Pressable onPress={() => onNavigate('home')} style={isMobile && styles.footerLogoMobile}>
           <Logo markStyle={styles.footerMark} nameStyle={styles.footerLogoName} taglineStyle={styles.footerLogoTagline} />
         </Pressable>
 
-        {!isMobile && (
-          <View style={styles.footerColumns}>
+        <View style={[styles.footerColumns, isMobile && styles.footerColumnsMobile]}>
             {(showHomeLink ? ['Home', ...footerColumns] : footerColumns).map((item) => {
               const isWhoLink = item === 'Who We Are';
               const isSolutionLink = item === 'Solutions';
@@ -330,10 +336,9 @@ function SiteFooter({ isMobile, onNavigate, showHomeLink = false }) {
                 </LinkText>
               );
             })}
-          </View>
-        )}
+        </View>
 
-        <View style={styles.connectWrap}>
+        <View style={[styles.connectWrap, isMobile && styles.connectWrapMobile]}>
           <View style={styles.socialRow}>
             <View style={styles.linkedinBadge}>
               <Text style={styles.linkedinBadgeText}>in</Text>
@@ -346,14 +351,14 @@ function SiteFooter({ isMobile, onNavigate, showHomeLink = false }) {
       </View>
       <View style={styles.footerRule} />
       <View style={[styles.footerBottom, isMobile && styles.footerBottomMobile]}>
-        <Text style={styles.footerText}>© 2026 RGF Intelligence Solutions. All rights reserved.</Text>
-        <Text style={styles.footerText}>Privacy  |  Terms  |  Sitemap</Text>
+        <Text style={[styles.footerText, isMobile && styles.footerTextMobile]}>© 2026 RGF Intelligence Solutions. All rights reserved.</Text>
+        <Text style={[styles.footerText, isMobile && styles.footerTextMobile]}>Privacy  |  Terms  |  Sitemap</Text>
       </View>
     </Section>
   );
 }
 
-function SolutionPage({ isMobile, onNavigate }) {
+function SolutionPage({ isMobile, isPhone, onNavigate }) {
   const solutionCards = [
     {
       title: 'AI & Intelligent Systems',
@@ -405,9 +410,9 @@ function SolutionPage({ isMobile, onNavigate }) {
           style={styles.solutionHero}
           shellStyle={styles.headerShell}
         >
-          <SiteHeader isMobile={isMobile} onNavigate={onNavigate} activePage="solution" />
+          <SiteHeader isMobile={isPhone} onNavigate={onNavigate} activePage="solution" />
           <View style={[styles.solutionHeroRow, isMobile && styles.solutionHeroRowMobile]}>
-            <View style={styles.solutionHeroCopy}>
+            <View style={[styles.solutionHeroCopy, isMobile && STACKED_CONTENT]}>
               <Eyebrow onDark>OUR SOLUTIONS</Eyebrow>
               <Text style={styles.solutionHeroTitle}>Intelligence That{isMobile ? '\n' : ' '}<Text style={styles.solutionHeroTitleAccent}>Solves Real Business Problems.</Text></Text>
               <Text style={styles.solutionHeroText}>
@@ -436,7 +441,7 @@ function SolutionPage({ isMobile, onNavigate }) {
               { Icon: BarChartIcon, title: 'Measurable', text: 'Outcomes' },
               { Icon: ShieldIcon, title: 'Trusted', text: 'Partner' },
             ].map((item, index) => (
-              <View key={item.title} style={[styles.solutionTrustItem, index > 0 && !isMobile && styles.solutionTrustDivider]}>
+              <View key={item.title} style={[styles.solutionTrustItem, isMobile && STACKED_FLEX_ITEM, index > 0 && !isMobile && styles.solutionTrustDivider]}>
                 <item.Icon size={30} color={BLUE} />
                 <View><Text style={styles.solutionTrustTitle}>{item.title}</Text><Text style={styles.solutionTrustText}>{item.text}</Text></View>
               </View>
@@ -455,7 +460,7 @@ function SolutionPage({ isMobile, onNavigate }) {
           </View>
           <View style={[styles.solutionGrid, isMobile && styles.solutionGridMobile]}>
             {solutionCards.map((item) => (
-              <View key={item.title} style={styles.solutionVisualCard}>
+              <View key={item.title} style={[styles.solutionVisualCard, isMobile && styles.solutionVisualCardMobile, isMobile && STACKED_FLEX_ITEM]}>
                 <Image source={item.bg} style={styles.solutionVisualImage} resizeMode="cover" />
                 <View style={styles.solutionVisualBody}>
                   <Text style={styles.solutionBoxTitle}>{item.title}</Text>
@@ -464,7 +469,7 @@ function SolutionPage({ isMobile, onNavigate }) {
                 </View>
               </View>
             ))}
-            <View style={styles.solutionNeedCard}>
+            <View style={[styles.solutionNeedCard, isMobile && styles.solutionNeedCardMobile, isMobile && STACKED_FLEX_ITEM]}>
               <Text style={styles.solutionNeedTitle}>Not Sure What{ '\n'}Solution You Need?</Text>
               <Text style={styles.solutionNeedText}>That’s okay. You don’t need to know the technology. Just tell us what’s not working, and we’ll help identify the right solution.</Text>
               <Btn label="TELL US YOUR BUSINESS PROBLEM →" onPress={() => onNavigate('home')} />
@@ -482,7 +487,7 @@ function SolutionPage({ isMobile, onNavigate }) {
           </View>
           <View style={[styles.solutionApproachRow, isMobile && styles.solutionApproachRowMobile]}>
             {approachSteps.map((step, index) => (
-              <View key={step.number} style={[styles.solutionApproachItem, index > 0 && !isMobile && styles.solutionApproachDivider]}>
+              <View key={step.number} style={[styles.solutionApproachItem, isMobile && STACKED_FLEX_ITEM, index > 0 && !isMobile && styles.solutionApproachDivider]}>
                 <Text style={styles.solutionStepNumber}>{step.number}</Text>
                 <Text style={styles.solutionStepTitle}>{step.title}</Text>
                 <Text style={styles.solutionStepText}>{step.text}</Text>
@@ -494,7 +499,7 @@ function SolutionPage({ isMobile, onNavigate }) {
 
         <Section bg={NAVY} shellStyle={styles.solutionClosingShell}>
           <View style={[styles.solutionClosingRow, isMobile && styles.solutionClosingRowMobile]}>
-            <View style={styles.solutionClosingCopy}>
+            <View style={[styles.solutionClosingCopy, isMobile && STACKED_FLEX_ITEM]}>
               <Eyebrow onDark>READY TO FIND THE RIGHT SOLUTION?</Eyebrow>
               <Text style={styles.sectionTitleLight}>Let’s Solve Your Business Problem.</Text>
               <Text style={styles.sectionSubtitleLight}>Whether you need AI, automation, better data, connected systems or a complete transformation, we’ll help you determine the best path forward.</Text>
@@ -520,6 +525,7 @@ function InquiryForm({
   includePhone = true,
   source = 'contact',
   compact = false,
+  stacked = false,
 }) {
   const [form, setForm] = useState({
     firstName: '',
@@ -625,19 +631,19 @@ function InquiryForm({
   };
 
   return (
-    <View style={styles.contactForm}>
+    <View style={[styles.contactForm, (compact || stacked) && styles.contactFormStacked]}>
       <Text style={[styles.eyebrow, styles.formEyebrow]}>SEND US A MESSAGE</Text>
       <Text style={styles.contactFormTitle}>{title}</Text>
-      <View style={[styles.contactFormGrid, compact && styles.contactFormGridMobile]}>
+      <View style={[styles.contactFormGrid, (compact || stacked) && styles.contactFormGridMobile]}>
         <TextInput
-          style={styles.contactInputHalf}
+          style={[styles.contactInputHalf, (compact || stacked) && STACKED_FLEX_ITEM]}
           placeholder="First Name *"
           placeholderTextColor="#344A72"
           value={form.firstName}
           onChangeText={(value) => updateField('firstName', value)}
         />
         <TextInput
-          style={styles.contactInputHalf}
+          style={[styles.contactInputHalf, (compact || stacked) && STACKED_FLEX_ITEM]}
           placeholder="Last Name *"
           placeholderTextColor="#344A72"
           value={form.lastName}
@@ -653,9 +659,9 @@ function InquiryForm({
           onChangeText={(value) => updateField('company', value)}
         />
       )}
-      <View style={[styles.contactFormGrid, compact && styles.contactFormGridMobile]}>
+      <View style={[styles.contactFormGrid, (compact || stacked) && styles.contactFormGridMobile]}>
         <TextInput
-          style={styles.contactInputHalf}
+          style={[styles.contactInputHalf, (compact || stacked) && STACKED_FLEX_ITEM]}
           placeholder="Email *"
           placeholderTextColor="#344A72"
           keyboardType="email-address"
@@ -665,7 +671,7 @@ function InquiryForm({
         />
         {includePhone && (
           <TextInput
-            style={styles.contactInputHalf}
+            style={[styles.contactInputHalf, (compact || stacked) && STACKED_FLEX_ITEM]}
             placeholder="Phone Number *"
             placeholderTextColor="#344A72"
             keyboardType="number-pad"
@@ -711,7 +717,7 @@ function InquiryForm({
   );
 }
 
-function ContactPage({ isMobile, onNavigate }) {
+function ContactPage({ isMobile, isPhone, onNavigate }) {
   return (
     <SafeAreaView style={styles.safeArea}>
       <StatusBar style="light" />
@@ -723,9 +729,9 @@ function ContactPage({ isMobile, onNavigate }) {
           style={styles.contactHero}
           shellStyle={styles.headerShell}
         >
-          <SiteHeader isMobile={isMobile} onNavigate={onNavigate} activePage="contact" />
+          <SiteHeader isMobile={isPhone} onNavigate={onNavigate} activePage="contact" />
           <View style={[styles.contactHeroRow, isMobile && styles.contactHeroRowMobile]}>
-            <View style={styles.contactHeroCopy}>
+            <View style={[styles.contactHeroCopy, isMobile && STACKED_CONTENT]}>
               <Eyebrow onDark>CONTACT US</Eyebrow>
               <Text style={styles.contactHeroTitle}>Let’s Start the</Text>
               <Text style={styles.contactHeroAccent}>Conversation.</Text>
@@ -750,7 +756,7 @@ function ContactPage({ isMobile, onNavigate }) {
 
         <Section bg="#FFFFFF" shellStyle={styles.contactShell}>
           <View style={[styles.contactContentRow, isMobile && styles.contactContentRowMobile]}>
-            <View style={styles.contactIntro}>
+            <View style={[styles.contactIntro, isMobile && STACKED_CONTENT]}>
               <Eyebrow>GET IN TOUCH</Eyebrow>
               <Text style={styles.sectionTitleDark}>Multiple Ways to Connect.</Text>
               <Text style={styles.contactBodyText}>Choose the option that works best for you. We’re here to help.</Text>
@@ -771,25 +777,25 @@ function ContactPage({ isMobile, onNavigate }) {
               </View>
             </View>
 
-            <InquiryForm source="contact" includePhone />
+            <InquiryForm source="contact" includePhone stacked={isMobile} />
           </View>
         </Section>
 
         <Section bg="#F0F7FE" shellStyle={styles.contactLocationShell}>
           <View style={[styles.contactLocationRow, isMobile && styles.contactLocationRowMobile]}>
-            <View style={styles.contactLocationCopy}>
+            <View style={[styles.contactLocationCopy, isMobile && styles.contactLocationCopyMobile, isMobile && STACKED_FLEX_ITEM]}>
               <Eyebrow>OUR LOCATION</Eyebrow>
               <Text style={styles.sectionTitleDark}>Based in Frisco, TX{ '\n' }Serving Businesses{ '\n' }Everywhere.</Text>
               <Text style={styles.contactBodyText}>We work with clients across the U.S. and globally, with a strong focus on the Dallas–Fort Worth area and beyond.</Text>
               <Btn label="SCHEDULE A CALL  →" />
             </View>
-            <View style={styles.contactMap}>
+            <View style={[styles.contactMap, isMobile && styles.contactMapMobile, isMobile && STACKED_FLEX_ITEM]}>
               <Image source={require('./assets/dallas.png')} style={styles.contactMapImage} resizeMode="contain" />
               <Text style={styles.contactMapLabel}>UNITED STATES</Text>
               <View style={styles.contactMapLine} />
               <View style={styles.contactMapPin}><Text style={styles.contactMapPinText}>Frisco, TX</Text></View>
             </View>
-            <View style={styles.contactLocationPoints}>
+            <View style={[styles.contactLocationPoints, isMobile && styles.contactLocationPointsMobile, isMobile && STACKED_FLEX_ITEM]}>
               {[
                 ['Local Expertise', 'Global Reach'],
                 ['Onsite or Virtual Meetings', 'Your Preference'],
@@ -817,7 +823,7 @@ function ContactPage({ isMobile, onNavigate }) {
   );
 }
 
-function InsightsPage({ isMobile, onNavigate }) {
+function InsightsPage({ isMobile, isPhone, onNavigate }) {
   const featured = [
     { tag: 'TREND', title: 'The Practical Impact of AI\nfor Growing Businesses', text: 'How small and mid-sized companies are using AI and automation to save time, reduce costs, and compete at a higher level.', image: require('./assets/01-ai-intelligence.png') },
     { tag: 'GUIDE', title: 'A Step-by-Step Guide to\nProcess Automation', text: 'A practical framework to identify, prioritize, and automate the right processes in your business.', image: require('./assets/1.admin.png') },
@@ -844,9 +850,9 @@ function InsightsPage({ isMobile, onNavigate }) {
           style={styles.insightsHero}
           shellStyle={styles.headerShell}
         >
-          <SiteHeader isMobile={isMobile} onNavigate={onNavigate} activePage="insights" />
+          <SiteHeader isMobile={isPhone} onNavigate={onNavigate} activePage="insights" />
           <View style={[styles.insightsHeroRow, isMobile && styles.insightsHeroRowMobile]}>
-            <View style={styles.insightsHeroCopy}>
+            <View style={[styles.insightsHeroCopy, isMobile && STACKED_CONTENT]}>
               <Eyebrow onDark>INSIGHTS</Eyebrow>
               <Text style={styles.insightsHeroTitle}>Real Ideas.</Text>
               <Text style={styles.insightsHeroAccent}>Real Impact.</Text>
@@ -860,15 +866,15 @@ function InsightsPage({ isMobile, onNavigate }) {
         <Section bg="#F0F7FE" shellStyle={styles.insightsTopicStripShell}>
           <View style={[styles.insightsTopicStrip, isMobile && styles.insightsTopicStripMobile]}>
             {[[BarChartIcon, 'Industry Trends', "What's shaping tomorrow"], [DatabaseIcon, 'Practical Guides', 'Actionable strategies'], [UsersIcon, 'Expert Perspectives', 'Real-world experience'], [BulbIcon, 'Customer Success', 'Ideas in action']].map(([Icon, title, text]) => (
-              <View key={title} style={styles.insightsTopicFeature}><Icon size={32} color={BLUE} /><View><Text style={styles.insightsTopicTitle}>{title}</Text><Text style={styles.insightsTopicText}>{text}</Text></View></View>
+              <View key={title} style={[styles.insightsTopicFeature, isMobile && STACKED_FLEX_ITEM]}><Icon size={32} color={BLUE} /><View><Text style={styles.insightsTopicTitle}>{title}</Text><Text style={styles.insightsTopicText}>{text}</Text></View></View>
             ))}
           </View>
         </Section>
 
         <Section bg="#FFFFFF" shellStyle={styles.insightsShell}>
-          <View style={styles.insightsHeading}><View><Eyebrow>FEATURED INSIGHTS</Eyebrow><Text style={styles.insightsSectionTitle}>Ideas and Knowledge to Move Your Business Forward.</Text></View>{!isMobile && <LinkText style={styles.linkText} hoverStyle={styles.linkTextHover} activeStyle={styles.linkTextPressed}>VIEW ALL INSIGHTS  →</LinkText>}</View>
+          <View style={[styles.insightsHeading, isMobile && styles.insightsHeadingMobile]}><View><Eyebrow>FEATURED INSIGHTS</Eyebrow><Text style={styles.insightsSectionTitle}>Ideas and Knowledge to Move Your Business Forward.</Text></View>{!isMobile && <LinkText style={styles.linkText} hoverStyle={styles.linkTextHover} activeStyle={styles.linkTextPressed}>VIEW ALL INSIGHTS  →</LinkText>}</View>
           <View style={[styles.insightsFeaturedGrid, isMobile && styles.insightsFeaturedGridMobile]}>
-            {featured.map((item) => <View key={item.title} style={styles.insightCard}><View style={styles.insightCardImageWrap}><Image source={item.image} style={styles.insightCardImage} resizeMode="cover" /><Text style={styles.insightCardTag}>{item.tag}</Text></View><View style={styles.insightCardBody}><Text style={styles.insightCardTitle}>{item.title}</Text><Text style={styles.insightCardText}>{item.text}</Text></View></View>)}
+            {featured.map((item) => <View key={item.title} style={[styles.insightCard, isMobile && STACKED_FLEX_ITEM]}><View style={styles.insightCardImageWrap}><Image source={item.image} style={styles.insightCardImage} resizeMode="cover" /><Text style={styles.insightCardTag}>{item.tag}</Text></View><View style={styles.insightCardBody}><Text style={styles.insightCardTitle}>{item.title}</Text><Text style={styles.insightCardText}>{item.text}</Text></View></View>)}
           </View>
 
           <Eyebrow>BROWSE INSIGHTS BY TOPIC</Eyebrow>
@@ -877,13 +883,13 @@ function InsightsPage({ isMobile, onNavigate }) {
           </View>
 
           <View style={[styles.insightsLatestRow, isMobile && styles.insightsLatestRowMobile]}>
-            <View style={styles.insightsLatest}><Eyebrow>LATEST INSIGHTS</Eyebrow>{latest.map(([title, date, image]) => <View key={title} style={styles.insightsLatestItem}><Image source={image} style={styles.insightsLatestImage} resizeMode="cover" /><View style={styles.insightsLatestCopy}><Text style={styles.insightsLatestTitle}>{title}</Text><Text style={styles.insightsLatestDate}>{date}</Text></View><Text style={styles.insightsLatestArrow}>→</Text></View>)}</View>
-            <View style={styles.insightsSubscribe}><Eyebrow>STAY INFORMED</Eyebrow><Text style={styles.insightsSubscribeTitle}>Insights Delivered{ '\n' }to Your Inbox.</Text><Text style={styles.insightsSubscribeText}>Get the latest articles, guides, and industry perspectives — no spam, just valuable insights.</Text><View style={styles.insightsSubscribeForm}><TextInput style={styles.insightsSubscribeInput} placeholder="Enter your email address" placeholderTextColor="#6D7890" /><Btn label="SUBSCRIBE  →" /></View></View>
+            <View style={[styles.insightsLatest, isMobile && STACKED_CONTENT]}><Eyebrow>LATEST INSIGHTS</Eyebrow>{latest.map(([title, date, image]) => <View key={title} style={styles.insightsLatestItem}><Image source={image} style={styles.insightsLatestImage} resizeMode="cover" /><View style={styles.insightsLatestCopy}><Text style={styles.insightsLatestTitle}>{title}</Text><Text style={styles.insightsLatestDate}>{date}</Text></View><Text style={styles.insightsLatestArrow}>→</Text></View>)}</View>
+            <View style={[styles.insightsSubscribe, isMobile && STACKED_CONTENT]}><Eyebrow>STAY INFORMED</Eyebrow><Text style={styles.insightsSubscribeTitle}>Insights Delivered{ '\n' }to Your Inbox.</Text><Text style={styles.insightsSubscribeText}>Get the latest articles, guides, and industry perspectives — no spam, just valuable insights.</Text><View style={styles.insightsSubscribeForm}><TextInput style={styles.insightsSubscribeInput} placeholder="Enter your email address" placeholderTextColor="#6D7890" /><Btn label="SUBSCRIBE  →" /></View></View>
           </View>
         </Section>
 
         <Section bg={NAVY} image={require('./assets/bgimg.png')} scrim={['rgba(4,16,31,0.82)', 'rgba(4,16,31,0.42)', 'rgba(4,16,31,0.75)']} shellStyle={styles.insightsClosingShell}>
-          <View style={[styles.insightsClosingRow, isMobile && styles.insightsClosingRowMobile]}><View><Eyebrow onDark>TURN INSIGHTS INTO ACTION</Eyebrow><Text style={styles.sectionTitleLight}>Let’s Solve Your Business Problem.</Text><Text style={styles.insightsClosingText}>Talk with our team to explore how these insights can create real results for your organization.</Text></View><Btn label="SCHEDULE A CONSULTATION  →" onPress={() => onNavigate('contact')} /></View>
+          <View style={[styles.insightsClosingRow, isMobile && styles.insightsClosingRowMobile]}><View style={[styles.insightsClosingCopy, isMobile && STACKED_CONTENT]}><Eyebrow onDark>TURN INSIGHTS INTO ACTION</Eyebrow><Text style={styles.sectionTitleLight}>Let’s Solve Your Business Problem.</Text><Text style={styles.insightsClosingText}>Talk with our team to explore how these insights can create real results for your organization.</Text></View><Btn label="SCHEDULE A CONSULTATION  →" onPress={() => onNavigate('contact')} /></View>
         </Section>
         <SiteFooter isMobile={isMobile} onNavigate={onNavigate} showHomeLink />
       </ScrollView>
@@ -891,7 +897,7 @@ function InsightsPage({ isMobile, onNavigate }) {
   );
 }
 
-function HowWeWorkPage({ isMobile, onNavigate }) {
+function HowWeWorkPage({ isMobile, isPhone, onNavigate }) {
   const steps = [
     { number: '01', Icon: BulbIcon, title: 'Discover', subtitle: 'Understand Your Business', text: 'We learn about your organization, goals, challenges, people, processes and existing technology.', image: require('./assets/1.admin.png') },
     { number: '02', Icon: BarChartIcon, title: 'Diagnose', subtitle: 'Identify Opportunities', text: 'We analyze your operations, data and systems to find root causes, inefficiencies, bottlenecks and high-value opportunities.', image: require('./assets/03-data-analytics.png') },
@@ -908,9 +914,9 @@ function HowWeWorkPage({ isMobile, onNavigate }) {
       <StatusBar style="light" />
       <ScrollView contentContainerStyle={styles.page}>
         <Section bg={NAVY} image={require('./assets/howweworkbg.png')} scrim={['rgba(4,16,31,0.76)', 'rgba(4,16,31,0.2)', 'rgba(4,16,31,0.48)']} style={styles.howHero} shellStyle={styles.headerShell}>
-          <SiteHeader isMobile={isMobile} onNavigate={onNavigate} activePage="how" />
+          <SiteHeader isMobile={isPhone} onNavigate={onNavigate} activePage="how" />
           <View style={[styles.howHeroRow, isMobile && styles.howHeroRowMobile]}>
-            <View style={styles.howHeroCopy}>
+            <View style={[styles.howHeroCopy, isMobile && STACKED_CONTENT]}>
               <Eyebrow onDark>HOW WE WORK</Eyebrow>
               <Text style={styles.howHeroTitle}>A Clear Process.</Text>
               <Text style={styles.howHeroAccent}>Real Results.</Text>
@@ -923,22 +929,22 @@ function HowWeWorkPage({ isMobile, onNavigate }) {
         </Section>
 
         <Section bg="#FFFFFF" shellStyle={styles.howShell}>
-          <View style={styles.howHeading}><View><Eyebrow>OUR PROCESS</Eyebrow><Text style={styles.howSectionTitle}>From Challenge to Opportunity.</Text><Text style={styles.howIntroText}>We follow a proven, step-by-step approach designed to understand your business, design the right solution, and deliver measurable results.</Text></View>{!isMobile && <LinkText style={styles.linkText} hoverStyle={styles.linkTextHover} activeStyle={styles.linkTextPressed}>OUR APPROACH  →</LinkText>}</View>
-          <View style={[styles.howStepsGrid, isMobile && styles.howStepsGridMobile]}>{steps.map(({ number, Icon, title, subtitle, text, image }) => <View key={number} style={styles.howStep}><View style={styles.howStepImageWrap}><Image source={image} style={styles.howStepImage} resizeMode="cover" /><Text style={styles.howStepNumber}>{number}</Text><View style={styles.howStepIcon}><Icon size={20} color={BLUE} /></View></View><View style={styles.howStepTitleRow}><View><Text style={styles.howStepTitle}>{title}</Text><Text style={styles.howStepSubtitle}>{subtitle}</Text></View><Text style={styles.howStepArrow}>→</Text></View><Text style={styles.howStepText}>{text}</Text></View>)}</View>
+          <View style={[styles.howHeading, isMobile && styles.howHeadingMobile]}><View><Eyebrow>OUR PROCESS</Eyebrow><Text style={styles.howSectionTitle}>From Challenge to Opportunity.</Text><Text style={styles.howIntroText}>We follow a proven, step-by-step approach designed to understand your business, design the right solution, and deliver measurable results.</Text></View>{!isMobile && <LinkText style={styles.linkText} hoverStyle={styles.linkTextHover} activeStyle={styles.linkTextPressed}>OUR APPROACH  →</LinkText>}</View>
+          <View style={[styles.howStepsGrid, isMobile && styles.howStepsGridMobile]}>{steps.map(({ number, Icon, title, subtitle, text, image }) => <View key={number} style={[styles.howStep, isMobile && STACKED_FLEX_ITEM]}><View style={styles.howStepImageWrap}><Image source={image} style={styles.howStepImage} resizeMode="cover" /><Text style={styles.howStepNumber}>{number}</Text><View style={styles.howStepIcon}><Icon size={20} color={BLUE} /></View></View><View style={styles.howStepTitleRow}><View><Text style={styles.howStepTitle}>{title}</Text><Text style={styles.howStepSubtitle}>{subtitle}</Text></View><Text style={styles.howStepArrow}>→</Text></View><Text style={styles.howStepText}>{text}</Text></View>)}</View>
         </Section>
 
-        <Section bg="#F0F7FE" shellStyle={styles.howPartnershipShell}><View style={[styles.howPartnershipRow, isMobile && styles.howPartnershipRowMobile]}><View style={styles.howPartnershipCopy}><Eyebrow>PARTNERSHIP APPROACH</Eyebrow><Text style={styles.howSectionTitle}>More Than a Vendor — A True Partner.</Text><Text style={styles.howIntroText}>We work alongside your team, combining our expertise with your industry knowledge to deliver practical solutions that create real, measurable value.</Text></View><View style={[styles.howPrinciples, isMobile && styles.howPrinciplesMobile]}>{principles.map(([title, text], index) => <View key={title} style={[styles.howPrinciple, index > 0 && !isMobile && styles.howPrincipleDivider]}><UsersIcon size={30} color={BLUE} /><Text style={styles.howPrincipleTitle}>{title}</Text><Text style={styles.howPrincipleText}>{text}</Text></View>)}</View></View></Section>
+        <Section bg="#F0F7FE" shellStyle={styles.howPartnershipShell}><View style={[styles.howPartnershipRow, isMobile && styles.howPartnershipRowMobile]}><View style={[styles.howPartnershipCopy, isMobile && STACKED_FLEX_ITEM]}><Eyebrow>PARTNERSHIP APPROACH</Eyebrow><Text style={styles.howSectionTitle}>More Than a Vendor — A True Partner.</Text><Text style={styles.howIntroText}>We work alongside your team, combining our expertise with your industry knowledge to deliver practical solutions that create real, measurable value.</Text></View><View style={[styles.howPrinciples, isMobile && styles.howPrinciplesMobile, isMobile && STACKED_FLEX_ITEM]}>{principles.map(([title, text], index) => <View key={title} style={[styles.howPrinciple, isMobile && STACKED_FLEX_ITEM, index > 0 && !isMobile && styles.howPrincipleDivider]}><UsersIcon size={30} color={BLUE} /><Text style={styles.howPrincipleTitle}>{title}</Text><Text style={styles.howPrincipleText}>{text}</Text></View>)}</View></View></Section>
 
-        <Section bg="#FFFFFF" shellStyle={styles.howOutcomeShell}><View style={[styles.howOutcomeRow, isMobile && styles.howOutcomeRowMobile]}><View style={styles.howWhy}><Eyebrow>WHY IT WORKS</Eyebrow><Text style={styles.howSectionTitle}>Business First.{ '\n' }Technology Second.{ '\n'}<Text style={{ color: BLUE }}>Results Always.</Text></Text><Text style={styles.howIntroText}>We start with your business problem, not a predefined technology. This ensures the right solution, greater adoption and measurable outcomes.</Text><Btn label="SEE REAL-WORLD EXAMPLES  →" /></View><View style={styles.howOutcomeImage}><Image source={require('./assets/whyit.png')} style={StyleSheet.absoluteFillObject} resizeMode="cover" /><View style={styles.howOutcomeOverlay} /><Text style={styles.howOutcomePath}>STRATEGY{ '\n' }  SOLUTION{ '\n' }    EXECUTION{ '\n' }      RESULTS</Text></View><View style={styles.howOutcomeList}><Eyebrow>TYPICAL OUTCOMES</Eyebrow>{outcomes.map(([title, text, Icon]) => <View key={title} style={styles.howOutcomeItem}><Icon size={26} color={BLUE} /><View><Text style={styles.howOutcomeTitle}>{title}</Text><Text style={styles.howOutcomeText}>{text}</Text></View></View>)}</View></View></Section>
+        <Section bg="#FFFFFF" shellStyle={styles.howOutcomeShell}><View style={[styles.howOutcomeRow, isMobile && styles.howOutcomeRowMobile]}><View style={[styles.howWhy, isMobile && STACKED_FLEX_ITEM]}><Eyebrow>WHY IT WORKS</Eyebrow><Text style={styles.howSectionTitle}>Business First.{ '\n' }Technology Second.{ '\n'}<Text style={{ color: BLUE }}>Results Always.</Text></Text><Text style={styles.howIntroText}>We start with your business problem, not a predefined technology. This ensures the right solution, greater adoption and measurable outcomes.</Text><Btn label="SEE REAL-WORLD EXAMPLES  →" /></View><View style={[styles.howOutcomeImage, isMobile && STACKED_FLEX_ITEM]}><Image source={require('./assets/whyit.png')} style={StyleSheet.absoluteFillObject} resizeMode="cover" /><View style={styles.howOutcomeOverlay} /><Text style={styles.howOutcomePath}>STRATEGY{ '\n' }  SOLUTION{ '\n' }    EXECUTION{ '\n' }      RESULTS</Text></View><View style={[styles.howOutcomeList, isMobile && STACKED_FLEX_ITEM]}><Eyebrow>TYPICAL OUTCOMES</Eyebrow>{outcomes.map(([title, text, Icon]) => <View key={title} style={styles.howOutcomeItem}><Icon size={26} color={BLUE} /><View style={styles.howOutcomeCopy}><Text style={styles.howOutcomeTitle}>{title}</Text><Text style={styles.howOutcomeText}>{text}</Text></View></View>)}</View></View></Section>
 
-        <Section bg={NAVY} image={require('./assets/bgimg.png')} scrim={['rgba(4,16,31,0.82)', 'rgba(4,16,31,0.42)', 'rgba(4,16,31,0.75)']} shellStyle={styles.howClosingShell}><View style={[styles.howClosingRow, isMobile && styles.howClosingRowMobile]}><View><Eyebrow onDark>READY TO GET STARTED?</Eyebrow><Text style={styles.sectionTitleLight}>Let’s Solve Your Business Problem.</Text><Text style={styles.howClosingText}>Tell us about your challenges and we’ll help you identify the right next step.</Text></View><Btn label="TELL US YOUR BUSINESS PROBLEM  →" onPress={() => onNavigate('contact')} /></View></Section>
+        <Section bg={NAVY} image={require('./assets/bgimg.png')} scrim={['rgba(4,16,31,0.82)', 'rgba(4,16,31,0.42)', 'rgba(4,16,31,0.75)']} shellStyle={styles.howClosingShell}><View style={[styles.howClosingRow, isMobile && styles.howClosingRowMobile]}><View style={[styles.howClosingCopy, isMobile && STACKED_CONTENT]}><Eyebrow onDark>READY TO GET STARTED?</Eyebrow><Text style={styles.sectionTitleLight}>Let’s Solve Your Business Problem.</Text><Text style={styles.howClosingText}>Tell us about your challenges and we’ll help you identify the right next step.</Text></View><Btn label="TELL US YOUR BUSINESS PROBLEM  →" onPress={() => onNavigate('contact')} /></View></Section>
         <SiteFooter isMobile={isMobile} onNavigate={onNavigate} showHomeLink />
       </ScrollView>
     </SafeAreaView>
   );
 }
 
-function IndustriesPage({ isMobile, onNavigate }) {
+function IndustriesPage({ isMobile, isPhone, onNavigate }) {
   const industries = [
     { Icon: HouseIcon, title: 'Healthcare & Provider Organizations', text: 'Secure workflows, operational visibility, patient experience improvements, and digital modernization for healthcare teams.', points: ['Patient operations support', 'Workflow automation', 'Secure digital transformation'] },
     { Icon: BuildingIcon, title: 'Financial Services & Fintech', text: 'Operational efficiency, transaction workflows, compliance support, and digital enablement for finance-focused organizations.', points: ['Operations modernization', 'Process automation', 'Scalable financial workflows'] },
@@ -981,9 +987,9 @@ function IndustriesPage({ isMobile, onNavigate }) {
           style={styles.solutionHero}
           shellStyle={styles.headerShell}
         >
-          <SiteHeader isMobile={isMobile} onNavigate={onNavigate} activePage="industries" />
+          <SiteHeader isMobile={isPhone} onNavigate={onNavigate} activePage="industries" />
           <View style={[styles.solutionHeroRow, isMobile && styles.solutionHeroRowMobile]}>
-            <View style={styles.solutionHeroCopy}>
+            <View style={[styles.solutionHeroCopy, isMobile && STACKED_CONTENT]}>
               <Eyebrow onDark>INDUSTRIES</Eyebrow>
               <Text style={styles.solutionHeroTitle}>Flexible Solutions for the Industries You Serve.</Text>
               <Text style={styles.solutionHeroText}>
@@ -1012,7 +1018,7 @@ function IndustriesPage({ isMobile, onNavigate }) {
               { Icon: BarChartIcon, title: 'Data &', text: 'Insights' },
               { Icon: ShieldIcon, title: 'Trusted', text: 'Execution' },
             ].map((item, index) => (
-              <View key={item.title} style={[styles.solutionTrustItem, index > 0 && !isMobile && styles.solutionTrustDivider]}>
+              <View key={item.title} style={[styles.solutionTrustItem, isMobile && STACKED_FLEX_ITEM, index > 0 && !isMobile && styles.solutionTrustDivider]}>
                 <item.Icon size={30} color={BLUE} />
                 <View><Text style={styles.solutionTrustTitle}>{item.title}</Text><Text style={styles.solutionTrustText}>{item.text}</Text></View>
               </View>
@@ -1030,7 +1036,7 @@ function IndustriesPage({ isMobile, onNavigate }) {
           </View>
           <View style={[styles.solutionGrid, isMobile && styles.solutionGridMobile]}>
             {industries.map((item) => (
-              <View key={item.title} style={styles.solutionVisualCard}>
+              <View key={item.title} style={[styles.solutionVisualCard, isMobile && styles.solutionVisualCardMobile, isMobile && STACKED_FLEX_ITEM]}>
                 <View style={styles.industryCardTop}><item.Icon size={28} color={BLUE} /><Text style={styles.industryCardTitle}>{item.title}</Text></View>
                 <View style={styles.solutionVisualBody}>
                   <Text style={styles.solutionVisualSubtitle}>{item.text}</Text>
@@ -1051,7 +1057,7 @@ function IndustriesPage({ isMobile, onNavigate }) {
           </View>
           <View style={[styles.industryCapabilityGrid, isMobile && styles.industryCapabilityGridMobile]}>
             {capabilities.map(([title, text]) => (
-              <View key={title} style={styles.industryCapabilityItem}>
+              <View key={title} style={[styles.industryCapabilityItem, isMobile && styles.industryCapabilityItemMobile, isMobile && STACKED_FLEX_ITEM]}>
                 <Text style={styles.industryCapabilityTitle}>{title}</Text>
                 <Text style={styles.industryCapabilityText}>{text}</Text>
               </View>
@@ -1068,7 +1074,7 @@ function IndustriesPage({ isMobile, onNavigate }) {
           </View>
           <View style={[styles.solutionApproachRow, isMobile && styles.solutionApproachRowMobile]}>
             {process.map((step, index) => (
-              <View key={step[0]} style={[styles.solutionApproachItem, index > 0 && !isMobile && styles.solutionApproachDivider]}>
+              <View key={step[0]} style={[styles.solutionApproachItem, isMobile && STACKED_FLEX_ITEM, index > 0 && !isMobile && styles.solutionApproachDivider]}>
                 <Text style={styles.solutionStepNumber}>{String(index + 1).padStart(2, '0')}</Text>
                 <Text style={styles.solutionStepTitle}>{step[0]}</Text>
                 <Text style={styles.solutionStepText}>{step[1]}</Text>
@@ -1079,7 +1085,7 @@ function IndustriesPage({ isMobile, onNavigate }) {
 
         <Section bg={NAVY} image={require('./assets/bgimg.png')} scrim={['rgba(4,16,31,0.82)', 'rgba(4,16,31,0.42)', 'rgba(4,16,31,0.75)']} shellStyle={styles.howClosingShell}>
           <View style={[styles.howClosingRow, isMobile && styles.howClosingRowMobile]}>
-            <View>
+            <View style={[styles.howClosingCopy, isMobile && STACKED_CONTENT]}>
               <Eyebrow onDark>READY TO BUILD FOR YOUR INDUSTRY?</Eyebrow>
               <Text style={styles.sectionTitleLight}>Let’s Solve Your Business Problem.</Text>
               <Text style={styles.howClosingText}>Tell us where your operations are challenged and we’ll help identify the right strategy, technology, and delivery path for your business.</Text>
@@ -1094,7 +1100,7 @@ function IndustriesPage({ isMobile, onNavigate }) {
   );
 }
 
-function WhoWeArePage({ isMobile, onNavigate }) {
+function WhoWeArePage({ isMobile, isPhone, onNavigate }) {
   return (
     <SafeAreaView style={styles.safeArea}>
       <StatusBar style="light" />
@@ -1106,9 +1112,9 @@ function WhoWeArePage({ isMobile, onNavigate }) {
           style={styles.whoHero}
           shellStyle={styles.whoShell}
         >
-          <SiteHeader isMobile={isMobile} onNavigate={onNavigate} activePage="who" />
+          <SiteHeader isMobile={isPhone} onNavigate={onNavigate} activePage="who" />
           <View style={[styles.whoHeroRow, isMobile && styles.whoHeroRowMobile]}>
-            <View style={styles.whoHeroCopy}>
+            <View style={[styles.whoHeroCopy, isMobile && STACKED_CONTENT]}>
               <Eyebrow onDark>ABOUT RGF</Eyebrow>
               <Text style={styles.whoHeroTitle}>Who We Are</Text>
               <Text style={styles.whoHeroTitleAccent}>And Why We Exist.</Text>
@@ -1174,7 +1180,7 @@ function WhoWeArePage({ isMobile, onNavigate }) {
 
         <Section bg={NAVY} shellStyle={styles.whoShell}>
           <View style={[styles.whoWhyRow, isMobile && styles.whoWhyRowMobile]}>
-            <View style={styles.whoWhyCopy}>
+            <View style={[styles.whoWhyCopy, isMobile && STACKED_FLEX_ITEM]}>
               <Eyebrow onDark>WHY CHOOSE RGF</Eyebrow>
               <Text style={[styles.sectionTitleLight, styles.whoSectionTitleLight]}>More Than Technology.{"\n"}A True Partner.</Text>
               <Text style={styles.sectionSubtitleLight}>
@@ -1183,14 +1189,14 @@ function WhoWeArePage({ isMobile, onNavigate }) {
                 to ensure you get measurable results.
               </Text>
             </View>
-            <View style={[styles.whoFeatureGrid, isMobile && styles.whoFeatureGridMobile]}>
+            <View style={[styles.whoFeatureGrid, isMobile && styles.whoFeatureGridMobile, isMobile && STACKED_FLEX_ITEM]}>
               {[
                 [BuildingIcon, 'Industry & Business Expertise', 'Real-world experience across multiple industries and business sizes.'],
                 [GearIcon, 'Advanced Technology', 'AI, automation, data, and modern software solutions.'],
                 [UsersIcon, 'Collaborative Approach', 'Your goals. Our team. One path forward.'],
                 [TrendIcon, 'Measurable Results', 'Greater efficiency, lower costs, and long-term growth.'],
               ].map(([Icon, title, text]) => (
-                <View key={title} style={styles.whoFeature}>
+                <View key={title} style={[styles.whoFeature, isMobile && STACKED_FLEX_ITEM]}>
                   <Icon size={32} color={BLUE_LIGHT} />
                   <Text style={styles.whoFeatureTitle}>{title}</Text>
                   <Text style={styles.whoFeatureText}>{text}</Text>
@@ -1220,7 +1226,7 @@ function WhoWeArePage({ isMobile, onNavigate }) {
               ['Multiple', 'Industries'],
               ['Scalable', 'for Any Business Size'],
             ].map(([value, label]) => (
-              <View key={label} style={styles.whoStat}>
+              <View key={label} style={[styles.whoStat, isMobile && STACKED_FLEX_ITEM]}>
                 <Text style={styles.whoStatValue}>{value}</Text>
                 <Text style={styles.whoStatLabel}>{label}</Text>
               </View>
@@ -1247,7 +1253,8 @@ function WhoWeArePage({ isMobile, onNavigate }) {
 
 export default function App() {
   const { width } = useWindowDimensions();
-  const isMobile = width < 700;
+  const isPhone = width < 700;
+  const isMobile = width < 900;
   const [page, setPage] = useState('home');
 
   const [fontsLoaded] = useFonts({
@@ -1262,27 +1269,27 @@ export default function App() {
   }
 
   if (page === 'who') {
-    return <WhoWeArePage isMobile={isMobile} onNavigate={setPage} />;
+    return <WhoWeArePage isMobile={isMobile} isPhone={isPhone} onNavigate={setPage} />;
   }
 
   if (page === 'solution') {
-    return <SolutionPage isMobile={isMobile} onNavigate={setPage} />;
+    return <SolutionPage isMobile={isMobile} isPhone={isPhone} onNavigate={setPage} />;
   }
 
   if (page === 'industries') {
-    return <IndustriesPage isMobile={isMobile} onNavigate={setPage} />;
+    return <IndustriesPage isMobile={isMobile} isPhone={isPhone} onNavigate={setPage} />;
   }
 
   if (page === 'contact') {
-    return <ContactPage isMobile={isMobile} onNavigate={setPage} />;
+    return <ContactPage isMobile={isMobile} isPhone={isPhone} onNavigate={setPage} />;
   }
 
   if (page === 'insights') {
-    return <InsightsPage isMobile={isMobile} onNavigate={setPage} />;
+    return <InsightsPage isMobile={isMobile} isPhone={isPhone} onNavigate={setPage} />;
   }
 
   if (page === 'how') {
-    return <HowWeWorkPage isMobile={isMobile} onNavigate={setPage} />;
+    return <HowWeWorkPage isMobile={isMobile} isPhone={isPhone} onNavigate={setPage} />;
   }
 
   return (
@@ -1296,10 +1303,10 @@ export default function App() {
           style={styles.heroSection}
           shellStyle={styles.headerShell}
         >
-          <SiteHeader isMobile={isMobile} onNavigate={setPage} />
+          <SiteHeader isMobile={isPhone} onNavigate={setPage} />
 
           <View style={[styles.heroRow, isMobile && styles.heroRowMobile]}>
-            <View style={styles.heroTextWrap}>
+            <View style={[styles.heroTextWrap, isMobile && STACKED_CONTENT]}>
               <Text style={styles.heroKicker}>INTELLIGENCE. EXECUTION. REAL RESULTS.</Text>
               <Text style={styles.heroTitle}>
                 <Text style={{ color: BLUE_LIGHT }}>
@@ -1361,7 +1368,7 @@ export default function App() {
             {challenges.map((item, index) => (
               <View
                 key={item.title}
-                style={[styles.challengeItem, index > 0 && !isMobile && styles.challengeDivider]}
+                style={[styles.challengeItem, isMobile && STACKED_FLEX_ITEM, index > 0 && !isMobile && styles.challengeDivider]}
               >
                 <item.Icon size={34} color={BLUE} />
                 <Text style={styles.challengeTitle}>{item.title}</Text>
@@ -1373,7 +1380,7 @@ export default function App() {
 
         <Section bg={NAVY} photo={APPROACH_PHOTO}>
           <View style={[styles.approachHeader, isMobile && styles.approachHeaderMobile]}>
-            <View style={styles.approachCopy}>
+            <View style={[styles.approachCopy, isMobile && STACKED_CONTENT]}>
               <Eyebrow onDark>THE RGF APPROACH</Eyebrow>
               <Text style={styles.sectionTitleLight}>From Today’s Challenges to Tomorrow’s Opportunities</Text>
               <Text style={styles.sectionSubtitleLight}>
@@ -1383,11 +1390,11 @@ export default function App() {
               <Btn label="OUR APPROACH →" variant="outline" onDark />
             </View>
 
-            <View style={[styles.approachRow, isMobile && styles.approachRowMobile]}>
+            <View style={[styles.approachRow, isMobile && styles.approachRowMobile, isMobile && STACKED_FLEX_ITEM]}>
               {approachSteps.map((step, index) => (
                 <View
                   key={step.letter}
-                  style={[styles.approachItem, index > 0 && !isMobile && styles.approachDivider]}
+                  style={[styles.approachItem, isMobile && STACKED_FLEX_ITEM, index > 0 && !isMobile && styles.approachDivider]}
                 >
                   <ApproachTile bg={step.bg} />
                   <Text style={styles.approachEyebrow}>{step.eyebrow}</Text>
@@ -1414,7 +1421,7 @@ export default function App() {
 
           <View style={[styles.solutionsGrid, isMobile && styles.solutionsGridMobile]}>
             {solutions.map((item) => (
-              <View key={item.title} style={styles.solutionCard}>
+              <View key={item.title} style={[styles.solutionCard, isMobile && styles.solutionCardMobile, isMobile && STACKED_FLEX_ITEM]}>
                 <Image source={item.bg} style={styles.solutionImage} resizeMode="cover" />
                 <Text style={styles.solutionTitle}>{item.title}</Text>
                 <Text style={styles.solutionDesc}>{item.desc}</Text>
@@ -1425,7 +1432,7 @@ export default function App() {
 
         <Section bg={NAVY} image={require('./assets/mount.png')}>
           <View style={[styles.tellUsRow, isMobile && styles.tellUsRowMobile]}>
-            <View style={styles.tellUsCopy}>
+            <View style={[styles.tellUsCopy, isMobile && styles.tellUsCopyMobile]}>
               <Eyebrow onDark>TELL US YOUR BUSINESS PROBLEM</Eyebrow>
               <Text style={styles.sectionTitleLight}>
                 You Don’t Need to Know the Technology. <Text style={{ color: BLUE_LIGHT }}>Start Here.</Text>
@@ -1478,7 +1485,7 @@ export default function App() {
             {industries.map((item, index) => (
               <View
                 key={item.label}
-                style={[styles.industryItem, index > 0 && !isMobile && styles.challengeDivider]}
+                style={[styles.industryItem, isMobile && STACKED_FLEX_ITEM, index > 0 && !isMobile && styles.challengeDivider]}
               >
                 <item.Icon size={34} color={BLUE} />
                 <Text style={styles.industryLabel}>{item.label}</Text>
@@ -1569,6 +1576,12 @@ const styles = StyleSheet.create(increaseContentFontSizes({
     paddingHorizontal: 24,
     paddingVertical: 48,
   },
+  shellTablet: {
+    paddingHorizontal: 24,
+  },
+  shellPhone: {
+    paddingHorizontal: 16,
+  },
   whoShell: {
     paddingHorizontal: 38,
     paddingVertical: 18,
@@ -1588,6 +1601,9 @@ const styles = StyleSheet.create(increaseContentFontSizes({
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingBottom: 18,
+  },
+  topbarPhone: {
+    justifyContent: 'center',
   },
   headerMark: {
     width: 104,
@@ -1638,6 +1654,9 @@ const styles = StyleSheet.create(increaseContentFontSizes({
     paddingHorizontal: 18,
     paddingVertical: 12,
     alignSelf: 'flex-start',
+  },
+  btnNarrow: {
+    alignSelf: 'center',
   },
   btnHoverSolid: {
     backgroundColor: '#2E8CFF',
@@ -1964,6 +1983,11 @@ const styles = StyleSheet.create(increaseContentFontSizes({
     minWidth: 200,
     flexGrow: 1,
   },
+  solutionCardMobile: {
+    width: '100%',
+    minWidth: 0,
+    flexGrow: 0,
+  },
   solutionImage: {
     width: '100%',
     height: 110,
@@ -1994,6 +2018,12 @@ const styles = StyleSheet.create(increaseContentFontSizes({
   },
   tellUsCopy: {
     flex: 1.3,
+  },
+  tellUsCopyMobile: {
+    flexGrow: 0,
+    flexShrink: 0,
+    flexBasis: 'auto',
+    width: '100%',
   },
   input: {
     backgroundColor: '#FFFFFF',
@@ -2164,6 +2194,9 @@ const styles = StyleSheet.create(increaseContentFontSizes({
     flex: 1.3,
   },
   ctaCopyMobile: {
+    flexGrow: 0,
+    flexShrink: 0,
+    flexBasis: 'auto',
     width: '100%',
   },
   ctaTitle: {
@@ -2213,6 +2246,10 @@ const styles = StyleSheet.create(increaseContentFontSizes({
   },
   footerTopMobile: {
     flexDirection: 'column',
+    alignItems: 'center',
+  },
+  footerLogoMobile: {
+    alignSelf: 'center',
   },
   footerMark: {
     width: 84,
@@ -2233,10 +2270,19 @@ const styles = StyleSheet.create(increaseContentFontSizes({
   },
   footerColumns: {
     flexDirection: 'row',
+    flexWrap: 'wrap',
     alignItems: 'center',
     gap: 22,
     flex: 1,
     justifyContent: 'center',
+  },
+  footerColumnsMobile: {
+    width: '100%',
+    flexGrow: 0,
+    flexShrink: 0,
+    flexBasis: 'auto',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   footerLink: {
     color: '#B7C0CE',
@@ -2251,6 +2297,10 @@ const styles = StyleSheet.create(increaseContentFontSizes({
   },
   connectWrap: {
     alignItems: 'flex-end',
+  },
+  connectWrapMobile: {
+    alignItems: 'center',
+    alignSelf: 'center',
   },
   socialRow: {
     flexDirection: 'row',
@@ -2296,7 +2346,11 @@ const styles = StyleSheet.create(increaseContentFontSizes({
   },
   footerBottomMobile: {
     flexDirection: 'column',
-    alignItems: 'flex-start',
+    alignItems: 'center',
+  },
+  footerTextMobile: {
+    width: '100%',
+    textAlign: 'center',
   },
   footerText: {
     color: '#7C8798',
@@ -2473,6 +2527,13 @@ const styles = StyleSheet.create(increaseContentFontSizes({
     backgroundColor: '#F0F7FE',
     padding: 24,
   },
+  contactFormStacked: {
+    flexGrow: 0,
+    flexShrink: 0,
+    flexBasis: 'auto',
+    width: '100%',
+    alignSelf: 'center',
+  },
   contactFormTitle: {
     color: '#122D69',
     fontSize: 27,
@@ -2543,6 +2604,10 @@ const styles = StyleSheet.create(increaseContentFontSizes({
     flex: 1,
     maxWidth: 330,
   },
+  contactLocationCopyMobile: {
+    width: '100%',
+    maxWidth: 560,
+  },
   contactMap: {
     flex: 1.2,
     minHeight: 190,
@@ -2551,6 +2616,9 @@ const styles = StyleSheet.create(increaseContentFontSizes({
     justifyContent: 'center',
     borderRadius: 4,
     overflow: 'hidden',
+  },
+  contactMapMobile: {
+    width: '100%',
   },
   contactMapImage: {
     position: 'absolute',
@@ -2590,6 +2658,9 @@ const styles = StyleSheet.create(increaseContentFontSizes({
   contactLocationPoints: {
     flex: 0.9,
     gap: 15,
+  },
+  contactLocationPointsMobile: {
+    width: '100%',
   },
   contactLocationPoint: {
     flexDirection: 'row',
@@ -2736,6 +2807,10 @@ const styles = StyleSheet.create(increaseContentFontSizes({
     justifyContent: 'space-between',
     gap: 20,
     marginBottom: 18,
+  },
+  insightsHeadingMobile: {
+    flexDirection: 'column',
+    alignItems: 'stretch',
   },
   insightsSectionTitle: {
     color: '#122D69',
@@ -2936,6 +3011,10 @@ const styles = StyleSheet.create(increaseContentFontSizes({
     fontFamily: 'Inter_400Regular',
     marginTop: 5,
   },
+  insightsClosingCopy: {
+    flex: 1,
+    minWidth: 0,
+  },
   howHero: {
     minHeight: 430,
     overflow: 'hidden',
@@ -3042,6 +3121,10 @@ const styles = StyleSheet.create(increaseContentFontSizes({
     alignItems: 'flex-end',
     gap: 20,
     marginBottom: 22,
+  },
+  howHeadingMobile: {
+    flexDirection: 'column',
+    alignItems: 'stretch',
   },
   howSectionTitle: {
     color: '#122D69',
@@ -3241,6 +3324,10 @@ const styles = StyleSheet.create(increaseContentFontSizes({
     fontFamily: 'Georgia',
     marginTop: 2,
   },
+  howOutcomeCopy: {
+    flex: 1,
+    minWidth: 0,
+  },
   howClosingShell: {
     paddingHorizontal: 38,
     paddingVertical: 28,
@@ -3250,6 +3337,10 @@ const styles = StyleSheet.create(increaseContentFontSizes({
     justifyContent: 'space-between',
     alignItems: 'center',
     gap: 24,
+  },
+  howClosingCopy: {
+    flex: 1,
+    minWidth: 0,
   },
   howClosingRowMobile: {
     flexDirection: 'column',
@@ -3412,6 +3503,10 @@ const styles = StyleSheet.create(increaseContentFontSizes({
     shadowOffset: { width: 0, height: 2 },
     elevation: 2,
   },
+  solutionVisualCardMobile: {
+    width: '100%',
+    minWidth: 0,
+  },
   solutionVisualImage: {
     width: '100%',
     height: 116,
@@ -3447,6 +3542,10 @@ const styles = StyleSheet.create(increaseContentFontSizes({
     borderRadius: 6,
     padding: 22,
     overflow: 'hidden',
+  },
+  solutionNeedCardMobile: {
+    width: '100%',
+    minWidth: 0,
   },
   solutionNeedTitle: {
     color: '#FFFFFF',
@@ -3504,6 +3603,10 @@ const styles = StyleSheet.create(increaseContentFontSizes({
     borderWidth: 1,
     borderColor: '#DCE7F3',
     padding: 16,
+  },
+  industryCapabilityItemMobile: {
+    width: '100%',
+    minWidth: 0,
   },
   industryCapabilityTitle: {
     color: TEXT_DARK,
